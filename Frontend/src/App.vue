@@ -22,7 +22,7 @@ import {RouterLink, RouterView} from 'vue-router'
                 <RouterLink to="/about" class="nav-link">About</RouterLink>
               </li>
               <li class="nav-item">
-                <RouterLink to="/login" class="nav-link">Login</RouterLink>
+                <RouterLink to="/test" class="nav-link">Test</RouterLink>
               </li>
             </ul>
             <form class="d-flex" role="search">
