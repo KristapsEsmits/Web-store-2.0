@@ -30,7 +30,7 @@ class TestController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:40',
             'desc' => 'required|string|max:255',
-            'price' => 'required',
+            'price' => 'required|numeric',
         ]);
 
         if ($validator->fails()) {
@@ -76,7 +76,8 @@ class TestController extends Controller
         }
     }
 
-    public function edit($id){
+    public function edit($id)
+    {
         $test = Test::find($id);
         if ($test) {
             return response()->json([
@@ -98,7 +99,7 @@ class TestController extends Controller
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:40',
                 'desc' => 'required|string|max:255',
-                'price' => 'required',
+                'price' => 'required|numeric',
             ]);
 
             if ($validator->fails()) {
@@ -134,7 +135,8 @@ class TestController extends Controller
         }
     }
 
-    public function destroy($id){
+    public function destroy($id)
+    {
         $test = Test::find($id);
         if ($test) {
             $test->delete();

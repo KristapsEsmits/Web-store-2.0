@@ -7,7 +7,7 @@ import {RouterLink, RouterView} from 'vue-router'
     <div class="wrapper">
       <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-          <RouterLink to="/" class="navbar-brand">Home</RouterLink>
+          <RouterLink to="/" class="navbar-brand">Nosaukums</RouterLink>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                   data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                   aria-label="Toggle navigation">

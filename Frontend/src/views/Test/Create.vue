@@ -46,6 +46,7 @@
         },
       };
     },
+
     methods: {
       saveTest() {
         var list = this;
@@ -60,6 +61,7 @@
   
           this.errorList = {};
         })
+        
         .catch(function (error) {
           if (error.response.status == 422) {
             list.errorList = error.response.data.errors;

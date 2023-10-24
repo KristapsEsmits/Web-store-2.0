@@ -22,8 +22,8 @@
               <td>{{ test.name }}</td>
               <td>{{ test.desc }}</td>
               <td>{{ test.price }}</td>
-              <td>
-                <router-link :to="{path: '/test/'+test.id+'/edit'}" class="btn btn-success">Edit</router-link>
+              <td class="d-flex justify-content-center">
+                <router-link :to="{path: '/test/'+test.id+'/edit'}" class="btn btn-success float-middle">Edit</router-link>
                 <button type="button" @click="deleteTest(test.id)" class="btn btn-danger">Delete</button>
               </td>
             </tr>
@@ -63,6 +63,7 @@ export default {
         alert(res.data.message);
         this.getTest();
         })
+
         .catch(function (error) {
           if (error.response.status == 422) {
             list.errorList = error.response.data.errors;
