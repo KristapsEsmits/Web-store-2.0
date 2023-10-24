@@ -23,7 +23,7 @@
               <td>{{ test.desc }}</td>
               <td>{{ test.price }}</td>
               <td>
-                <router-link to="/" class="btn btn-success">Edit</router-link>
+                <router-link :to="{path: '/test/'+test.id+'/edit'}" class="btn btn-success">Edit</router-link>
                 <button type="button" class="btn btn-danger">Delete</button>
               </td>
             </tr>
