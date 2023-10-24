@@ -24,7 +24,7 @@
               <td>{{ test.price }}</td>
               <td>
                 <router-link :to="{path: '/test/'+test.id+'/edit'}" class="btn btn-success">Edit</router-link>
-                <button type="button" class="btn btn-danger">Delete</button>
+                <button type="button" @click="deleteTest(test.id)" class="btn btn-danger">Delete</button>
               </td>
             </tr>
           </tbody>
@@ -44,15 +44,35 @@ export default {
       test: [],
     };
   },
+
   mounted() {
     this.getTest();
   },
+
   methods: {
     getTest() {
       axios.get('http://127.0.0.1:8000/api/test').then((res) => {
         this.test = res.data.test;
         console.log(this.test)
       });
+    },
+
+    deleteTest(testId) {
+    if (confirm('Are you sure?')) {
+      axios.delete(`http://127.0.0.1:8000/api/test/${testId}/delete`).then((res) => {
+        alert(res.data.message);
+        this.getTest();
+        })
+        .catch(function (error) {
+          if (error.response.status == 422) {
+            list.errorList = error.response.data.errors;
+          } else if (error.request) {
+            console.log(error.request);
+          } else {
+            console.log('Error', error.message);
+          }
+        });
+      }
     },
   },
 };
