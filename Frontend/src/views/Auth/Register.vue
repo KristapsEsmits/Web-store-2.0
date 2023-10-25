@@ -2,43 +2,109 @@
     <div class="container">
         <div class="card">
             <div class="card-header">
-                <h4>Login</h4>
+                <h4>Register</h4>
              </div>
              <div class="card-body">
+                <ul class="alert alert-danger" v-if="Object.keys(errorList).length > 0">
+                    <li class="mb-0 ms-3" v-for="(error, index) in errorList" :key="index">
+                    {{ error[0] }}
+                    </li>
+                </ul> 
                 <form>
-                    <div class="form-group">
-                        <label for="exampleInputEmail1">Username</label>
-                        <input type="text" class="form-control" aria-describedby="emailHelp" placeholder="Username">
+                    <div class="mb-3">
+                        <label for="Username">Username</label>
+                        <input type="text" v-model="model.register.username" class="form-control"  placeholder="Username">
                     </div>
-                    <div class="form-group">
-                        <label for="exampleInputPassword1">Password</label>
-                        <input type="password" class="form-control" placeholder="Password">
+                    <div class="mb-3">
+                        <label for="Password">Password</label>
+                        <input type="password" v-model="model.register.password" class="form-control" placeholder="Password">
                     </div>
-                    <div class="form-group">
-                        <label for="exampleInputPassword1">Repeat password</label>
-                        <input type="password" class="form-control" placeholder="Repeat Password">
+                    <div class="mb-3">
+                        <label for="Repeat_password">Repeat password</label>
+                        <input type="password" v-model="model.register.password_repeat" class="form-control" placeholder="Repeat Password">
                     </div>
-                    <div class="form-group">
-                        <label for="exampleInputEmail1">Name</label>
-                        <input type="text" class="form-control" placeholder="Name">
+                    <div class="mb-3">
+                        <label for="Name">Name</label>
+                        <input type="text" v-model="model.register.name" class="form-control" placeholder="Name">
                     </div>
-                    <div class="form-group">
-                        <label for="exampleInputEmail1">Surname</label>
-                        <input type="text" class="form-control" placeholder="Surname">
+                    <div class="mb-3">
+                        <label for="Surname">Surname</label>
+                        <input type="text" v-model="model.register.surname" class="form-control" placeholder="Surname">
                     </div>
-                    <div class="form-group">
-                        <label for="exampleInputEmail1">Number</label>
-                        <input type="number" class="form-control" placeholder="Number">
+                    <div class="mb-3">
+                        <label for="Phone">Phone</label>
+                        <input type="phone" v-model="model.register.phone" class="form-control" placeholder="Phone">
                     </div>
-                    <div class="form-group">
-                        <label for="exampleInputEmail1">Email address</label>
-                        <input type="email" class="form-control" placeholder="Enter email">
+                    <div class="mb-3">
+                        <label for="Email">Email address</label>
+                        <input type="email" v-model="model.register.email" class="form-control" placeholder="Enter email">
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="button" @click="saveRegister" class="btn btn-primary">Register</button>
                     </form>
              </div>
         </div>
     </div>
 </template>
   
-  
+<script>
+import axios from 'axios';
+
+export default {
+    name: 'Register',
+    data() {
+        return {
+        errorList: {},
+        model: {
+            register: {
+            username: '',
+            password_repeat: '',
+            password: '',
+            name: '',
+            surname: '',
+            phone: '',
+            email: '',
+            },
+        },
+        };
+    },
+
+    methods: {
+        saveRegister() {
+        //Hashing password before sending to backend
+        const hashedPassword = this.model.register.password;
+        axios.post('http://127.0.0.1:8000/api/register', {
+            ...this.model.register,
+            password: hashedPassword,
+        })
+            .then((res) => {
+                console.log(res.data);
+                alert(res.data.message);
+
+                this.model.register.username = '';
+                this.model.register.password = '';
+                this.model.register.password_repeat = '';
+                this.model.register.name = '';
+                this.model.register.surname = '';
+                this.model.register.phone = '';
+                this.model.register.email = '';
+
+                this.errorList = {};
+            })
+
+            .catch((error) => {
+                if (error.response) {
+                    // Handle response error (e.g., HTTP status 422)
+                    console.log(error.response.data);
+                    this.errorList = error.response.data.errors;
+                } else if (error.request) {
+                    // Handle network error (e.g., server not reachable)
+                    console.log(error.request);
+                } else {
+                    // Handle other errors
+                    console.log('Error', error.message);
+                }
+            });
+        },
+    },
+};
+</script>
