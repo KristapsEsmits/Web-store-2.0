@@ -70,7 +70,7 @@ export default {
 
     methods: {
         saveRegister() {
-        //Hashing password before sending to backend
+        // Hashing password before sending to backend
         const hashedPassword = this.model.register.password;
         axios.post('http://127.0.0.1:8000/api/register', {
             ...this.model.register,
@@ -79,6 +79,7 @@ export default {
             .then((res) => {
                 console.log(res.data);
                 alert(res.data.message);
+                this.$router.push('/login');
 
                 this.model.register.username = '';
                 this.model.register.password = '';

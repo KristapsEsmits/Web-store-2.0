@@ -18,5 +18,5 @@ Route::put('test/{id}/edit', [Testcontroller::class, 'update']);
 Route::delete('test/{id}/delete', [Testcontroller::class, 'destroy']);
 
 //Auth API
-Route::get('register', [Authcontroller::class, 'index']);
 Route::post('register', [Authcontroller::class, 'register']);
+Route::post('login', [Authcontroller::class, 'login']);
