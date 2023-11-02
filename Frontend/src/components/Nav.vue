@@ -27,6 +27,9 @@
               <li class="nav-item">
                 <RouterLink to="/register" class="nav-link">Register</RouterLink>
               </li>
+              <li class="nav-item">
+                <RouterLink to="/profile" class="nav-link">Profile</RouterLink>
+              </li>
             </ul>
           </div>
         </div>

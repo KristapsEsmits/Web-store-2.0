@@ -1,3 +1,66 @@
+<script>
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+
+export default {
+    name: 'Register',
+    data() {
+    return {
+        errorList: {}, // Initialize errorList here
+        model: {
+            register: {
+                username: '',
+                password_repeat: '',
+                password: '',
+                name: '',
+                surname: '',
+                phone: '',
+                email: '',
+            },
+        },
+    };
+},
+
+
+    methods: {
+        saveRegister() {
+        // Hashing password before sending to backend
+        const hashedPassword = this.model.register.password;
+        axios.post('http://127.0.0.1:8000/api/register', {
+            ...this.model.register,
+            password: hashedPassword,
+        })
+            .then((res) => {
+                console.log(res.data);
+                alert(res.data.message);
+                this.$router.push('/login');
+
+                this.model.register.username = '';
+                this.model.register.password = '';
+                this.model.register.password_repeat = '';
+                this.model.register.name = '';
+                this.model.register.surname = '';
+                this.model.register.phone = '';
+                this.model.register.email = '';
+
+                this.errorList = {};
+            })
+
+            .catch((error) => {
+                if (error.response) {
+                    console.log(error.response.data);
+                    this.errorList = error.response.data.errors;
+                } else if (error.request) {
+                    console.log(error.request);
+                } else {
+                    console.log('Error', error.message);
+                }
+            });
+        },
+    },
+};
+</script>
+
 <template>
     <div class="container">
         <div class="card">
@@ -45,67 +108,3 @@
         </div>
     </div>
 </template>
-  
-<script>
-import axios from 'axios';
-
-export default {
-    name: 'Register',
-    data() {
-        return {
-        errorList: {},
-        model: {
-            register: {
-            username: '',
-            password_repeat: '',
-            password: '',
-            name: '',
-            surname: '',
-            phone: '',
-            email: '',
-            },
-        },
-        };
-    },
-
-    methods: {
-        saveRegister() {
-        // Hashing password before sending to backend
-        const hashedPassword = this.model.register.password;
-        axios.post('http://127.0.0.1:8000/api/register', {
-            ...this.model.register,
-            password: hashedPassword,
-        })
-            .then((res) => {
-                console.log(res.data);
-                alert(res.data.message);
-                this.$router.push('/login');
-
-                this.model.register.username = '';
-                this.model.register.password = '';
-                this.model.register.password_repeat = '';
-                this.model.register.name = '';
-                this.model.register.surname = '';
-                this.model.register.phone = '';
-                this.model.register.email = '';
-
-                this.errorList = {};
-            })
-
-            .catch((error) => {
-                if (error.response) {
-                    // Handle response error (e.g., HTTP status 422)
-                    console.log(error.response.data);
-                    this.errorList = error.response.data.errors;
-                } else if (error.request) {
-                    // Handle network error (e.g., server not reachable)
-                    console.log(error.request);
-                } else {
-                    // Handle other errors
-                    console.log('Error', error.message);
-                }
-            });
-        },
-    },
-};
-</script>
