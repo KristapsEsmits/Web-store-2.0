@@ -7,6 +7,8 @@ onMounted(async () => {
   const data = await axios.get('/api/user');
   users.value = data.data;
 });
+
+
 </script>
 
 <template>

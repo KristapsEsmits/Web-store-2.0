@@ -1,66 +1,3 @@
-<script>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
-
-export default {
-    name: 'Register',
-    data() {
-    return {
-        errorList: {}, // Initialize errorList here
-        model: {
-            register: {
-                username: '',
-                password_repeat: '',
-                password: '',
-                name: '',
-                surname: '',
-                phone: '',
-                email: '',
-            },
-        },
-    };
-},
-
-
-    methods: {
-        saveRegister() {
-        // Hashing password before sending to backend
-        const hashedPassword = this.model.register.password;
-        axios.post('http://127.0.0.1:8000/api/register', {
-            ...this.model.register,
-            password: hashedPassword,
-        })
-            .then((res) => {
-                console.log(res.data);
-                alert(res.data.message);
-                this.$router.push('/login');
-
-                this.model.register.username = '';
-                this.model.register.password = '';
-                this.model.register.password_repeat = '';
-                this.model.register.name = '';
-                this.model.register.surname = '';
-                this.model.register.phone = '';
-                this.model.register.email = '';
-
-                this.errorList = {};
-            })
-
-            .catch((error) => {
-                if (error.response) {
-                    console.log(error.response.data);
-                    this.errorList = error.response.data.errors;
-                } else if (error.request) {
-                    console.log(error.request);
-                } else {
-                    console.log('Error', error.message);
-                }
-            });
-        },
-    },
-};
-</script>
-
 <template>
     <div class="container">
         <div class="card">
@@ -75,8 +12,12 @@ export default {
                 </ul> 
                 <form>
                     <div class="mb-3">
-                        <label for="Username">Username</label>
-                        <input type="text" v-model="model.register.username" class="form-control"  placeholder="Username">
+                        <label for="Name">Name</label>
+                        <input type="text" v-model="model.register.name" class="form-control" placeholder="Name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="Surname">Surname</label>
+                        <input type="text" v-model="model.register.surname" class="form-control" placeholder="Surname">
                     </div>
                     <div class="mb-3">
                         <label for="Password">Password</label>
@@ -85,14 +26,6 @@ export default {
                     <div class="mb-3">
                         <label for="Repeat_password">Repeat password</label>
                         <input type="password" v-model="model.register.password_repeat" class="form-control" placeholder="Repeat Password">
-                    </div>
-                    <div class="mb-3">
-                        <label for="Name">Name</label>
-                        <input type="text" v-model="model.register.name" class="form-control" placeholder="Name">
-                    </div>
-                    <div class="mb-3">
-                        <label for="Surname">Surname</label>
-                        <input type="text" v-model="model.register.surname" class="form-control" placeholder="Surname">
                     </div>
                     <div class="mb-3">
                         <label for="Phone">Phone</label>
@@ -108,3 +41,65 @@ export default {
         </div>
     </div>
 </template>
+  
+<script>
+import axios from 'axios';
+
+export default {
+    name: 'Register',
+    data() {
+        return {
+        errorList: {},
+        model: {
+            name: '',
+            surname: '',
+            register: {
+            password_repeat: '',
+            password: '',
+            phone: '',
+            email: '',
+            },
+        },
+        };
+    },
+
+    methods: {
+        saveRegister() {
+        // Hashing password before sending to backend
+        const hashedPassword = this.model.register.password;
+        axios.post('http://127.0.0.1:8000/api/register', {
+            ...this.model.register,
+            password: hashedPassword,
+        })
+            .then((res) => {
+                console.log(res.data);
+                alert(res.data.message);
+                this.$router.push('/login');
+                
+                this.model.register.name = '';
+                this.model.register.surname = ''
+                this.model.register.password = '';
+                this.model.register.password_repeat = '';;
+                this.model.register.phone = '';
+                this.model.register.email = '';
+
+                this.errorList = {};
+            })
+
+            .catch((error) => {
+                if (error.response) {
+                    // Handle response error (e.g., HTTP status 422)
+                    console.log(error.response.data);
+                    this.errorList = error.response.data.errors;
+                } else if (error.request) {
+                    // Handle network error (e.g., server not reachable)
+                    console.log(error.request);
+                } else {
+                    // Handle other errors
+                    console.log('Error', error.message);
+                }
+            });
+        },
+    },
+};
+</script>
