@@ -7,6 +7,12 @@
         </h4>
       </div>
       <div class="card-body">
+        <div v-if="successMessage" class="alert alert-success">
+          {{ successMessage }}
+          <button type="button" class="close" @click="dismissSuccessMessage">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
         <table class="table table-bordered">
           <thead>
             <tr>
@@ -42,7 +48,13 @@ export default {
   data() {
     return {
       test: [],
+      successMessage: '',
     };
+  },
+
+  created() {
+    this.successMessage = this.$route.query.successMessage;
+    this.getTest();
   },
 
   mounted() {
@@ -74,6 +86,10 @@ export default {
           }
         });
       }
+    },
+
+    dismissSuccessMessage() {
+      this.successMessage = ''; 
     },
   },
 };

@@ -6,14 +6,15 @@ export default {
     data() {
         return {
         errorList: {},
+        successMessage: '',
         model: {
             name: '',
             surname: '',
             register: {
-            password_confirmation: '',
-            password: '',
-            phone: '',
-            email: '',
+                password_confirmation: '',
+                password: '',
+                phone: '',
+                email: '',
             },
         },
         };
@@ -29,13 +30,13 @@ export default {
         })
             .then((res) => {
                 console.log(res.data);
-                alert(res.data.message);
-                this.$router.push('/login');
-                
+                this.successMessage = res.data.message; 
+                // this.$router.push('/login');
+
                 this.model.register.name = '';
-                this.model.register.surname = ''
+                this.model.register.surname = '';
                 this.model.register.password = '';
-                this.model.register.password_repeat = '';;
+                this.model.register.password_confirmation = '';
                 this.model.register.phone = '';
                 this.model.register.email = '';
 
@@ -67,6 +68,9 @@ export default {
                 <h4>Register</h4>
              </div>
              <div class="card-body">
+                <div v-if="successMessage" class="alert alert-success">
+                    {{ successMessage }}
+                </div>
                 <ul class="alert alert-danger" v-if="Object.keys(errorList).length > 0">
                     <li class="mb-0 ms-3" v-for="(error, index) in errorList" :key="index">
                     {{ error[0] }}

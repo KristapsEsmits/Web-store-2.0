@@ -30,6 +30,9 @@ const loginUser = async () => {
           <h4>Login</h4>
         </div>
         <div class="card-body">
+          <div v-if="successMessage" class="alert alert-success">
+            {{ successMessage }}
+        </div>
             <!-- <ul class="alert alert-danger" v-if="Object.keys(errorList).length > 0">
                 <li class="mb-0 ms-3" v-for="(error, index) in errorList" :key="index">
                 {{ error[0] }}
@@ -47,6 +50,12 @@ const loginUser = async () => {
             <div class="form-group form-check">
                 <input type="checkbox" class="form-check-input">
                 <label class="form-check-label" for="rememberMe">Remember Me</label>
+            </div>
+            <div>
+              <a href="#!">Forgot password?</a>
+            </div>
+            <div>
+              <p>Not a member? <a href="#!">Register</a></p>
             </div>
             <button type="submit" class="btn btn-primary">Login</button>
           </form>

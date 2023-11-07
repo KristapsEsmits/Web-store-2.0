@@ -53,8 +53,10 @@
         var list = this;
         axios.post('http://127.0.0.1:8000/api/test', this.model.test).then((res) => {
           console.log(res.data);
-          alert(res.data.message);
-          this.$router.push('/test');
+          // alert(res.data.message);
+          // this.$router.push('/test');
+          const successMessage = res.data.message;
+          this.$router.push('/test?successMessage=' + successMessage);
   
           this.model.test.name = '';  
           this.model.test.desc = '';
