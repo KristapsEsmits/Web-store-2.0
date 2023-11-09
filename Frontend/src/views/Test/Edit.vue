@@ -55,7 +55,7 @@
 
     methods: {
       getTestData(testId) {
-        axios.get(`http://127.0.0.1:8000/api/test/${testId}/edit`).then((res) => {
+        axios.get(`/test/${testId}/edit`).then((res) => {
           this.model.test = res.data.test;
         })
 
@@ -70,7 +70,7 @@
 
       updateTest() {
         var list = this;
-        axios.put(`http://127.0.0.1:8000/api/test/${this.testId}/edit`, this.model.test).then((res) => {
+        axios.put(`/test/${this.testId}/edit`, this.model.test).then((res) => {
           console.log(res.data);
           this.$router.push('/test');
           alert(res.data.message);

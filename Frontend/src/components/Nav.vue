@@ -1,5 +1,18 @@
-<script setup>
-
+<script>
+import axios from 'axios';
+export default {
+    name: 'Register',
+    methods: {
+        async logout() {
+          await axios.get('/logout').then((res) => {
+            localStorage.removeItem('access_token');
+            this.$router.push('/login');
+          }).catch((error) => {
+            console.log(error);
+          });
+        },
+    },
+  };
 </script>
 <template>
     <header>
@@ -29,6 +42,9 @@
               </li>
               <li class="nav-item">
                 <RouterLink to="/profile" class="nav-link">Profile</RouterLink>
+              </li>
+              <li class="nav-item">
+                <button class="nav-link" @click="logout">Logout</button>
               </li>
             </ul>
           </div>

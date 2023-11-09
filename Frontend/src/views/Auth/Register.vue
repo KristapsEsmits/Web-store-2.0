@@ -24,7 +24,7 @@ export default {
         saveRegister() {
         // Hashing password before sending to backend
         const hashedPassword = this.model.register.password;
-        axios.post('http://127.0.0.1:8000/api/register', {
+        axios.post('/register', {
             ...this.model.register,
             password: hashedPassword,
         })

@@ -9,17 +9,20 @@ const form = ref({
   password: '',
 });
 
-const getToken = async () => {
-  await axios.get('/sanctum/csrf-cookie');
-}
 
 const loginUser = async () => {
-  await getToken();
   await axios.post('/login', { 
     email: form.value.email, 
     password: form.value.password
+  }).then((res) => {
+    console.log(res.data);
+    localStorage.setItem('access_token', res.data.access_token);
+    axios.defaults.headers.authorization = `Bearer ${res.data.access_token}`;
+    router.push('/');
+  }).catch((error) => {
+    console.log(error);
   });
-  router.push('/');
+
 }
 </script>
 
@@ -38,7 +41,7 @@ const loginUser = async () => {
                 {{ error[0] }}
                 </li>
             </ul>  -->
-            <form @submit.prevent="loginUser">
+            <form>
             <div class="form-group">
                 <label for="email">Email address</label>
                 <input type="email" class="form-control" v-model="form.email" placeholder="Enter email">
@@ -57,7 +60,7 @@ const loginUser = async () => {
             <div>
               <p>Not a member? <a href="#!">Register</a></p>
             </div>
-            <button type="submit" class="btn btn-primary">Login</button>
+            <button type="button" @click="loginUser" class="btn btn-primary">Login</button>
           </form>
         </div>
       </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -58,5 +59,42 @@ class AuthController extends Controller
             'status' => 200,
             'message' => 'User registered successfully!',
         ], 200);
+    }
+
+    public function login(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            $user = auth()->user();
+
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return response()->json([
+                'message' => 'User logged in successfully!',
+                'access_token' => $token,
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => 'Invalid credentials!',
+            ], 401);
+
+        }
+    }
+
+    public function logout()
+    {
+        auth()->user()->tokens()->delete();
+        return response()->json([
+            'message' => 'Logged out',
+        ]);
+    }
+
+    public function user()
+    {
+        return auth()->user();
     }
 }

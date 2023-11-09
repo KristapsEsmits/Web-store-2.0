@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const users = ref([]);
 onMounted(async () => {
-  const data = await axios.get('/api/user');
+  const data = await axios.get('/user');
   users.value = data.data;
 });
 
