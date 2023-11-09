@@ -15,7 +15,6 @@ const loginUser = async () => {
     email: form.value.email, 
     password: form.value.password
   }).then((res) => {
-    console.log(res.data);
     localStorage.setItem('access_token', res.data.access_token);
     axios.defaults.headers.authorization = `Bearer ${res.data.access_token}`;
     router.push('/');
