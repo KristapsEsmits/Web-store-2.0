@@ -1,18 +1,18 @@
-<script setup>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
+<script>
+// import { ref, onMounted } from 'vue';
+// import axios from 'axios';
 
-const users = ref([]);
-onMounted(async () => {
-  const data = await axios.get('/user');
-  users.value = data.data;
-});
+// const users = ref([]);
+// onMounted(async () => {
+//   const data = await axios.get('/user');
+//   users.value = data.data;
+// });
 
 
 </script>
 
 <template>
   <main>
-    <h1> Hello! {{ users?.name }} {{ users?.surname }}!</h1>
+    <h1> Hello!!!!</h1>
   </main>
 </template>

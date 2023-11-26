@@ -1,19 +1,37 @@
 <script>
 import axios from 'axios';
+
 export default {
-    name: 'Register',
-    methods: {
-        async logout() {
-          await axios.get('/logout').then((res) => {
-            localStorage.removeItem('access_token');
-            this.$router.push('/login');
-          }).catch((error) => {
-            console.log(error);
-          });
-        },
+  name: 'Register',
+  data() {
+    return {
+      isLoggedIn: false,
+    };
+  },
+
+  async created() {
+    this.isLoggedIn = await this.isUserLoggedIn();
+  },
+
+  methods: {
+    async isUserLoggedIn() {
+      return !!localStorage.getItem('access_token');
     },
-  };
+    
+    async logout() {
+      try {
+        await axios.get('/logout');
+        localStorage.removeItem('access_token');
+        this.isLoggedIn = false; 
+        this.$router.push('/login');
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  },
+};
 </script>
+
 <template>
     <header>
     <div class="wrapper">
@@ -31,19 +49,19 @@ export default {
               <li class="nav-item">
                 <RouterLink to="/" class="nav-link">Home</RouterLink>
               </li>
-              <li class="nav-item">
-                <RouterLink to="/test" class="nav-link">Test</RouterLink>
-              </li>
-              <li class="nav-item">
-                <RouterLink to="/login" class="nav-link">Login</RouterLink>
-              </li>
-              <li class="nav-item">
+              <li class="nav-item" v-if="!isLoggedIn">
                 <RouterLink to="/register" class="nav-link">Register</RouterLink>
               </li>
-              <li class="nav-item">
+              <li class="nav-item" v-if="isLoggedIn">
+                <RouterLink to="/admin" class="nav-link">Admin</RouterLink>
+              </li>
+              <li class="nav-item" v-if="!isLoggedIn">
+                <RouterLink to="/login" class="nav-link">Login</RouterLink>
+              </li>
+              <li class="nav-item" v-if="isLoggedIn">
                 <RouterLink to="/profile" class="nav-link">Profile</RouterLink>
               </li>
-              <li class="nav-item">
+              <li class="nav-item" v-if="isLoggedIn">
                 <button class="nav-link" @click="logout">Logout</button>
               </li>
             </ul>

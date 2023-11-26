@@ -2,8 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\Testcontroller;
 use App\Http\Controllers\Api\Authcontroller;
+use App\Http\Controllers\Api\Testcontroller;
+use App\Http\Controllers\Api\Brandscontroller;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +26,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('test/{id}/delete', [Testcontroller::class, 'destroy']);
     Route::get('logout', [Authcontroller::class, 'logout']);
     Route::get('user', [Authcontroller::class, 'user']);
+    Route::get('brands', [Brandscontroller::class, 'index']);
+    Route::post('brands', [Brandscontroller::class, 'store']);
+    Route::get('brands/{id}', [Brandscontroller::class, 'show']);
+    Route::get('brands/{id}/edit', [Brandscontroller::class, 'edit']);
+    Route::put('brands/{id}/edit', [Brandscontroller::class, 'update']);
+    Route::delete('brands/{id}/delete', [Brandscontroller::class, 'destroy']);
 });
 
 //Auth API
