@@ -54,6 +54,11 @@ const router = createRouter({
       name: 'brands/create',
       component: () => import('../views/Admin/Brands/Create.vue')
     },
+    {
+      path: '/brands/:id/edit',
+      name: 'brands/edit',
+      component: () => import('../views/Admin/Brands/Edit.vue')
+    },
   ]
 })
 

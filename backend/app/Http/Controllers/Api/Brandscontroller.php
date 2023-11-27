@@ -6,6 +6,7 @@ use App\Models\Brands;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class BrandsController extends Controller
 {
@@ -29,7 +30,7 @@ class BrandsController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:40',
-            'img' => 'required|image|mimes:jpeg,png,jpg,gif,svg', 
+            'img' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
         ]);
 
         if ($validator->fails()) {
@@ -39,12 +40,12 @@ class BrandsController extends Controller
                 'errors' => $validator->messages(),
             ], 422);
         } else {
-
-            $imgPath = $request->file('img')->store('uploads', 'public');
+            $randomString = Str::random(10);
+            $imgPath = $request->file('img')->storeAs('uploads', $randomString . '.' . $request->file('img')->getClientOriginalExtension(), 'public');
 
             $brands = Brands::create([
                 'name' => $request->name,
-                'img' => $imgPath,
+                'img' => $randomString . '.' . $request->file('img')->getClientOriginalExtension(),
             ]);
 
             if ($brands) {
@@ -99,7 +100,7 @@ class BrandsController extends Controller
         if ($brands) {
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:40',
-                'img' => 'required|string|max:255',
+                'img' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
             ]);
 
             if ($validator->fails()) {
@@ -109,22 +110,19 @@ class BrandsController extends Controller
                     'errors' => $validator->messages(),
                 ], 422);
             } else {
-                $brands->update([
-                    'name' => $request->name,
-                    'img' => $request->img,
-                ]);
-
-                if ($brands) {
-                    return response()->json([
-                        'status' => 200,
-                        'message' => 'Data updated successfully!',
-                    ], 200);
-                } else {
-                    return response()->json([
-                        'status' => 404,
-                        'message' => 'No listing found!',
-                    ], 404);
+                if ($request->hasFile('img')) {
+                    $randomString = Str::random(10); 
+                    $imgPath = $request->file('img')->storeAs('uploads', $randomString . '.' . $request->file('img')->getClientOriginalExtension(), 'public');
+                    $brands->img = $randomString . '.' . $request->file('img')->getClientOriginalExtension();
                 }
+
+                $brands->name = $request->name;
+                $brands->save();
+
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Data updated successfully!',
+                ], 200);
             }
         } else {
             return response()->json([
@@ -136,18 +134,27 @@ class BrandsController extends Controller
 
     public function destroy($id)
     {
-        $brands = Brands::find($id);
-        if ($brands) {
-            $brands->delete();
-            return response()->json([
-                'status' => 200,
-                'message' => 'Data deleted successfully!',
-            ], 200);
-        } else {
+        $brand = Brands::find($id);
+
+        if (!$brand) {
             return response()->json([
                 'status' => 404,
-                'message' => 'No listing found',
+                'message' => 'Brand not found',
             ], 404);
         }
+
+        $imagePath = public_path("/storage/uploads/{$brand->img}");
+
+        if (file_exists($imagePath)) {
+            unlink($imagePath);
+        }
+
+        $brand->delete();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Brand and associated image deleted successfully',
+        ], 200);
     }
+
 }
