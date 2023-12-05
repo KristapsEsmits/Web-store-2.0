@@ -100,7 +100,7 @@ class BrandsController extends Controller
         if ($brands) {
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:40',
-                'img' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
+                'img' => $request->hasFile('img') ? 'image|mimes:jpeg,png,jpg,gif,svg' : '', // Conditional validation for image
             ]);
 
             if ($validator->fails()) {
@@ -111,7 +111,7 @@ class BrandsController extends Controller
                 ], 422);
             } else {
                 if ($request->hasFile('img')) {
-                    $randomString = Str::random(10); 
+                    $randomString = Str::random(10);
                     $imgPath = $request->file('img')->storeAs('uploads', $randomString . '.' . $request->file('img')->getClientOriginalExtension(), 'public');
                     $brands->img = $randomString . '.' . $request->file('img')->getClientOriginalExtension();
                 }
@@ -131,6 +131,7 @@ class BrandsController extends Controller
             ], 404);
         }
     }
+
 
     public function destroy($id)
     {
@@ -153,7 +154,7 @@ class BrandsController extends Controller
 
         return response()->json([
             'status' => 200,
-            'message' => 'Brand and associated image deleted successfully',
+            'message' => 'Brand deleted successfully',
         ], 200);
     }
 

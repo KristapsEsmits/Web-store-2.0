@@ -23,7 +23,6 @@
       getBrands() {
         axios.get('/brands').then((res) => {
           this.brands = res.data.brands;
-          console.log(this.brands)
         });
       },
   
@@ -83,7 +82,7 @@
                 <td>{{ brands.name }}</td>
                 <td>{{ brands.img }}</td>
                 <td class="image-cell">
-                  <img :src="`backend/public/storage/uploads/${brands.img}`" alt="Brand Image" class="brand-image">
+                    <img :src="'http://localhost:8000/storage/uploads/' + brands.img" style="max-width: 90px; max-height: 70px;" alt="Brand Image" >
                 </td>
                 <td class="d-flex justify-content-center">
                   <router-link :to="{path: '/brands/'+brands.id+'/edit'}" class="btn btn-success float-middle">Edit</router-link>

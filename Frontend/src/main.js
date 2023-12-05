@@ -21,12 +21,5 @@ axios.interceptors.request.use((config) => {
     return config;
 });
 
-// axios.interceptors.response.use(function (response) {
-//     return response;
-// }, async function (error) {
-//     if (error.response.status === 401) await router.push({name: 'login'})
-//     return Promise.reject(error);
-// }
-// )
 
 axios.defaults.baseURL = 'http://127.0.0.1:8000/api'
