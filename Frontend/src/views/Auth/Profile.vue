@@ -29,7 +29,9 @@ onMounted(async () => {
     <div class="container" v-else>
       <div class="card">
         <div class="card-header">
-          <h4>Profile</h4>
+          <h4 class="card-title">Profile
+            <router-link :to="{path: '/profile/edit'}" class="btn btn-primary btn-round btn-fill float-end">Update data</router-link>
+          </h4>
         </div>
         <div class="card-body">
           <div>

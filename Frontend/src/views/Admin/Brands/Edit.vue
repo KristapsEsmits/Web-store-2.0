@@ -40,29 +40,29 @@
       },
 
       updateBrands() {
-  var list = this;
-  const formData = new FormData();
-  formData.append('name', this.model.brands.name);
+        var list = this;
+        const formData = new FormData();
+        formData.append('name', this.model.brands.name);
 
-  if (this.model.brands.img) {
-    formData.append('img', this.model.brands.img);
-  }
+        if (this.model.brands.img) {
+          formData.append('img', this.model.brands.img);
+        }
 
-  axios.put(`/brands/${this.brandsId}/edit`, formData).then((res) => {
-    this.$router.push('/brands');
-    alert(res.data.message);
-    this.errorList = '';
-  })
-  .catch(function (error) {
-    if (error.response.status == 422) {
-      list.errorList = error.response.data.errors;
-    } else if (error.request) {
-      console.log(error.request);
-    } else {
-      console.log('Error', error.message);
-    }
-  });
-},
+        axios.put(`/brands/${this.brandsId}/edit`, formData).then((res) => {
+          this.$router.push('/admin/brands');
+          alert(res.data.message);
+          this.errorList = '';
+        })
+        .catch(function (error) {
+          if (error.response.status == 422) {
+            list.errorList = error.response.data.errors;
+          } else if (error.request) {
+            console.log(error.request);
+          } else {
+            console.log('Error', error.message);
+          }
+        });
+      },
 
     },
   };

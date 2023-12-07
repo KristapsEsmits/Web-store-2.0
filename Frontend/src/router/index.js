@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,6 +6,8 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
+      component: () => import('../views/HomeView.vue'),
+      meta: { tabName: 'Home' },
     },
     {
       path: '/test',
@@ -44,19 +45,34 @@ const router = createRouter({
       component: () => import('../views/Auth/Profile.vue'),
     },
     {
-      path: '/brands',
-      name: 'brands',
+      path: '/admin/brands',
+      name: 'admin/brands',
       component: () => import('../views/Admin/Brands/Brands.vue'),
     },
     {
-      path: '/brands/create',
-      name: 'brands/create',
+      path: '/admin/brands/create',
+      name: 'admin/brands/create',
       component: () => import('../views/Admin/Brands/Create.vue'),
     },
     {
-      path: '/brands/:id/edit',
-      name: 'brands/edit',
+      path: '/admin/brands/:id/edit',
+      name: 'admin/brands/edit',
       component: () => import('../views/Admin/Brands/Edit.vue'),
+    },
+    {
+      path: '/brands',
+      name: 'brands',
+      component: () => import('../views/Brands.vue'),
+    },
+    {
+      path: '/products',
+      name: 'products',
+      component: () => import('../views/Products.vue'),
+    },
+    {
+      path: '/profile/edit',
+      name: 'profile/edit',
+      component: () => import('../views/Auth/EditData.vue'),
     },
   ]
 })

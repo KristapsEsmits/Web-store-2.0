@@ -50,14 +50,14 @@
       },
     },
   };
-  </script>
+</script>
 
 <template>
     <div class="container">
       <div class="card">
         <div class="card-header">
           <h4 class="card-title">Brands
-            <router-link to="/brands/create" class="btn btn-primary btn-round btn-fill float-end">Add Brand</router-link>
+            <router-link to="/admin/brands/create" class="btn btn-primary btn-round btn-fill float-end">Add Brand</router-link>
           </h4>
         </div>
         <div class="card-body">
@@ -85,7 +85,7 @@
                     <img :src="'http://localhost:8000/storage/uploads/' + brands.img" style="max-width: 90px; max-height: 70px;" alt="Brand Image" >
                 </td>
                 <td class="d-flex justify-content-center">
-                  <router-link :to="{path: '/brands/'+brands.id+'/edit'}" class="btn btn-success float-middle">Edit</router-link>
+                  <router-link :to="{path: '/admin/brands/'+brands.id+'/edit'}" class="btn btn-success float-middle">Edit</router-link>
                   <button type="button" @click="deleteBrands(brands.id)" class="btn btn-danger">Delete</button>
                 </td>
               </tr>

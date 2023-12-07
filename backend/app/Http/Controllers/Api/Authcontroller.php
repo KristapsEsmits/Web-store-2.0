@@ -66,4 +66,49 @@ class AuthController extends Controller
     {
         return auth()->user();
     }
+
+    public function update(Request $request, int $id)
+    {
+        $user = User::find($id);
+        if ($user) {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|regex:/^[A-Za-z]+$/',
+                'surname' => 'required|regex:/^[A-Za-z]+$/',
+                'phone' => 'required|numeric|digits_between:4,16|:users',
+                'email' => 'required|email|:users',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 422,
+                    'message' => 'Bad Request data wrong!',
+                    'errors' => $validator->messages(),
+                ], 422);
+            } else {
+                $user->update([
+                    'name' => $request->name,
+                    'surname' => $request->surname,
+                    'phone' => $request->phone,
+                    'email' => $request->email,
+                ]);
+
+                if ($user) {
+                    return response()->json([
+                        'status' => 200,
+                        'message' => 'Data updated successfully!',
+                    ], 200);
+                } else {
+                    return response()->json([
+                        'status' => 404,
+                        'message' => 'No user found!',
+                    ], 404);
+                }
+            }
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'No user found',
+            ], 404);
+        }
+    }
 }

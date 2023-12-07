@@ -27,7 +27,7 @@ export default {
       axios.post('/brands', formData)
         .then((res) => {
           const successMessage = res.data.message;
-          this.$router.push('/brands?successMessage=' + successMessage);
+          this.$router.push('/admin/brands?successMessage=' + successMessage);
 
           this.model.brands.name = '';
           this.model.brands.img = null;

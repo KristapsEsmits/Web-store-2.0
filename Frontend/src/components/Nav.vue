@@ -49,14 +49,22 @@ export default {
               <li class="nav-item">
                 <RouterLink to="/" class="nav-link">Home</RouterLink>
               </li>
+              <li class="nav-item">
+                <RouterLink to="/brands" class="nav-link">Brands</RouterLink>
+              </li>
+              <li class="nav-item">
+                <RouterLink to="/products" class="nav-link">Products</RouterLink>
+              </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item" v-if="!isLoggedIn">
+                <RouterLink to="/login" class="nav-link">Login</RouterLink>
+              </li>
               <li class="nav-item" v-if="!isLoggedIn">
                 <RouterLink to="/register" class="nav-link">Register</RouterLink>
               </li>
               <li class="nav-item" v-if="isLoggedIn">
                 <RouterLink to="/admin" class="nav-link">Admin</RouterLink>
-              </li>
-              <li class="nav-item" v-if="!isLoggedIn">
-                <RouterLink to="/login" class="nav-link">Login</RouterLink>
               </li>
               <li class="nav-item" v-if="isLoggedIn">
                 <RouterLink to="/profile" class="nav-link">Profile</RouterLink>

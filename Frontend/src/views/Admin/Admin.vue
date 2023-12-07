@@ -4,7 +4,7 @@
       <router-link to="/test">
           <button class="btn btn-primary">Test</button>
       </router-link>
-      <router-link to="/brands">
+      <router-link to="admin/brands">
           <button class="btn btn-primary">Brands</button>
       </router-link>
 

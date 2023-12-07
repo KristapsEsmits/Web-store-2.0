@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('brands/{id}/edit', [Brandscontroller::class, 'edit']);
     Route::put('brands/{id}/edit', [Brandscontroller::class, 'update']);
     Route::delete('brands/{id}/delete', [Brandscontroller::class, 'destroy']);
+    Route::put('profile/edit/{id}', [Authcontroller::class, 'update']);
 });
 
 //Auth API
