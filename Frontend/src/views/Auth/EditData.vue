@@ -4,6 +4,7 @@ import axios from 'axios';
 import router from '../../router';
 
 const user = ref(null);
+const errorList = ref({});
 
 onMounted(async () => {
   try {
@@ -11,7 +12,6 @@ onMounted(async () => {
     user.value = response.data;
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      // Redirect to login page when authentication fails
       await router.push({ name: 'login' });
     }
   }
@@ -19,36 +19,31 @@ onMounted(async () => {
 
 const updateUser = async () => {
   try {
-    const response = await axios.put(`/profile/edit/${user.value.id}`, {
+    const response = await axios.put(`profile/edit/${user.value.id}`, {
       name: user.value.name,
       surname: user.value.surname,
       phone: user.value.phone,
       email: user.value.email,
     });
 
-    // Optionally, you can reload the user data after the update
     const userResponse = await axios.get('/user');
     user.value = userResponse.data;
+    router.push({ name: 'profile', query: { successMessage: response.data.message } });
 
-    // Handle success (e.g., show a success message)
-    console.log('User updated successfully!');
-    router.push('/profile');
-    alert(response.data.message);
   } catch (error) {
     if (error.response && error.response.status === 422) {
-      // Handle validation errors, if any
-      console.error('Validation errors:', error.response.data.errors);
+      errorList.value = error.response.data.errors;
+      console.error('Validation errors:', errorList.value);
     } else {
-      // Handle other errors
       console.error('Error updating user:', error.message);
     }
   }
 };
 
 const updateExit = () => {
-  // Redirect to /profile when cancel is clicked
   router.push('/profile');
 };
+
 </script>
 
 <template>
@@ -58,6 +53,11 @@ const updateExit = () => {
         <h4 class="card-title">Update data</h4>
       </div>
       <div class="card-body">
+        <ul class="alert alert-danger" v-if="Object.keys(errorList).length > 0">
+          <li class="mb-0 ms-3" v-for="(error, index) in errorList" :key="index">
+            {{ error[0] }}
+          </li>
+        </ul>
         <div class="mb-3">
           <label for="Name">Name</label>
           <input type="text" v-model="user.name" class="form-control" />

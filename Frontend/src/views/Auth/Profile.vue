@@ -1,10 +1,16 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
-import router from '../../router';
 
 const users = ref([]);
 const isLoading = ref(true);
+const router = useRouter(); 
+const successMessage = ref(router.currentRoute.value.query.successMessage || ''); 
+
+const dismissSuccessMessage = () => {
+  successMessage.value = '';
+};
 
 onMounted(async () => {
   try {
@@ -12,25 +18,27 @@ onMounted(async () => {
     users.value = data.data;
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      // Redirect to login page when authentication fails
       await router.push({ name: 'login' });
     }
   } finally {
-    // Set loading state to false after the request completes
     isLoading.value = false;
   }
 });
-
 </script>
 
 <template>
   <main>
     <div v-if="isLoading"></div>
     <div class="container" v-else>
+      <div v-if="successMessage" class="alert alert-success d-flex justify-content-between align-items-center">
+          <span>{{ successMessage }}</span>
+          <button type="button" class="btn-close" @click="dismissSuccessMessage"></button>
+      </div>
       <div class="card">
         <div class="card-header">
           <h4 class="card-title">Profile
-            <router-link :to="{path: '/profile/edit'}" class="btn btn-primary btn-round btn-fill float-end">Update data</router-link>
+            <router-link :to="{ path: '/profile/edit' }" class="btn btn-primary btn-round btn-fill float-end">Update data</router-link>
+            <router-link :to="{ path: '/profile/change-password' }" class="btn btn-primary btn-round btn-fill float-end">Change password</router-link>
           </h4>
         </div>
         <div class="card-body">
@@ -41,7 +49,7 @@ onMounted(async () => {
             <h1>Email: {{ users?.email }}</h1>
           </div>
         </div>
-      </div> 
+      </div>
     </div>
   </main>
 </template>

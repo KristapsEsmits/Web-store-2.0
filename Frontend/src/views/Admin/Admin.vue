@@ -7,7 +7,9 @@
       <router-link to="admin/brands">
           <button class="btn btn-primary">Brands</button>
       </router-link>
-
+      <router-link to="admin/items">
+          <button class="btn btn-primary">Items</button>
+      </router-link>
 
       
     </div>

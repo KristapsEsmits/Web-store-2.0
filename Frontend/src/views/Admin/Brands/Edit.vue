@@ -64,6 +64,9 @@
         });
       },
 
+      Exit() { 
+      this.$router.push('/admin/brands'); 
+    },
     },
   };
 </script>
@@ -90,6 +93,7 @@
         </div>
           <div class="mb-3">
             <button type="button" @click="updateBrands" class="btn btn-primary">Update</button>
+            <button type="button" @click="Exit" class="btn btn-danger">Cancel</button>
           </div>
         </div>
       </div>

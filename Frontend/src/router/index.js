@@ -45,6 +45,16 @@ const router = createRouter({
       component: () => import('../views/Auth/Profile.vue'),
     },
     {
+      path: '/profile/edit',
+      name: 'profile/edit',
+      component: () => import('../views/Auth/EditData.vue'),
+    },
+    {
+      path: '/profile/change-password',
+      name: 'profile/change-password',
+      component: () => import('../views/Auth/ChangePassword.vue'),
+    },
+    {
       path: '/admin/brands',
       name: 'admin/brands',
       component: () => import('../views/Admin/Brands/Brands.vue'),
@@ -65,14 +75,29 @@ const router = createRouter({
       component: () => import('../views/Brands.vue'),
     },
     {
+      path: '/brand/:id/products',
+      name: 'brand-products',
+      component: () => import('../views/BrandProducts.vue'),
+    },
+    {
       path: '/products',
       name: 'products',
       component: () => import('../views/Products.vue'),
     },
     {
-      path: '/profile/edit',
-      name: 'profile/edit',
-      component: () => import('../views/Auth/EditData.vue'),
+      path: '/product/:id',
+      name: 'product',
+      component: () => import('../views/ProductView.vue'),
+    },
+    {
+      path: '/admin/items',
+      name: 'admin/items',
+      component: () => import('../views/Admin/Items/Items.vue'),
+    },
+    {
+      path: '/admin/items/create',
+      name: 'admin/items/create',
+      component: () => import('../views/Admin/Items/Create.vue'),
     },
   ]
 })

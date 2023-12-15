@@ -44,6 +44,10 @@ export default {
           }
         });
     },
+
+    Exit() { 
+      this.$router.push('/admin/brands'); 
+    },
   },
 };
 </script>
@@ -70,6 +74,7 @@ export default {
         </div>
         <div class="mb-3">
           <button type="button" @click="saveBrands" class="btn btn-primary">Save</button>
+          <button type="button" @click="Exit" class="btn btn-danger">Cancel</button>
         </div>
       </div>
     </div>

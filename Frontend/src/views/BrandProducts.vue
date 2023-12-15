@@ -12,8 +12,12 @@
     },
     methods: {
       getItems() {
-        axios.get('/items').then((res) => {
-          this.items = res.data.items;
+        const brandId = this.$route.params.id; 
+        // Fetching items based on the specified brand_id
+        axios.get(`/items?brand_id=${brandId}`).then((res) => {
+          // Filter items to display only those with the specified brand_id
+          this.items = res.data.items.filter(item => item.brand_id === parseInt(brandId));
+
         });
       },
     },

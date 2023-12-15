@@ -1,5 +1,9 @@
 <template>
   <div class="container">
+    <div v-if="successMessage" class="alert alert-success d-flex justify-content-between align-items-center">
+      <span>{{ successMessage }}</span>
+      <button type="button" class="btn-close" @click="dismissSuccessMessage"></button>
+    </div>
     <div class="card">
       <div class="card-header">
         <h4 class="card-title">Test
@@ -7,12 +11,6 @@
         </h4>
       </div>
       <div class="card-body">
-        <div v-if="successMessage" class="alert alert-success">
-          {{ successMessage }}
-          <button type="button" class="close" @click="dismissSuccessMessage">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
         <table class="table table-bordered">
           <thead>
             <tr>
@@ -41,6 +39,7 @@
 </template>
 
 <script>
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 export default {
@@ -71,22 +70,20 @@ export default {
 
     deleteTest(testId) {
     if (confirm('Are you sure?')) {
-      axios.delete(`/test/${testId}/delete`).then((res) => {
-        alert(res.data.message);
-        this.getTest();
+      axios.delete(`/test/${testId}/delete`)
+        .then((res) => {
+          this.successMessage = res.data.message;
+          this.getTest();
         })
-
-        .catch(function (error) {
-          if (error.response.status == 422) {
-            list.errorList = error.response.data.errors;
-          } else if (error.request) {
-            console.log(error.request);
+        .catch((error) => {
+          if (error.response && error.response.status === 422) {
+            console.error('Validation errors:', error.response.data.errors);
           } else {
-            console.log('Error', error.message);
+            console.error('Error deleting test:', error.message);
           }
         });
-      }
-    },
+    }
+  },
 
     dismissSuccessMessage() {
       this.successMessage = ''; 
