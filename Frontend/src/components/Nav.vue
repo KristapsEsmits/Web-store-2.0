@@ -33,11 +33,14 @@ export default {
 </script>
 
 <template>
-    <header>
+    <header class="bar">
     <div class="wrapper">
       <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-          <RouterLink to="/" class="navbar-brand">Nosaukums</RouterLink>
+          <RouterLink to="/" class="navbar-brand">
+            <img src="public\favicon.ico" alt="Logo" style="height: 30px; width: 30px;">
+            Frenko
+          </RouterLink>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                   data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                   aria-label="Toggle navigation">
@@ -50,10 +53,10 @@ export default {
                 <RouterLink to="/" class="nav-link">Home</RouterLink>
               </li>
               <li class="nav-item">
-                <RouterLink to="/brands" class="nav-link">Brands</RouterLink>
+                <RouterLink to="/products" class="nav-link">Products</RouterLink>
               </li>
               <li class="nav-item">
-                <RouterLink to="/products" class="nav-link">Products</RouterLink>
+                <RouterLink to="/brands" class="nav-link">Brands</RouterLink>
               </li>
             </ul>
             <ul class="navbar-nav ml-auto">
@@ -79,3 +82,12 @@ export default {
     </div>
   </header>
 </template>
+
+<style scoped>
+/* .bar{
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
+  top: 0;
+} */
+</style>
