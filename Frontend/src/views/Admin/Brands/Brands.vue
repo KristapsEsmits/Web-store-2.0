@@ -1,3 +1,7 @@
+<script setup>
+import AdminNav from '../../../components/AdminNav.vue';
+</script>
+
 <script>
 import axios from 'axios';
 
@@ -54,6 +58,8 @@ export default {
 
 <template>
   <div class="container">
+    <AdminNav />
+      <router-view />
     <div v-if="successMessage" class="alert alert-success d-flex justify-content-between align-items-center">
       <span>{{ successMessage }}</span>
       <button type="button" class="btn-close" @click="dismissSuccessMessage"></button>
@@ -98,3 +104,10 @@ export default {
     </div>
   </div>
 </template>
+
+<style scoped>
+  .card {
+    margin-top: 20px;
+  }
+</style>
+

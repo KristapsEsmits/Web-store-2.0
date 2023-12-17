@@ -1,19 +1,24 @@
-<template>
-    <div class="about">
-      <h1>Admin</h1>
-      <router-link to="/test">
-          <button class="btn btn-primary">Test</button>
-      </router-link>
-      <router-link to="admin/brands">
-          <button class="btn btn-primary">Brands</button>
-      </router-link>
-      <router-link to="admin/items">
-          <button class="btn btn-primary">Items</button>
-      </router-link>
+<script setup>
+import AdminNav from '../../components/AdminNav.vue';
+</script>
 
-      
+<template>
+    <div class="wrapper">
+    <AdminNav />
+      <router-view />
+    
+        <div class="about">
+            <h1>Admin Dashboard</h1>
+        </div>
     </div>
-</template>
+  </template>
   
-  
+<style scoped>
+    .wrapper {
+        display: flex;
+    }
+    .about {
+        margin-left: 101px;
+    }
+</style>
   

@@ -53,3 +53,12 @@ onMounted(async () => {
     </div>
   </main>
 </template>
+
+<style scoped>
+.card {
+  margin-top: 20px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
