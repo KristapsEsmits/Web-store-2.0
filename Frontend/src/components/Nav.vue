@@ -38,7 +38,7 @@ export default {
       <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
           <RouterLink to="/" class="navbar-brand">
-            <img src="public\favicon.ico" alt="Logo" style="height: 30px; width: 30px;">
+            <img src="\favicon.ico" alt="Logo" style="height: 30px; width: 30px;">
             Frenko
           </RouterLink>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -82,3 +82,15 @@ export default {
     </div>
   </header>
 </template>
+
+<style scoped>
+  .bar {
+    background-color: #f8f9fa;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+  }
+
+</style>

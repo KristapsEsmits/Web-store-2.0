@@ -63,10 +63,13 @@ export default {
 
 <template>
     <div class="container">
+        <div class="logo">
+            <img src="\favicon.ico" alt="Logo" style="height: 60px; width: 60px;">
+        </div>
+        <div class="logoText">
+            <h1>Create an Account</h1>  
+        </div>
         <div class="card">
-            <div class="card-header">
-                <h4>Register</h4>
-             </div>
              <div class="card-body">
                 <div v-if="successMessage" class="alert alert-success">
                     {{ successMessage }}
@@ -77,33 +80,67 @@ export default {
                     </li>
                 </ul> 
                 <form>
-                    <div class="mb-3">
-                        <label for="Name">Name</label>
+                    <div class="form-floating mb-3">
                         <input type="text" v-model="model.register.name" class="form-control" placeholder="Name">
+                        <label for="Name">Name</label>
                     </div>
-                    <div class="mb-3">
-                        <label for="Surname">Surname</label>
+                    <div class="form-floating mb-3">
                         <input type="text" v-model="model.register.surname" class="form-control" placeholder="Surname">
+                        <label for="Surname">Surname</label>
                     </div>
-                    <div class="mb-3">
-                        <label for="Password">Password</label>
+                    <div class="form-floating mb-3">
                         <input type="password" v-model="model.register.password" class="form-control" placeholder="Password">
+                        <label for="Password">Password</label>
                     </div>
-                    <div class="mb-3">
-                        <label for="Repeat_password">Repeat password</label>
+                    <div class="form-floating mb-3">
                         <input type="password" v-model="model.register.password_confirmation" class="form-control" placeholder="Repeat Password">
+                        <label for="Repeat_password">Repeat password</label>
                     </div>
-                    <div class="mb-3">
-                        <label for="Phone">Phone</label>
+                    <div class="form-floating mb-3">
                         <input type="phone" v-model="model.register.phone" class="form-control" placeholder="Phone">
+                        <label for="Phone">Phone</label>
                     </div>
-                    <div class="mb-3">
-                        <label for="Email">Email address</label>
+                    <div class="form-floating mb-3">
                         <input type="email" v-model="model.register.email" class="form-control" placeholder="Enter email">
+                        <label for="Email">Email address</label>
                     </div>
-                        <button type="button" @click="saveRegister" class="btn btn-primary">Register</button>
+                        <button type="button" @click="saveRegister" class="btn btn-primary registerbtn">Register</button>
                     </form>
              </div>
         </div>
+        <div class="Member">
+            <p>Already a member? <RouterLink to="/login">Login</RouterLink></p>
+        </div>
     </div>
 </template>
+
+<style scoped>
+    .logo, .logoText{
+        display: flex;
+        justify-content: center;
+    }
+
+    .container {
+        margin-top: 40px;
+    }
+
+    .card {
+        display: flex;
+        justify-content: center;
+        width: 380px;
+        margin: 0 auto;
+    }
+
+    .registerbtn {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        height: 40px;
+    }
+
+    .Member {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+</style>

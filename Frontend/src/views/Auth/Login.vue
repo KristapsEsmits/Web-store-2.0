@@ -23,8 +23,6 @@ const loginUser = async () => {
     axios.defaults.headers.authorization = `Bearer ${res.data.access_token}`;
     router.push('/');
   } catch (error) {
-    console.error(error);
-
     if (error.response && error.response.status === 401) {
       errorMessage.value = 'Wrong email or password. Please try again.';
     } else {
@@ -32,14 +30,18 @@ const loginUser = async () => {
     }
   }
 };
+
 </script>
 
 <template>
   <div class="container">
+    <div class="logo">
+      <img src="\favicon.ico" alt="Logo" style="height: 60px; width: 60px;">
+    </div>
+    <div class="logoText">
+        <h1>Sign in to Frenko</h1>  
+    </div>
     <div class="card">
-      <div class="card-header">
-        <h4>Login</h4>
-      </div>
       <div class="card-body">
         <div v-if="errorMessage" class="alert alert-danger">
           {{ errorMessage }}
@@ -48,27 +50,60 @@ const loginUser = async () => {
           {{ successMessage }}
         </div>
         <form>
-          <div class="form-group">
-            <label for="email">Email address</label>
-            <input type="email" class="form-control" v-model="form.email" placeholder="Enter email">
+          <div class="form-floating mb-3">
+            <input type="email" id="floatingInput" class="form-control" v-model="form.email" placeholder="name@example.com">
+            <label for="floatingInput">Email address</label>
           </div>
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" class="form-control" v-model="form.password" placeholder="Password">
+          <div class="form-floating mb-2">
+            <input type="password" id="floatingInput" class="form-control" v-model="form.password" placeholder="Password">
+            <label for="floatingInput">Password</label>
           </div>
-          <div class="form-group form-check">
-            <input type="checkbox" class="form-check-input">
-            <label class="form-check-label" for="rememberMe">Remember Me</label>
-          </div>
-          <div>
+          <div class="text mb-3">
             <a href="#!">Forgot password?</a>
           </div>
-          <div>
-            <p>Not a member? <RouterLink to="/register">Register</RouterLink></p>
-          </div>
-          <button type="button" @click="loginUser" class="btn btn-primary">Login</button>
+          <button type="button" @click="loginUser" class="btn btn-primary loginbtn">Login</button>
         </form>
       </div>
     </div>
+    <div class="noMember">
+        <p>Not a member? <RouterLink to="/register">Register</RouterLink></p>
+    </div>
   </div>
 </template>
+
+<style scoped>
+  .container {
+    margin-top: 80px;
+  }
+
+  .logo, .logoText{
+    display: flex;
+    justify-content: center;
+  }
+
+  .card {
+    display: flex;
+    justify-content: center;
+    width: 380px;
+    margin: 0 auto;
+  }
+
+  .input{
+    width: 100%;
+    height: 30px;
+  }
+
+  .loginbtn {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 40px;
+  }
+
+  .noMember {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+</style>
+```
