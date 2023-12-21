@@ -87,9 +87,9 @@ export default {
               {{ error[0] }}
             </li>
           </ul>
-          <div class="mb-3">
+          <div class="input-group-prepend mb-3">
             <label for="Brand">Brand</label>
-            <select v-model="model.item.brand_id" class="form-control">
+            <select v-model="model.item.brand_id" class="custom-select form-control">
               <option v-for="brand in brands" :key="brand.id" :value="brand.id">{{ brand.name }}</option>
             </select>
           </div>

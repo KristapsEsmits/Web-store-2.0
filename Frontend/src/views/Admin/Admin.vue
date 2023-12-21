@@ -4,18 +4,18 @@ import AdminNav from '../../components/AdminNav.vue';
 
 <template>
     <div class="wrapper">
-    <AdminNav />
+      <AdminNav :isSidebarOpen="isSidebarOpen" @toggleSidebar="toggleSidebar" />
       <router-view />
-    
-        <div class="about">
-            <h1>Admin Dashboard</h1>
-            <div class="form-floating mb-3">
-                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-                <label for="floatingInput">Email address</label>
-            </div>
+      
+      <div class="about" :style="{ marginLeft: isSidebarOpen ? '250px' : '101px' }">
+        <h1>Admin Dashboard</h1>
+        <div class="form-floating mb-3">
+          <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+          <label for="floatingInput">Email address</label>
         </div>
+      </div>
     </div>
-  </template>
+</template>
   
 <style scoped>
     .wrapper {
