@@ -29,14 +29,12 @@
   </div>
   <div class="container">
     <div class="row">
-      <div v-for="brand in brands" :key="brand.id" class="col-md-3 mb-3 izmers">
-        <div class="card">
-          <img class="img" v-if="brand.img" :src="'http://localhost:8000/storage/uploads/' + brand.img" alt="Brand Image">
-          <div class="card-body">
-            <h5 class="card-title">{{ brand.name }}</h5>
-            <router-link :to="{path: '/brand/'+brand.id+'/products'}" class="btn btn-primary float-center">Products</router-link>
+      <div v-for="brand in brands" :key="brand.id" class="col-md-3 mb-4">
+        <router-link :to="{path: '/brand/'+brand.id+'/products'}" class="card-link">
+          <div class="card">
+            <img class="img" v-if="brand.img" :src="'http://localhost:8000/storage/uploads/' + brand.img" alt="Brand Image">
           </div>
-        </div>
+        </router-link>
       </div>
     </div>
   </div>
@@ -47,13 +45,31 @@
     text-align: center;
     margin-top: 20px;
   }
+
   .card {
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s;
     width: 280px;
-    height: 250px;
-    justify-content: flex-end;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none; 
   }
-  .img{
-    max-width: 280px;
-    max-height: 200px;
+
+  .card:hover {
+    transform: scale(1.1);
+    background-color: rgb(250, 250, 250);
+  }
+
+  .card-link {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .img {
+    max-width: 100%;
+    max-height: 100%;
   }
 </style>

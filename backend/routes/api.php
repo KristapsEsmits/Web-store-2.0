@@ -48,4 +48,5 @@ Route::get('brands/{id}/products', [Brandscontroller::class, 'index']);
 // Items API
 Route::get('items', [Itemscontroller::class, 'index']);
 Route::get('items/{id}', [Itemscontroller::class, 'show']);
+Route::get('/front-page-items', [ItemsController::class, 'frontPageItems']);
 

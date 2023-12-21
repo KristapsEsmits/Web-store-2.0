@@ -109,4 +109,21 @@ class ItemsController extends Controller
             'message' => 'Item deleted successfully',
         ], 200);
     }
+
+    public function frontPageItems()
+    {
+        $items = Items::latest()->take(4)->get();
+
+        if ($items->count() > 0) {
+            return response()->json([
+                'status' => 200,
+                'items' => $items,
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'No data found!',
+            ], 404);
+        }
+    }
 }

@@ -9,8 +9,8 @@
                     </h2>
                 </div>
                 <div class="col-lg-2">
+                    <h6 class="text-uppercase fw-bold">Products</h6>
                     <ul>
-                        <h6 class="text-uppercase fw-bold">Products</h6>
                         <li href="#!" class="text-reset">Angular</li>
                         <li href="#!" class="text-reset">React</li>
                     </ul>
