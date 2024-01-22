@@ -97,10 +97,11 @@ class BrandsController extends Controller
     public function update(Request $request, int $id)
     {
         $brands = Brands::find($id);
+
         if ($brands) {
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:40',
-                'img' => $request->hasFile('img') ? 'image|mimes:jpeg,png,jpg,gif,svg' : '', // Conditional validation for image
+                'img' => $request->hasFile('img') ? 'image|mimes:jpeg,png,jpg,gif,svg' : '',
             ]);
 
             if ($validator->fails()) {
@@ -113,16 +114,37 @@ class BrandsController extends Controller
                 if ($request->hasFile('img')) {
                     $randomString = Str::random(10);
                     $imgPath = $request->file('img')->storeAs('uploads', $randomString . '.' . $request->file('img')->getClientOriginalExtension(), 'public');
-                    $brands->img = $randomString . '.' . $request->file('img')->getClientOriginalExtension();
+
+                    // Delete old image if it exists
+                    if ($brands->img) {
+                        $oldImagePath = public_path("/storage/uploads/{$brands->img}");
+                        if (file_exists($oldImagePath)) {
+                            unlink($oldImagePath);
+                        }
+                    }
+
+                    $brands->update([
+                        'name' => $request->name,
+                        'img' => $randomString . '.' . $request->file('img')->getClientOriginalExtension(),
+                    ]);
+                } else {
+                    // No new image is being uploaded
+                    $brands->update([
+                        'name' => $request->name,
+                    ]);
                 }
 
-                $brands->name = $request->name;
-                $brands->save();
-
-                return response()->json([
-                    'status' => 200,
-                    'message' => 'Data updated successfully!',
-                ], 200);
+                if ($brands) {
+                    return response()->json([
+                        'status' => 200,
+                        'message' => 'Data updated successfully!',
+                    ], 200);
+                } else {
+                    return response()->json([
+                        'status' => 404,
+                        'message' => 'No listing found!',
+                    ], 404);
+                }
             }
         } else {
             return response()->json([

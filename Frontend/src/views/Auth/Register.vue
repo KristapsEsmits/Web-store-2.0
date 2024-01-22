@@ -29,9 +29,7 @@ export default {
             password: hashedPassword,
         })
             .then((res) => {
-                console.log(res.data);
                 this.successMessage = res.data.message; 
-                // this.$router.push('/login');
 
                 this.model.register.name = '';
                 this.model.register.surname = '';

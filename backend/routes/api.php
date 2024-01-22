@@ -18,24 +18,29 @@ use App\Http\Controllers\Api\Itemscontroller;
 */
 
 Route::middleware('auth:sanctum')->group(function () {
+    // Test
     Route::get('test', [Testcontroller::class, 'index']);
     Route::post('test', [Testcontroller::class, 'store']);
     Route::get('test/{id}', [Testcontroller::class, 'show']);
     Route::get('test/{id}/edit', [Testcontroller::class, 'edit']);
     Route::put('test/{id}/edit', [Testcontroller::class, 'update']);
     Route::delete('test/{id}/delete', [Testcontroller::class, 'destroy']);
+    // Auth
     Route::get('logout', [Authcontroller::class, 'logout']);
     Route::get('user', [Authcontroller::class, 'user']);
     Route::put('profile/edit/{id}', [Authcontroller::class, 'update']);
     Route::put('profile/change-password/{id}', [Authcontroller::class, 'changePassword']);
+    // Brands
     Route::post('brands', [Brandscontroller::class, 'store']);
     Route::get('brands/{id}/edit', [Brandscontroller::class, 'edit']);
-    Route::put('brands/{id}/edit', [Brandscontroller::class, 'update']);
+
     Route::delete('brands/{id}/delete', [Brandscontroller::class, 'destroy']);
+    // Items
     Route::post('items', [Itemscontroller::class, 'store']);
     Route::get('items/{id}/edit', [Itemscontroller::class, 'edit']);
     Route::put('items/{id}/edit', [Itemscontroller::class, 'update']);
     Route::delete('items/{id}/delete', [Itemscontroller::class, 'destroy']);
+
 });
 
 // Auth API
@@ -50,3 +55,4 @@ Route::get('items', [Itemscontroller::class, 'index']);
 Route::get('items/{id}', [Itemscontroller::class, 'show']);
 Route::get('/front-page-items', [ItemsController::class, 'frontPageItems']);
 
+Route::put('brands/{id}/edit', [Brandscontroller::class, 'update']);

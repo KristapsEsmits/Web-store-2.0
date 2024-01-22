@@ -1,6 +1,6 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import {onMounted, ref} from 'vue';
+import {useRouter} from 'vue-router';
 import axios from 'axios';
 
 const users = ref([]);
@@ -28,25 +28,20 @@ onMounted(async () => {
 
 <template>
   <main>
-    <div v-if="isLoading"></div>
-    <div class="container" v-else>
+    <div class="container">
       <div v-if="successMessage" class="alert alert-success d-flex justify-content-between align-items-center">
           <span>{{ successMessage }}</span>
           <button type="button" class="btn-close" @click="dismissSuccessMessage"></button>
       </div>
       <div class="card">
-        <div class="card-header">
-          <h4 class="card-title">Profile
-            <router-link :to="{ path: '/profile/edit' }" class="btn btn-primary btn-round btn-fill float-end">Update data</router-link>
-            <router-link :to="{ path: '/profile/change-password' }" class="btn btn-primary btn-round btn-fill float-end">Change password</router-link>
-          </h4>
-        </div>
         <div class="card-body">
           <div>
-            <h1>Name: {{ users?.name }}</h1>
-            <h1>Surname: {{ users?.surname }}</h1>
-            <h1>Phone number: {{ users?.phone }}</h1>
-            <h1>Email: {{ users?.email }}</h1>
+            <router-link :to="{ path: '/profile/change-password' }" class="float-end nav-link">Change password
+            </router-link>
+            <router-link :to="{ path: '/profile/edit' }" class="actionBtn float-end nav-link">Update data</router-link>
+            <h1>{{ users?.name }} {{ users?.surname }}</h1>
+            <h2>Number {{ users?.phone }}</h2>
+            <h2>Email {{ users?.email }}</h2>
           </div>
         </div>
       </div>
@@ -60,5 +55,9 @@ onMounted(async () => {
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.actionBtn {
+  margin-right: 10px;
 }
 </style>

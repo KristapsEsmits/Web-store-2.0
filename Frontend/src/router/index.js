@@ -6,7 +6,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: () => import('../views/HomeView.vue'),
+      component: () => import('../views/HomeView/HomeView.vue'),
       meta: { tabName: 'Home' },
     },
     {
@@ -27,7 +27,7 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: () => import('../views/Auth/Login.vue'),
+      component: () => import('../views/Auth/Login/Login.vue'),
     },
     {
       path: '/register',
@@ -72,22 +72,22 @@ const router = createRouter({
     {
       path: '/brands',
       name: 'brands',
-      component: () => import('../views/Brands.vue'),
+      component: () => import('../views/Brands/Brands.vue'),
     },
     {
       path: '/brand/:id/products',
       name: 'brand-products',
-      component: () => import('../views/BrandProducts.vue'),
+      component: () => import('../views/BrandProducts/BrandProducts.vue'),
     },
     {
       path: '/products',
       name: 'products',
-      component: () => import('../views/Products.vue'),
+      component: () => import('../views/Products/Products.vue'),
     },
     {
       path: '/product/:id',
       name: 'product',
-      component: () => import('../views/ProductView.vue'),
+      component: () => import('../views/ProductView/ProductView.vue'),
     },
     {
       path: '/admin/items',

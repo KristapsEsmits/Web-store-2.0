@@ -1,0 +1,28 @@
+.header {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.card {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s;
+  width: 280px;
+  height: 340px;
+  justify-content: flex-end;
+  border: none;
+}
+
+.card:hover {
+  transform: scale(1.1);
+}
+
+.card-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.img {
+  max-width: 280px;
+  max-height: 200px;
+}

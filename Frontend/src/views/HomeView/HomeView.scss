@@ -1,0 +1,34 @@
+.card {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s;
+  width: 280px;
+  height: 340px;
+  justify-content: flex-end;
+  border: 1px solid #ccc;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+.img {
+  max-width: 280px;
+  max-height: 200px;
+}
+
+.text {
+  display: flex;
+  justify-content: space-between;;
+}
+
+.card-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.viewAll {
+  text-decoration: none;
+  color: inherit;
+  font-size: 18px;
+}

@@ -1,6 +1,7 @@
 <script>
-  import axios from 'axios';
-  export default {
+import axios from 'axios';
+
+export default {
     name: 'Edit',
     data() {
       return {
@@ -43,12 +44,11 @@
         var list = this;
         const formData = new FormData();
         formData.append('name', this.model.brands.name);
+        formData.append('img', this.model.brands.img);
+        console.log(formData);
 
-        if (this.model.brands.img) {
-          formData.append('img', this.model.brands.img);
-        }
-
-        axios.put(`/brands/${this.brandsId}/edit`, formData).then((res) => {
+        axios.put(`/brands/${this.brandsId}/edit`, formData)
+            .then((res) => {
           this.$router.push('/admin/brands');
           alert(res.data.message);
           this.errorList = '';
@@ -85,11 +85,11 @@
             </ul>
         <div class="mb-3">
             <label for="Name">Name</label>
-            <input type="text" v-model="model.brands.name" class="form-control" />
+          <input type="text" v-model="model.brands.name" class="form-control"/>
         </div>
         <div class="mb-3">
             <label for="Image">Image</label>
-            <input type="file" @change="handleImageUpload" class="form-control" />
+          <input type="file" @change="handleImageUpload" class="form-control"/>
         </div>
           <div class="mb-3">
             <button type="button" @click="updateBrands" class="btn btn-primary">Update</button>
