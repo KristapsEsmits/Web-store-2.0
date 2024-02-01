@@ -1,5 +1,4 @@
 <script>
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import axios from 'axios';
 
 export default {
@@ -62,13 +61,20 @@ export default {
       <div v-for="item in items" :key="item.id" class="col-md-3 mb-4">
         <router-link :to="{path: '/product/'+item.id+''}" class="card-link">
           <div class="card">
-            <img class="img" v-if="item.img" :src="'http://localhost:8000/storage/uploads/' + item.img"
-                 alt="Item Image">
+            <img class="img" v-if="item.img" :src="'http://localhost:8000/storage/uploads/' + item.img" alt="Item Image">
             <div class="card-body">
               <h5 class="card-title">{{ item.name }}</h5>
               <h5 class="card-title">{{ item.price }}€</h5>
-              <button class="btn btn-primary add-to-cart-btn">Add to cart</button>
-              <button class="btn btn-primary ">Favorite</button>
+              <div class="button-container">
+                <button class="btn">
+                  <i class="bi bi-cart"></i>
+                  Cart
+                </button>
+                <button class="btn">
+                  <i class="bi bi-star"></i>
+                  Favorites
+                </button>
+              </div>
             </div>
           </div>
         </router-link>

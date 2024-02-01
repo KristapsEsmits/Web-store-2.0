@@ -1,7 +1,6 @@
-import { fileURLToPath, URL } from 'node:url'
-
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import { resolve } from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -9,11 +8,16 @@ export default defineConfig({
     vue(),
   ],
   server: {
-    port: 5173
+    port: 5173,
+    fs: {
+      // Allow serving files from the node_modules directory
+      allow: ['node_modules'] ['src']
+    }
   },
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      // Resolve '@' to the src directory
+      '@': resolve(__dirname, 'src')
     }
-  },
-})
+  }
+});

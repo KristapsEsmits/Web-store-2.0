@@ -10,7 +10,11 @@
   width: 280px;
   height: 340px;
   justify-content: flex-end;
-  border: none;
+  border: 1px solid #ccc;
+
+  &:hover {
+    transform: scale(1.1);
+  }
 }
 
 .card:hover {

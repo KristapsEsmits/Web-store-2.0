@@ -7,7 +7,7 @@ import Footer from './components/Footer.vue';
   <main>
     <Nav />
       <router-view />
-    <Footer />
+    <!-- <Footer /> -->
   </main>
 </template>
 
@@ -20,4 +20,6 @@ import Footer from './components/Footer.vue';
     flex: 1;
     margin-top: 60px;
   }
+
+ 
 </style>

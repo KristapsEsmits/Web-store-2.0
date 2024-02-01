@@ -6,23 +6,33 @@ export default {
   data() {
     return {
       isLoggedIn: false,
+      user: null,
     };
   },
-
   async created() {
     this.isLoggedIn = await this.isUserLoggedIn();
+    if (this.isLoggedIn) {
+      this.fetchUserData();
+    }
   },
-
   methods: {
     async isUserLoggedIn() {
       return !!localStorage.getItem('access_token');
     },
-    
+    async fetchUserData() {
+      try {
+        const response = await axios.get('/user');
+        this.user = response.data;
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        // Handle error accordingly
+      }
+    },
     async logout() {
       try {
         await axios.get('/logout');
         localStorage.removeItem('access_token');
-        this.isLoggedIn = false; 
+        this.isLoggedIn = false;
         this.$router.push('/login');
       } catch (error) {
         console.log(error);
@@ -33,7 +43,7 @@ export default {
 </script>
 
 <template>
-    <header class="bar">
+  <header class="bar">
     <div class="wrapper">
       <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
@@ -59,21 +69,50 @@ export default {
                 <RouterLink to="/brands" class="nav-link">Brands</RouterLink>
               </li>
             </ul>
+
             <ul class="navbar-nav ml-auto">
               <li class="nav-item" v-if="!isLoggedIn">
                 <RouterLink to="/login" class="nav-link">Login</RouterLink>
               </li>
+
               <li class="nav-item" v-if="!isLoggedIn">
                 <RouterLink to="/register" class="nav-link">Register</RouterLink>
               </li>
-              <li class="nav-item" v-if="isLoggedIn">
-                <RouterLink to="/admin" class="nav-link">Admin</RouterLink>
+
+              <li class="nav-item">
+                <button class="btn">
+                  <i class="bi bi-star"></i>
+                  Favorites
+                </button>
               </li>
-              <li class="nav-item" v-if="isLoggedIn">
-                <RouterLink to="/profile" class="nav-link">Profile</RouterLink>
+              
+              <li class="nav-item">
+                <button class="btn">
+                  <i class="bi bi-cart"></i>
+                  Cart
+                </button>
               </li>
-              <li class="nav-item" v-if="isLoggedIn">
-                <button class="nav-link" @click="logout">Logout</button>
+
+              <li class="nav-item dropdown" v-if="isLoggedIn">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-person-fill"></i>
+                  {{ user?.name }} {{ user?.surname }}
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <li>
+                    <RouterLink to="/profile" class="dropdown-item">My Profile</RouterLink>
+                  </li>
+                  <li class="nav-item">
+                      <RouterLink to="/admin" class="dropdown-item">Admin</RouterLink>
+                  </li>
+                  <li class="dropdown-divider"></li>
+                  <li class="nav-item">
+                    <button class="dropdown-item" @click="logout">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Logout
+                    </button>
+                  </li>
+                </ul>
               </li>
             </ul>
           </div>
@@ -92,5 +131,4 @@ export default {
     width: 100%;
     z-index: 100;
   }
-
 </style>

@@ -32,3 +32,21 @@
   color: inherit;
   font-size: 18px;
 }
+
+.card-body {
+  position: relative;
+}
+
+.button-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover .button-container {
+  opacity: 1;
+}

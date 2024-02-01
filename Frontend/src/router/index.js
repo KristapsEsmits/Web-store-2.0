@@ -32,27 +32,27 @@ const router = createRouter({
     {
       path: '/register',
       name: 'register',
-      component: () => import('../views/Auth/Register.vue'),
+      component: () => import('../views/Auth/Register/Register.vue'),
     },
     {
       path: '/admin',
       name: 'admin',
-      component: () => import('../views/Admin/Admin.vue'),
+      component: () => import('../views/Admin/Dashboard/Admin.vue'),
     },
     {
       path: '/profile',
       name: 'profile',
-      component: () => import('../views/Auth/Profile.vue'),
+      component: () => import('../views/Auth/Profile/Profile.vue'),
     },
     {
       path: '/profile/edit',
       name: 'profile/edit',
-      component: () => import('../views/Auth/EditData.vue'),
+      component: () => import('../views/Auth/EditData/EditData.vue'),
     },
     {
       path: '/profile/change-password',
       name: 'profile/change-password',
-      component: () => import('../views/Auth/ChangePassword.vue'),
+      component: () => import('../views/Auth/ChangePassword/ChangePassword.vue'),
     },
     {
       path: '/admin/brands',

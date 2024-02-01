@@ -154,7 +154,7 @@ class BrandsController extends Controller
         }
     }
 
-
+// Delete brand and its image
     public function destroy($id)
     {
         $brand = Brands::find($id);
