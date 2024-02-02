@@ -99,6 +99,21 @@ const router = createRouter({
       name: 'admin/items/create',
       component: () => import('../views/Admin/Items/Create.vue'),
     },
+    {
+      path: '/admin/categories',
+      name: '/admin/categories',
+      component: () => import('../views/Admin/categories/categories-table/categories.vue'),
+    },
+    {
+      path: '/admin/categories/create',
+      name: '/admin/categories/create',
+      component: () => import('../views/Admin/categories/create-categories/create-categories.vue'),
+    },
+    // {
+    //   path: '/test/:id/edit',
+    //   name: 'test/edit',
+    //   component: () => import('../views/Test/Edit.vue'),
+    // },
   ]
 })
 

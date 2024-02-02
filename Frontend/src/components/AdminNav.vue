@@ -18,6 +18,10 @@
           <button class="btn" v-if="isSidebarOpen">I</button>
           <button class="btn" v-else>Items</button>
         </router-link>
+        <router-link to="/admin/categories">
+          <button class="btn" v-if="isSidebarOpen">C</button>
+          <button class="btn" v-else>Categories</button>
+        </router-link>
       </div>
     </div>
     <button @click="toggleSidebar" class="btn toggle-btn">
