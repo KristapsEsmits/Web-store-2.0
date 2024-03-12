@@ -20,6 +20,7 @@ class Items extends Model
         'price',
         'img',
         'brand_id',
+        'categories_id',
     ];
 
     public function brands()

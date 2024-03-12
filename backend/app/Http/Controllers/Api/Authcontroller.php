@@ -9,8 +9,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
-
-
 class AuthController extends Controller
 {
     public function register(Request $request)
@@ -122,7 +120,6 @@ class AuthController extends Controller
             'message' => 'User updated successfully!',
         ], 200);
     }
-
 
     public function changePassword(Request $request, int $id)
     {

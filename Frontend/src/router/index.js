@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import {createRouter, createWebHistory} from 'vue-router'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -8,21 +8,6 @@ const router = createRouter({
       name: 'home',
       component: () => import('../views/HomeView/HomeView.vue'),
       meta: { tabName: 'Home' },
-    },
-    {
-      path: '/test',
-      name: 'test',
-      component: () => import('../views/Test/Test.vue'),
-    },
-    {
-      path: '/test/create',
-      name: 'test/create',
-      component: () => import('../views/Test/Create.vue'),
-    },
-    {
-      path: '/test/:id/edit',
-      name: 'test/edit',
-      component: () => import('../views/Test/Edit.vue'),
     },
     {
       path: '/login',
@@ -109,11 +94,11 @@ const router = createRouter({
       name: '/admin/categories/create',
       component: () => import('../views/Admin/categories/create-categories/create-categories.vue'),
     },
-    // {
-    //   path: '/test/:id/edit',
-    //   name: 'test/edit',
-    //   component: () => import('../views/Test/Edit.vue'),
-    // },
+      {
+          path: '/admin/categories/:id/edit',
+          name: '/admin/categories/:id/edit',
+          component: () => import('../views/Admin/categories/edit-categories/edit-categories.vue'),
+      },
   ]
 })
 

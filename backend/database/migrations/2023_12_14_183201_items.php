@@ -19,9 +19,11 @@ return new class extends Migration {
             $table->float('price');
             $table->string('img');
             $table->unsignedBigInteger('brand_id');
+            $table->unsignedBigInteger('categories_id');
             $table->timestamps();
 
             $table->foreign('brand_id')->references('id')->on('brands');
+            $table->foreign('categories_id')->references('id')->on('categories');
         });
     }
 

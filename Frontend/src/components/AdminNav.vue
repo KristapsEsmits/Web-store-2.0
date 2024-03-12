@@ -6,10 +6,6 @@
           <button class="btn" v-if="isSidebarOpen">H</button>
           <button class="btn" v-else>Home</button>
         </router-link>
-        <router-link to="/test">
-          <button class="btn" v-if="isSidebarOpen">T</button>
-          <button class="btn" v-else>Test</button>
-        </router-link>
         <router-link to="/admin/brands">
           <button class="btn" v-if="isSidebarOpen">B</button>
           <button class="btn" v-else>Brands</button>
@@ -32,7 +28,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import {ref} from 'vue';
 
 const isSidebarOpen = ref(false);
 

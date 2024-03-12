@@ -6,11 +6,15 @@ export default {
   data() {
     return {
       items: [],
+      brands: [],
     };
   },
+
   mounted() {
     this.getItems();
+    this.getBrands(); // Call the getBrands method here
   },
+
   methods: {
     getItems() {
       const brandId = this.$route.params.id;
@@ -20,13 +24,23 @@ export default {
         this.items = res.data.items.filter(item => item.brand_id === parseInt(brandId));
       });
     },
+
+    getBrands() {
+      const brandId = this.$route.params.id;
+      axios.get(`/brands?brand_id=${brandId}`).then((res) => {
+        // Filter brands to display only the one with the specified brand_id
+        this.brands = res.data.brands.filter(brand => brand.id === parseInt(brandId));
+      }).catch(error => {
+        console.error('Error fetching brand:', error);
+      });
+    },
   },
 };
 </script>
 
 <template>
   <div class="header">
-    <h1> Products</h1>
+    <h1 v-for="brand in brands"> {{ brand.name }} Products</h1>
   </div>
   <div class="container">
     <div class="row">

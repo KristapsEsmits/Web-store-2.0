@@ -52,6 +52,8 @@ export default {
     </a>
   </div>
 
+  <span class="badge badge-pill badge-secondary">Secondary</span>
+
   <div class="container">
     <div class="text mb-2">
       <h1>New Products</h1>
@@ -63,6 +65,7 @@ export default {
           <div class="card">
             <img class="img" v-if="item.img" :src="'http://localhost:8000/storage/uploads/' + item.img" alt="Item Image">
             <div class="card-body">
+              <button class="badge badge-pill badge-secondary">{{ item.categories_id }}</button>
               <h5 class="card-title">{{ item.name }}</h5>
               <h5 class="card-title">{{ item.price }}€</h5>
               <div class="button-container">

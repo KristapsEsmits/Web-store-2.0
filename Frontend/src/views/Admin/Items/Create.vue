@@ -12,10 +12,12 @@ export default {
           description: '',
           price: '',
           brand_id: null,
+          categories_id: null,
           img: null,
         },
       },
       brands: [],
+      categories: [],
     };
   },
   methods: {
@@ -29,6 +31,7 @@ export default {
     formData.append('description', this.model.item.description);
     formData.append('price', this.model.item.price);
     formData.append('brand_id', this.model.item.brand_id); // Include 'brand_id'
+      formData.append('categories_id', this.model.item.categories_id);
     formData.append('img', this.model.item.img);
 
     try {
@@ -67,9 +70,19 @@ export default {
         console.error('Error fetching brands:', error);
       }
     },
+
+    async getCategories() {
+      try {
+        const res = await axios.get('/categories');
+        this.categories = res.data.categories;
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    },
   },
   mounted() { 
     this.getBrands();
+    this.getCategories();
   },
 };
 </script>
@@ -87,6 +100,14 @@ export default {
               {{ error[0] }}
             </li>
           </ul>
+          <div class="input-group-prepend mb-3">
+            <label for="Brand">Category</label>
+            <select v-model="model.item.categories_id" class="custom-select form-control">
+              <option v-for="categories in categories" :key="categories.id" :value="categories.id">
+                {{ categories.category_name }}
+              </option>
+            </select>
+          </div>
           <div class="input-group-prepend mb-3">
             <label for="Brand">Brand</label>
             <select v-model="model.item.brand_id" class="custom-select form-control">

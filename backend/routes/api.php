@@ -1,11 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\Authcontroller;
-use App\Http\Controllers\Api\Testcontroller;
-use App\Http\Controllers\Api\Brandscontroller;
-use App\Http\Controllers\Api\Itemscontroller;
-use App\Http\Controllers\Api\Categoriescontoller;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BrandsController;
+use App\Http\Controllers\Api\ItemsController;
+use App\Http\Controllers\Api\CategoriesContoller;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,52 +18,47 @@ use App\Http\Controllers\Api\Categoriescontoller;
 */
 
 Route::middleware('auth:sanctum')->group(function () {
-    // Test
-    Route::get('test', [Testcontroller::class, 'index']);
-    Route::post('test', [Testcontroller::class, 'store']);
-    Route::get('test/{id}', [Testcontroller::class, 'show']);
-    Route::get('test/{id}/edit', [Testcontroller::class, 'edit']);
-    Route::put('test/{id}/edit', [Testcontroller::class, 'update']);
-    Route::delete('test/{id}/delete', [Testcontroller::class, 'destroy']);
 
     // Auth
-    Route::get('logout', [Authcontroller::class, 'logout']);
-    Route::get('user', [Authcontroller::class, 'user']);
-    Route::put('profile/edit/{id}', [Authcontroller::class, 'update']);
-    Route::put('profile/change-password/{id}', [Authcontroller::class, 'changePassword']);
+    Route::get('logout', [AuthController::class, 'logout']);
+    Route::get('user', [AuthController::class, 'user']);
+    Route::put('profile/edit/{id}', [AuthController::class, 'update']);
+    Route::put('profile/change-password/{id}', [AuthController::class, 'changePassword']);
 
     // Brands
-    Route::post('brands', [Brandscontroller::class, 'store']);
-    Route::get('brands/{id}/edit', [Brandscontroller::class, 'edit']);
-    Route::delete('brands/{id}/delete', [Brandscontroller::class, 'destroy']);
+    Route::post('brands', [BrandsController::class, 'store']);
+    Route::get('brands/{id}/edit', [BrandsController::class, 'edit']);
+    Route::delete('brands/{id}/delete', [BrandsController::class, 'destroy']);
 
     // Items
-    Route::post('items', [Itemscontroller::class, 'store']);
-    Route::get('items/{id}/edit', [Itemscontroller::class, 'edit']);
-    Route::put('items/{id}/edit', [Itemscontroller::class, 'update']);
-    Route::delete('items/{id}/delete', [Itemscontroller::class, 'destroy']);
+    Route::post('items', [ItemsController::class, 'store']);
+    Route::get('items/{id}/edit', [ItemsController::class, 'edit']);
+    Route::put('items/{id}/edit', [ItemsController::class, 'update']);
+    Route::delete('items/{id}/delete', [ItemsController::class, 'destroy']);
 
     // Categories
-    Route::get('categories', [Categoriescontoller::class, 'index']);
-    Route::post('categories', [Categoriescontoller::class, 'store']);
-    Route::get('categories/{id}', [Categoriescontoller::class, 'show']);
-    Route::get('categories/{id}/edit', [Categoriescontoller::class, 'edit']);
-    Route::put('categories/{id}/edit', [Categoriescontoller::class, 'update']);
-    Route::delete('categories/{id}/delete', [Categoriescontoller::class, 'destroy']);
+    Route::post('categories', [CategoriesContoller::class, 'store']);
+    Route::get('categories/{id}', [CategoriesContoller::class, 'show']);
+    Route::get('categories/{id}/edit', [CategoriesContoller::class, 'edit']);
+    Route::put('categories/{id}/edit', [CategoriesContoller::class, 'update']);
+    Route::delete('categories/{id}/delete', [CategoriesContoller::class, 'destroy']);
 });
 
 // Auth API
-Route::post('register', [Authcontroller::class, 'register']);
-Route::post('login', [Authcontroller::class, 'login']);
+Route::post('register', [AuthController::class, 'register']);
+Route::post('login', [AuthController::class, 'login']);
 
 // Brands API
-Route::get('brands/{id}', [Brandscontroller::class, 'show']);
-Route::get('brands', [Brandscontroller::class, 'index']);
-Route::get('brands/{id}/products', [Brandscontroller::class, 'index']);
-Route::put('brands/{id}/edit', [Brandscontroller::class, 'update']);
-// Items API
+Route::get('brands/{id}', [BrandsController::class, 'show']);
+Route::get('brands', [BrandsController::class, 'index']);
+Route::get('brands/{id}/products', [BrandsController::class, 'index']);
+Route::put('brands/{id}/edit', [BrandsController::class, 'update']);
 
-Route::get('items', [Itemscontroller::class, 'index']);
-Route::get('items/{id}', [Itemscontroller::class, 'show']);
+// Items API
+Route::get('items', [ItemsController::class, 'index']);
+Route::get('items/{id}', [ItemsController::class, 'show']);
 Route::get('/front-page-items', [ItemsController::class, 'frontPageItems']);
+
+// Categories API
+Route::get('categories', [CategoriesContoller::class, 'index']);
 

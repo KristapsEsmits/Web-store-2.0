@@ -7,8 +7,10 @@ export default {
     return {
       isLoggedIn: false,
       user: null,
+      categories: [],
     };
   },
+
   async created() {
     this.isLoggedIn = await this.isUserLoggedIn();
     if (this.isLoggedIn) {
@@ -19,6 +21,7 @@ export default {
     async isUserLoggedIn() {
       return !!localStorage.getItem('access_token');
     },
+
     async fetchUserData() {
       try {
         const response = await axios.get('/user');
@@ -28,6 +31,7 @@ export default {
         // Handle error accordingly
       }
     },
+
     async logout() {
       try {
         await axios.get('/logout');
@@ -38,6 +42,16 @@ export default {
         console.log(error);
       }
     },
+
+    getCategories() {
+      axios.get('/api/categories').then((res) => {
+        this.categories = res.data.categories;
+      });
+    },
+  },
+
+  mounted() {
+    this.getCategories();
   },
 };
 </script>
@@ -48,7 +62,7 @@ export default {
       <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
           <RouterLink to="/" class="navbar-brand">
-            <img src="\favicon.ico" alt="Logo" style="height: 30px; width: 30px;">
+            <img src="/favicon.ico" alt="Logo" style="height: 30px; width: 30px;">
             Frenko
           </RouterLink>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -62,8 +76,20 @@ export default {
               <li class="nav-item">
                 <RouterLink to="/" class="nav-link">Home</RouterLink>
               </li>
-              <li class="nav-item">
-                <RouterLink to="/products" class="nav-link">Products</RouterLink>
+              <li class="nav-item dropdown">
+                <a id="navbarDropdown" aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
+                   role="button">
+                  Products
+                </a>
+                <ul aria-labelledby="navbarDropdown" class="dropdown-menu">
+                  <RouterLink class="nav-link" to="/products">All Products</RouterLink>
+                  <li v-for="category in categories" :key="category.id">
+                    <RouterLink :to="'/category/' + category.id" class="dropdown-item">{{
+                        category.category_name
+                      }}
+                    </RouterLink>
+                  </li>
+                </ul>
               </li>
               <li class="nav-item">
                 <RouterLink to="/brands" class="nav-link">Brands</RouterLink>
