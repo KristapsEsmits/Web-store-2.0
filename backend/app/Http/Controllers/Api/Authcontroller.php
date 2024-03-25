@@ -134,7 +134,7 @@ class AuthController extends Controller
 
         $validator = Validator::make($request->all(), [
             'current_password' => 'required',
-            'password' => 'required|string|max:255|confirmed', 
+            'password' => 'required|string|max:255|confirmed',
         ]);
 
         if ($validator->fails()) {
@@ -161,5 +161,16 @@ class AuthController extends Controller
                 'message' => 'Current password is incorrect!',
             ], 422);
         }
+    }
+
+    public function userAmount()
+    {
+        $userCount = User::count();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Total number of users retrieved successfully!',
+            'user_count' => $userCount,
+        ], 200);
     }
 }

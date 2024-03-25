@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BrandsController;
 use App\Http\Controllers\Api\ItemsController;
 use App\Http\Controllers\Api\CategoriesContoller;
+use App\Http\Controllers\Api\FavoriteItemsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +43,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('categories/{id}/edit', [CategoriesContoller::class, 'edit']);
     Route::put('categories/{id}/edit', [CategoriesContoller::class, 'update']);
     Route::delete('categories/{id}/delete', [CategoriesContoller::class, 'destroy']);
+
+    // Favorite Items
+    Route::post('favorites', [FavoriteItemsController::class, 'store']);
+    Route::post('favorites/{id}', [FavoriteItemsController::class, 'show']);
+
 });
 
 // Auth API
@@ -62,3 +68,8 @@ Route::get('/front-page-items', [ItemsController::class, 'frontPageItems']);
 // Categories API
 Route::get('categories', [CategoriesContoller::class, 'index']);
 
+// Favorite Items API
+Route::get('favorites', [FavoriteItemsController::class, 'index']);
+
+//Users API
+Route::get('user-amount', [AuthController::class, 'userAmount']);

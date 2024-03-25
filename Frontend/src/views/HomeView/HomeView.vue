@@ -1,58 +1,25 @@
-<script>
-import axios from 'axios';
-
-export default {
-  name: 'items',
-  data() {
-    return {
-      items: [],
-    };
-  },
-  mounted() {
-    this.getItems();
-  },
-  methods: {
-    getItems() {
-      axios.get('/front-page-items').then((res) => {
-        this.items = res.data.items;
-      });
-    },
-  },
-
-};
-</script>
-
-
 <template>
-  <div id="carouselExampleIndicators" class="carousel slide mb-4" data-bs-ride="carousel"
+  <div class="home-wrapper">
+    <div id="carouselExampleIndicators" class="carousel slide mb-4" data-bs-ride="carousel"
        style="width: 50%; margin: auto;">
-    <ol class="carousel-indicators">
-      <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"></li>
-      <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"></li>
-      <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"></li>
-    </ol>
-    <div class="carousel-inner">
+      <div class="carousel-inner">
       <div class="carousel-item active">
-        <img class="d-block w-100" src="/1.png" alt="First slide">
+        <img alt="First slide" class="d-block w-100" src="/1.webp">
       </div>
       <div class="carousel-item">
-        <img class="d-block w-100" src="/2.png" alt="Second slide">
+        <img alt="Second slide" class="d-block w-100" src="/2.webp">
       </div>
       <div class="carousel-item">
-        <img class="d-block w-100" src="/3.png" alt="Third slide">
+        <img alt="Third slide" class="d-block w-100" src="/3.webp">
       </div>
     </div>
     <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-bs-slide="prev">
       <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Previous</span>
     </a>
     <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-bs-slide="next">
       <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Next</span>
     </a>
   </div>
-
-  <span class="badge badge-pill badge-secondary">Secondary</span>
 
   <div class="container">
     <div class="text mb-2">
@@ -84,8 +51,18 @@ export default {
       </div>
     </div>
   </div>
+  </div>
+
 </template>
 
+<script>
+import HomeView from './HomeView.js';
+
+export default {
+  mixins: [HomeView],
+};
+</script>
+
 <style lang="scss" scoped>
-@import "./HomeView.scss";
+@import "./HomeView.scss"; // Import SCSS file
 </style>

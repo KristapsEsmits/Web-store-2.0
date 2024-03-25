@@ -53,9 +53,8 @@ export default {
 </script>
 
 <template>
-  <div class="container">
-    <AdminNav />
-      <router-view />
+  <div class="wrapper">
+    <AdminNav :isSidebarOpen="isSidebarOpen" @toggleSidebar="toggleSidebar"/>
     <div v-if="successMessage" class="alert alert-success d-flex justify-content-between align-items-center">
       <span>{{ successMessage }}</span>
       <button type="button" class="btn-close" @click="dismissSuccessMessage"></button>
@@ -103,5 +102,10 @@ export default {
 <style scoped>
   .card {
     margin-top: 20px;
+    margin-left: 20px;
+  }
+
+  .wrapper {
+    display: flex;
   }
 </style>

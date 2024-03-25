@@ -84,7 +84,7 @@ export default {
                 <ul aria-labelledby="navbarDropdown" class="dropdown-menu">
                   <RouterLink class="nav-link" to="/products">All Products</RouterLink>
                   <li v-for="category in categories" :key="category.id">
-                    <RouterLink :to="'/category/' + category.id" class="dropdown-item">{{
+                    <RouterLink :to="'/products/' + category.id" class="dropdown-item">{{
                         category.category_name
                       }}
                     </RouterLink>
