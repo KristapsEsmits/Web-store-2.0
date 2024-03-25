@@ -50,10 +50,19 @@ const toggleSidebar = () => {
 </script>
 
 <style scoped>
+ul {
+  text-decoration: none;
+  padding: 0;
+}
+
+li {
+  list-style-type: none;
+}
+
 .nav {
   background-color: #f8f9fa;
   padding-top: 20px;
-  height: 93.1vh;
+  height: calc(100vh - 59.7px);
 }
 
 .links {
