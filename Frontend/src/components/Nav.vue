@@ -97,14 +97,6 @@ export default {
             </ul>
 
             <ul class="navbar-nav ml-auto">
-              <li class="nav-item" v-if="!isLoggedIn">
-                <RouterLink to="/login" class="nav-link">Login</RouterLink>
-              </li>
-
-              <li class="nav-item" v-if="!isLoggedIn">
-                <RouterLink to="/register" class="nav-link">Register</RouterLink>
-              </li>
-
               <li class="nav-item">
                 <button class="btn">
                   <i class="bi bi-star"></i>
@@ -117,6 +109,10 @@ export default {
                   <i class="bi bi-cart"></i>
                   Cart
                 </button>
+              </li>
+
+              <li class="nav-item" v-if="!isLoggedIn">
+                <RouterLink to="/login" class="nav-link">Login</RouterLink>
               </li>
 
               <li class="nav-item dropdown" v-if="isLoggedIn">

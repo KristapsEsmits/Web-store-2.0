@@ -23,7 +23,7 @@ return new class extends Migration {
             $table->timestamps();
 
             $table->foreign('brand_id')->references('id')->on('brands');
-            $table->foreign('categories_id')->references('id')->on('categories');
+            $table->foreign('categories_id')->references('category_name')->on('categories');
         });
     }
 

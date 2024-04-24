@@ -1,24 +1,36 @@
 .header {
   text-align: center;
-  margin-top: 20px;
+  margin: 20px 0 20px 0;
 }
 
+.container {
+  max-width: auto !important;
+  padding: 0;
+}
+
+
 .card {
-  position: relative;
   overflow: hidden;
-  transition: transform 0.3s;
-  width: 280px;
+  width: 220px;
   height: 340px;
-  justify-content: flex-end;
   border: 1px solid #ccc;
 
-  &:hover {
-    transform: scale(1.1);
+  .img-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 160px;
+    margin: 5px;
+  }
+
+  .card-body {
+    padding-top: 0;
   }
 }
 
-.card:hover {
-  transform: scale(1.1);
+.img {
+  max-width: 215px;
+  max-height: 160px;
 }
 
 .card-link {
@@ -26,7 +38,46 @@
   color: inherit;
 }
 
-.img {
-  max-width: 280px;
-  max-height: 200px;
+.button-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  opacity: 1;
+  z-index: 100;
+}
+
+.badge {
+  color: #000;
+  background-color: #f3f3f3;
+  border: none;
+  border-width: 1px;
+  text-decoration: none;
+}
+
+@media screen and (max-width: 575px) {
+  .row {
+    margin: 0;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .row {
+   justify-content: center;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .card:hover .button-container {
+    opacity: 1;
+  }
+
+  .card {
+    transition: transform 0.3s;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
 }

@@ -43,14 +43,11 @@ export default {
 
             .catch((error) => {
                 if (error.response) {
-                    // Handle response error (e.g., HTTP status 422)
                     console.log(error.response.data);
                     this.errorList = error.response.data.errors;
                 } else if (error.request) {
-                    // Handle network error (e.g., server not reachable)
                     console.log(error.request);
                 } else {
-                    // Handle other errors
                     console.log('Error', error.message);
                 }
             });
@@ -60,13 +57,16 @@ export default {
 </script>
 
 <template>
-    <div class="container">
+    <div class="attribute-container">
         <div class="logo">
             <img src="\favicon.ico" alt="Logo" style="height: 60px; width: 60px;">
         </div>
         <div class="logoText">
             <h1>Create an Account</h1>  
         </div>
+    </div>
+    
+    <div> 
         <div class="card">
              <div class="card-body">
                 <div v-if="successMessage" class="alert alert-success">

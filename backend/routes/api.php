@@ -39,7 +39,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Categories
     Route::post('categories', [CategoriesContoller::class, 'store']);
-    Route::get('categories/{id}', [CategoriesContoller::class, 'show']);
     Route::get('categories/{id}/edit', [CategoriesContoller::class, 'edit']);
     Route::put('categories/{id}/edit', [CategoriesContoller::class, 'update']);
     Route::delete('categories/{id}/delete', [CategoriesContoller::class, 'destroy']);
@@ -67,6 +66,7 @@ Route::get('/front-page-items', [ItemsController::class, 'frontPageItems']);
 
 // Categories API
 Route::get('categories', [CategoriesContoller::class, 'index']);
+Route::get('categories/{id}', [CategoriesContoller::class, 'show']);
 
 // Favorite Items API
 Route::get('favorites', [FavoriteItemsController::class, 'index']);

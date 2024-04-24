@@ -30,7 +30,7 @@ export default {
   </div>
   <div class="container">
     <div class="row">
-      <div v-for="brand in brands" :key="brand.id" class="col-md-3 mb-4">
+      <div v-for="brand in brands" :key="brand.id" class="col-auto mb-4">
         <router-link :to="{path: '/brand/'+brand.id+'/products'}" class="card-link">
           <div class="card">
             <img class="img" v-if="brand.img" :src="'http://localhost:8000/storage/uploads/' + brand.img"

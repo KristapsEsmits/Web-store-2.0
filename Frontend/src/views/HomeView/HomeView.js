@@ -14,6 +14,19 @@ export default {
     getItems() {
       axios.get('/front-page-items').then((res) => {
         this.items = res.data.items;
+        this.items.forEach(item => {
+          const relatedTableId = item.categories_id;
+          axios.get(`/categories`).then((response) => {
+              const categories = response.data.categories.filter(category => category.id === parseInt(relatedTableId));
+              
+              const categoriesName = categories.map(category => category.category_name);
+
+              item.categories_id = categoriesName[0];
+
+          }).catch((error) => {
+              console.error('Error fetching related data:', error);
+          });
+        });
       });
     },
 

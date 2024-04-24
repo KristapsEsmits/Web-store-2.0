@@ -14,7 +14,6 @@ export default {
   methods: {
     getItems() {
       const itemId = this.$route.params.id;
-      // Fetch item details based on the specified item ID
       axios.get(`/items/${itemId}`).then((res) => {
         this.items = res.data.items;
       });

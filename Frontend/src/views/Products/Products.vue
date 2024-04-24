@@ -2,6 +2,7 @@
   <div class="header">
     <h1>All Products</h1>
   </div>
+  
   <div class="container">
     <div class="filter">
       <h1>Filters</h1>
@@ -20,18 +21,33 @@
       <input v-model.number="filters.maxPrice" placeholder="Max Price" type="number">
       <button @click="getItems">Apply Filters</button>
     </div>
+  </div>
+
+  <div class="container">
     <div class="row">
-      <div v-for="item in items" :key="item.id" class="col-md-3 mb-4">
-        <router-link :to="{path: '/product/'+item.id+''}" class="card-link">
-          <div class="card">
-            <img class="img" v-if="item.img" :src="'http://localhost:8000/storage/uploads/' + item.img"
-                 alt="Item Image">
+      <div v-for="item in items" :key="item.id" class="col-auto mb-4">
+        <div class="card">
+          <router-link :to="{path: '/product/'+item.id+''}" class="card-link">
+            <div class="img-container">
+              <img class="img" v-if="item.img" :src="'http://localhost:8000/storage/uploads/' + item.img" alt="Item Image">
+            </div>
             <div class="card-body">
+              <button class="badge badge-pill badge-secondary">{{ item.categories_id }}</button>
               <h5 class="card-title">{{ item.name }}</h5>
               <h5 class="card-title">{{ item.price }}€</h5>
             </div>
+          </router-link>
+          <div class="button-container">
+            <button class="btn">
+              <i class="bi bi-cart"></i>
+              Cart
+            </button>
+            <button class="btn">
+              <i class="bi bi-star"></i>
+              Favorites
+            </button>
           </div>
-        </router-link>
+       </div>
       </div>
     </div>
   </div>
@@ -45,8 +61,6 @@ export default {
   data() {
     return {
       items: [],
-      categories: [],
-      brands: [],
       filters: {
         category: '',
         brand: '',
@@ -57,35 +71,26 @@ export default {
   },
 
   mounted() {
-    this.getCategories();
-    this.getBrands();
     this.getItems();
   },
 
   methods: {
     getItems() {
-      const queryParams = new URLSearchParams({
-        category: this.filters.category,
-        brand: this.filters.brand,
-        min_price: this.filters.minPrice,
-        max_price: this.filters.maxPrice
-      }).toString();
-      const url = `/items?${queryParams}`;
-
-      axios.get(url).then((res) => {
+      axios.get('/front-page-items').then((res) => {
         this.items = res.data.items;
-      });
-    },
+        this.items.forEach(item => {
+          const relatedTableId = item.categories_id;
+          axios.get(`/categories`).then((response) => {
+              const categories = response.data.categories.filter(category => category.id === parseInt(relatedTableId));
+              
+              const categoriesName = categories.map(category => category.category_name);
 
-    getCategories() {
-      axios.get('/categories').then((res) => {
-        this.categories = res.data.categories;
-      });
-    },
+              item.categories_id = categoriesName[0];
 
-    getBrands() {
-      axios.get('/brands').then((res) => {
-        this.brands = res.data.brands;
+          }).catch((error) => {
+              console.error('Error fetching related data:', error);
+          });
+        });
       });
     },
   },

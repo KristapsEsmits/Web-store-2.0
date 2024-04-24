@@ -24,7 +24,7 @@ const loginUser = async () => {
     router.push('/');
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      errorMessage.value = 'Wrong email or password. Please try again.';
+      errorMessage.value = 'Incorrect email or password. Please try again';
     } else {
       errorMessage.value = 'An unexpected error occurred. Please try again later.';
     }
@@ -43,14 +43,10 @@ const loginUser = async () => {
       </div>
     </div>
 
-
     <div class="card">
       <div class="card-body">
         <div v-if="errorMessage" class="alert alert-danger">
           {{ errorMessage }}
-        </div>
-        <div v-if="successMessage" class="alert alert-success">
-          {{ successMessage }}
         </div>
         <form>
           <div class="form-floating mb-3">
@@ -70,14 +66,12 @@ const loginUser = async () => {
         </form>
       </div>
     </div>
+
     <div class="noMember">
-      <p>Not a member?
-        <RouterLink to="/register">Register</RouterLink>
-      </p>
+      <p>Not a member? <RouterLink to="/register">Register</RouterLink></p>
     </div>
 </template>
 
 <style scoped>
 @import './Login.scss';
 </style>
-```

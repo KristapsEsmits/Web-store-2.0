@@ -3,10 +3,6 @@
     justify-content: center;
 }
 
-.container {
-    margin-top: 20px;
-}
-
 .card {
     display: flex;
     justify-content: center;
@@ -21,8 +17,19 @@
     height: 40px;
 }
 
+.form-control:focus {
+    border-color: #b3b3b3;
+    box-shadow: none;
+  }
+
 .Member {
     display: flex;
     justify-content: center;
     margin-top: 20px;
+}
+
+@media screen and (max-width: 375px){
+    .card {
+      width: 300px;
+    }
 }

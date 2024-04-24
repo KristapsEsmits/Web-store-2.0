@@ -12,26 +12,34 @@ export default {
 
   mounted() {
     this.getItems();
-    this.getBrands(); // Call the getBrands method here
+    this.getBrands();
   },
 
   methods: {
     getItems() {
       const brandId = this.$route.params.id;
-      // Fetching items based on the specified brand_id
-      axios.get(`/items?brand_id=${brandId}`).then((res) => {
-        // Filter items to display only those with the specified brand_id
+      axios.get(`/items`).then((res) => {
         this.items = res.data.items.filter(item => item.brand_id === parseInt(brandId));
+        this.items.forEach(item => {
+            const relatedTableId = item.categories_id;
+            axios.get(`/categories`).then((response) => {
+                const categories = response.data.categories.filter(category => category.id === parseInt(relatedTableId));
+                
+                const categoriesName = categories.map(category => category.category_name);
+
+                item.categories_id = categoriesName[0];
+
+            }).catch((error) => {
+                console.error('Error fetching related data:', error);
+            });
+        });
       });
     },
 
     getBrands() {
       const brandId = this.$route.params.id;
-      axios.get(`/brands?brand_id=${brandId}`).then((res) => {
-        // Filter brands to display only the one with the specified brand_id
+      axios.get(`/brands`).then((res) => {
         this.brands = res.data.brands.filter(brand => brand.id === parseInt(brandId));
-      }).catch(error => {
-        console.error('Error fetching brand:', error);
       });
     },
   },
@@ -42,19 +50,32 @@ export default {
   <div class="header">
     <h1 v-for="brand in brands"> {{ brand.name }} Products</h1>
   </div>
+  
   <div class="container">
     <div class="row">
-      <div v-for="item in items" :key="item.id" class="col-md-3 mb-4">
-        <router-link :to="{path: '/product/'+item.id+''}" class="card-link">
-          <div class="card">
-            <img class="img" v-if="item.img" :src="'http://localhost:8000/storage/uploads/' + item.img"
-                 alt="Item Image">
+      <div v-for="item in items" :key="item.id" class="col-auto mb-4">
+        <div class="card">
+          <router-link :to="{path: '/product/'+item.id+''}" class="card-link">
+            <div class="img-container">
+              <img class="img" v-if="item.img" :src="'http://localhost:8000/storage/uploads/' + item.img" alt="Item Image">
+            </div>
             <div class="card-body">
+              <button class="badge badge-pill badge-secondary">{{item.categories_id}}</button>
               <h5 class="card-title">{{ item.name }}</h5>
               <h5 class="card-title">{{ item.price }}€</h5>
             </div>
+          </router-link>
+          <div class="button-container">
+            <button class="btn">
+              <i class="bi bi-cart"></i>
+              Cart
+            </button>
+            <button class="btn">
+              <i class="bi bi-star"></i>
+              Favorites
+            </button>
           </div>
-        </router-link>
+       </div>
       </div>
     </div>
   </div>

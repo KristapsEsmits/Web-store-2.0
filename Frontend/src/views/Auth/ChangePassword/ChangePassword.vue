@@ -1,47 +1,48 @@
 <script setup>
-// import { ref, onMounted } from 'vue';
-// import axios from 'axios';
-// import router from '../../router';
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import router from '../../../router';
 
-// const user = ref(null);
-// const newPassword = ref('');
-// const passwordConfirmation = ref('');
-// const errorList = ref({});
+const user = ref(null);
+const currentPassword = ref(''); // Define currentPassword
+const newPassword = ref('');
+const newPasswordConfirmation = ref('');
+const errorList = ref({});
 
-// onMounted(async () => {
-//   try {
-//     const response = await axios.get('/user');
-//     user.value = response.data;
-//   } catch (error) {
-//     if (error.response && error.response.status === 401) {
-//       await router.push({ name: 'login' });
-//     }
-//   }
-// });
+onMounted(async () => {
+  try {
+    const response = await axios.get('/user');
+    user.value = response.data;
+  } catch (error) {
+    if (error.response && error.response.status === 401) {
+      await router.push({ name: 'login' });
+    }
+  }
+});
 
-// const changePassword = async () => {
-//   try {
-//     const response = await axios.put(`profile/change-password/${user.value.id}`, {
-//       current_password: user.value.password,
-//       new_password: newPassword.value,
-//       password_confirmation: passwordConfirmation.value,
-//     });
+const changePassword = async () => {
+  try {
+    const response = await axios.put(`/profile/change-password/${user.value.id}`, {
+      current_password: currentPassword.value, // Use currentPassword.value
+      new_password: newPassword.value,
+      password_confirmation: newPasswordConfirmation.value,
+    });
     
-//     router.push({ name: 'profile', query: { successMessage: response.data.message } });
+    router.push({ name: 'profile', query: { successMessage: response.data.message } });
 
-//   } catch (error) {
-//     if (error.response && error.response.status === 422) {
-//       errorList.value = error.response.data.errors;
-//       console.error('Validation errors:', errorList.value);
-//     } else {
-//       console.error('Error updating password:', error.message);
-//     }
-//   }
-// };
+  } catch (error) {
+    if (error.response && error.response.status === 422) {
+      errorList.value = error.response.data.errors;
+      console.error('Validation errors:', errorList.value);
+    } else {
+      console.error('Error updating password:', error.message);
+    }
+  }
+};
 
-// const updateExit = () => {
-//   router.push('/profile');
-// };
+const updateExit = () => {
+  router.push('/profile');
+};
 
 </script>
 
