@@ -1,12 +1,12 @@
-import { createApp } from 'vue';
-import { createPinia } from 'pinia';
+import {createApp} from 'vue';
+import {createPinia} from 'pinia';
 
 import axios from 'axios'
 import '../axios';
 import './assets/main.css';
 import App from './App.vue';
 import router from './router';
-import 'bootstrap' ;
+import 'bootstrap';
 
 const app = createApp(App);
 const pinia = createPinia();

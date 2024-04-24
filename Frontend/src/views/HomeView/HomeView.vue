@@ -1,7 +1,7 @@
 <template>
   <div class="home-wrapper">
     <div id="carouselExampleIndicators" class="carousel slide mb-4" data-bs-ride="carousel"
-       style="margin: auto;">
+         style="margin: auto;">
       <div class="carousel-inner">
         <div class="carousel-item active">
           <img alt="First slide" class="d-block w-100" src="/1.webp">
@@ -13,18 +13,18 @@
           <img alt="Third slide" class="d-block w-100" src="/3.webp">
         </div>
       </div>
-      <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <a class="carousel-control-prev" data-bs-slide="prev" href="#carouselExampleIndicators" role="button">
+        <span aria-hidden="true" class="carousel-control-prev-icon"></span>
       </a>
-      <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <a class="carousel-control-next" data-bs-slide="next" href="#carouselExampleIndicators" role="button">
+        <span aria-hidden="true" class="carousel-control-next-icon"></span>
       </a>
     </div>
   </div>
 
   <div class="newProducts">
     <h1>New Products</h1>
-    <router-link to="/products" class="viewAll">View all</router-link>
+    <router-link class="viewAll" to="/products">View all</router-link>
   </div>
 
   <div class="container">
@@ -33,7 +33,8 @@
         <div class="card">
           <router-link :to="{path: '/product/'+item.id+''}" class="card-link">
             <div class="img-container">
-              <img class="img" v-if="item.img" :src="'http://localhost:8000/storage/uploads/' + item.img" alt="Item Image">
+              <img v-if="item.img" :src="'http://localhost:8000/storage/uploads/' + item.img" alt="Item Image"
+                   class="img">
             </div>
             <div class="card-body">
               <button class="badge badge-pill badge-secondary">{{ item.categories_id }}</button>
@@ -51,7 +52,7 @@
               Favorites
             </button>
           </div>
-       </div>
+        </div>
       </div>
     </div>
   </div>

@@ -12,7 +12,7 @@ onMounted(async () => {
     user.value = response.data;
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      await router.push({ name: 'login' });
+      await router.push({name: 'login'});
     }
   }
 });
@@ -28,7 +28,7 @@ const updateUser = async () => {
 
     const userResponse = await axios.get('/user');
     user.value = userResponse.data;
-    router.push({ name: 'profile', query: { successMessage: response.data.message } });
+    router.push({name: 'profile', query: {successMessage: response.data.message}});
 
   } catch (error) {
     if (error.response && error.response.status === 422) {
@@ -47,39 +47,39 @@ const updateExit = () => {
 </script>
 
 <template>
-  <div class="container mt-5" v-if="user">
+  <div v-if="user" class="container mt-5">
     <div class="logo">
-      <img src="\favicon.ico" alt="Logo" style="height: 60px; width: 60px;">
+      <img alt="Logo" src="\favicon.ico" style="height: 60px; width: 60px;">
     </div>
     <div class="logoText">
       <h1>Profile information</h1>
     </div>
     <div class="card">
       <div class="card-body">
-        <ul class="alert alert-danger" v-if="Object.keys(errorList).length > 0">
-          <li class="mb-0 ms-3" v-for="(error, index) in errorList" :key="index">
+        <ul v-if="Object.keys(errorList).length > 0" class="alert alert-danger">
+          <li v-for="(error, index) in errorList" :key="index" class="mb-0 ms-3">
             {{ error[0] }}
           </li>
         </ul>
         <div class="form-floating mb-3">
-          <input type="text" v-model="user.name" class="form-control" placeholder="Name"/>
+          <input v-model="user.name" class="form-control" placeholder="Name" type="text"/>
           <label for="Name">Name</label>
         </div>
         <div class="form-floating mb-3">
-          <input type="text" v-model="user.surname" class="form-control" placeholder="Surname"/>
+          <input v-model="user.surname" class="form-control" placeholder="Surname" type="text"/>
           <label for="Surname">Surname</label>
         </div>
         <div class="form-floating mb-3">
-          <input type="text" v-model="user.phone" class="form-control" placeholder="Phone number"/>
+          <input v-model="user.phone" class="form-control" placeholder="Phone number" type="text"/>
           <label for="Phone number">Phone number</label>
         </div>
         <div class="form-floating mb-3">
-          <input type="text" v-model="user.email" class="form-control" placeholder="Email"/>
+          <input v-model="user.email" class="form-control" placeholder="Email" type="text"/>
           <label for="Email">Email</label>
         </div>
         <div class="mb-3">
-          <button type="button" @click="updateUser" class="btn btn-primary updateBtn">Update</button>
-          <button type="button" @click="updateExit" class="btn btn-danger">Cancel</button>
+          <button class="btn btn-primary updateBtn" type="button" @click="updateUser">Update</button>
+          <button class="btn btn-danger" type="button" @click="updateExit">Cancel</button>
         </div>
       </div>
     </div>
@@ -87,5 +87,5 @@ const updateExit = () => {
 </template>
 
 <style scoped>
-  @import './EditData.scss';
+@import './EditData.scss';
 </style>

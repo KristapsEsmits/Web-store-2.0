@@ -4,28 +4,28 @@
       <li>
         <router-link to="/admin">
           <button v-if="isSidebarOpen" class="btn"><i class="bi bi-house"></i></button>
-          <button class="btn" v-else>Home</button>
+          <button v-else class="btn">Home</button>
         </router-link>
       </li>
 
       <li>
         <router-link to="/admin/brands">
-          <button class="btn" v-if="isSidebarOpen">B</button>
-          <button class="btn" v-else>Brands</button>
+          <button v-if="isSidebarOpen" class="btn">B</button>
+          <button v-else class="btn">Brands</button>
         </router-link>
       </li>
 
       <li>
         <router-link to="/admin/items">
-          <button class="btn" v-if="isSidebarOpen">I</button>
-          <button class="btn" v-else>Items</button>
+          <button v-if="isSidebarOpen" class="btn">I</button>
+          <button v-else class="btn">Items</button>
         </router-link>
       </li>
 
       <li>
         <router-link to="/admin/categories">
           <button v-if="isSidebarOpen" class="btn"><i class="bi bi-box-seam"></i></button>
-          <button class="btn" v-else>Categories</button>
+          <button v-else class="btn">Categories</button>
         </router-link>
       </li>
 

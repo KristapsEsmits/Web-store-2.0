@@ -33,8 +33,8 @@ export default {
       <div v-for="brand in brands" :key="brand.id" class="col-auto mb-4">
         <router-link :to="{path: '/brand/'+brand.id+'/products'}" class="card-link">
           <div class="card">
-            <img class="img" v-if="brand.img" :src="'http://localhost:8000/storage/uploads/' + brand.img"
-                 alt="Brand Image">
+            <img v-if="brand.img" :src="'http://localhost:8000/storage/uploads/' + brand.img" alt="Brand Image"
+                 class="img">
           </div>
         </router-link>
       </div>

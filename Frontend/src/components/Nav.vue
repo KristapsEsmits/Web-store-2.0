@@ -61,23 +61,24 @@ export default {
     <div class="wrapper">
       <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-          <RouterLink to="/" class="navbar-brand">
-            <img src="/favicon.ico" alt="Logo" style="height: 30px; width: 30px;">
+          <RouterLink class="navbar-brand" to="/">
+            <img alt="Logo" src="/favicon.ico" style="height: 30px; width: 30px;">
             Frenko
           </RouterLink>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                  data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                  aria-label="Toggle navigation">
+          <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+                  class="navbar-toggler" data-bs-target="#navbarSupportedContent" data-bs-toggle="collapse"
+                  type="button">
             <span class="navbar-toggler-icon"></span>
           </button>
-          
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+          <div id="navbarSupportedContent" class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <RouterLink to="/" class="nav-link">Home</RouterLink>
+                <RouterLink class="nav-link" to="/">Home</RouterLink>
               </li>
               <li class="nav-item dropdown">
-                <a id="navbarDropdown" aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
+                <a id="navbarDropdown" aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
+                   href="#"
                    role="button">
                   Products
                 </a>
@@ -92,7 +93,7 @@ export default {
                 </ul>
               </li>
               <li class="nav-item">
-                <RouterLink to="/brands" class="nav-link">Brands</RouterLink>
+                <RouterLink class="nav-link" to="/brands">Brands</RouterLink>
               </li>
             </ul>
 
@@ -103,7 +104,7 @@ export default {
                   Favorites
                 </button>
               </li>
-              
+
               <li class="nav-item">
                 <button class="btn">
                   <i class="bi bi-cart"></i>
@@ -111,27 +112,28 @@ export default {
                 </button>
               </li>
 
-              <li class="nav-item" v-if="!isLoggedIn">
-                <RouterLink to="/login" class="nav-link">Login</RouterLink>
+              <li v-if="!isLoggedIn" class="nav-item">
+                <RouterLink class="nav-link" to="/login">Login</RouterLink>
               </li>
 
-              <li class="nav-item dropdown" v-if="isLoggedIn">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <li v-if="isLoggedIn" class="nav-item dropdown">
+                <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
+                   role="button">
                   <i class="bi bi-person-fill"></i>
                   {{ user?.name }} {{ user?.surname }}
                 </a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <ul aria-labelledby="navbarDropdown" class="dropdown-menu">
                   <li>
-                    <RouterLink to="/profile" class="dropdown-item">My Profile</RouterLink>
+                    <RouterLink class="dropdown-item" to="/profile">My Profile</RouterLink>
                   </li>
                   <li class="nav-item">
-                      <RouterLink to="/admin" class="dropdown-item">Admin</RouterLink>
+                    <RouterLink class="dropdown-item" to="/admin">Admin</RouterLink>
                   </li>
                   <li class="dropdown-divider"></li>
                   <li class="nav-item">
                     <button class="dropdown-item" @click="logout">
-                        <i class="bi bi-box-arrow-right"></i>
-                        Logout
+                      <i class="bi bi-box-arrow-right"></i>
+                      Logout
                     </button>
                   </li>
                 </ul>
@@ -145,12 +147,12 @@ export default {
 </template>
 
 <style scoped>
-  .bar {
-    background-color: #f8f9fa;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 100;
-  }
+.bar {
+  background-color: #f8f9fa;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+}
 </style>

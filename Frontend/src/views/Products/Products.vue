@@ -2,7 +2,7 @@
   <div class="header">
     <h1>All Products</h1>
   </div>
-  
+
   <div class="container">
     <div class="filter">
       <h1>Filters</h1>
@@ -29,7 +29,8 @@
         <div class="card">
           <router-link :to="{path: '/product/'+item.id+''}" class="card-link">
             <div class="img-container">
-              <img class="img" v-if="item.img" :src="'http://localhost:8000/storage/uploads/' + item.img" alt="Item Image">
+              <img v-if="item.img" :src="'http://localhost:8000/storage/uploads/' + item.img" alt="Item Image"
+                   class="img">
             </div>
             <div class="card-body">
               <button class="badge badge-pill badge-secondary">{{ item.categories_id }}</button>
@@ -47,7 +48,7 @@
               Favorites
             </button>
           </div>
-       </div>
+        </div>
       </div>
     </div>
   </div>
@@ -81,14 +82,14 @@ export default {
         this.items.forEach(item => {
           const relatedTableId = item.categories_id;
           axios.get(`/categories`).then((response) => {
-              const categories = response.data.categories.filter(category => category.id === parseInt(relatedTableId));
-              
-              const categoriesName = categories.map(category => category.category_name);
+            const categories = response.data.categories.filter(category => category.id === parseInt(relatedTableId));
 
-              item.categories_id = categoriesName[0];
+            const categoriesName = categories.map(category => category.category_name);
+
+            item.categories_id = categoriesName[0];
 
           }).catch((error) => {
-              console.error('Error fetching related data:', error);
+            console.error('Error fetching related data:', error);
           });
         });
       });

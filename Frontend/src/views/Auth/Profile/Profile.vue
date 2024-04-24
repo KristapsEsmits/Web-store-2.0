@@ -5,8 +5,8 @@ import axios from 'axios';
 
 const users = ref([]);
 const isLoading = ref(true);
-const router = useRouter(); 
-const successMessage = ref(router.currentRoute.value.query.successMessage || ''); 
+const router = useRouter();
+const successMessage = ref(router.currentRoute.value.query.successMessage || '');
 
 const dismissSuccessMessage = () => {
   successMessage.value = '';
@@ -18,7 +18,7 @@ onMounted(async () => {
     users.value = data.data;
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      await router.push({ name: 'login' });
+      await router.push({name: 'login'});
     }
   } finally {
     isLoading.value = false;
@@ -30,8 +30,8 @@ onMounted(async () => {
   <main>
     <div class="container">
       <div v-if="successMessage" class="alert alert-success d-flex justify-content-between align-items-center">
-          <span>{{ successMessage }}</span>
-          <button type="button" class="btn-close" @click="dismissSuccessMessage"></button>
+        <span>{{ successMessage }}</span>
+        <button class="btn-close" type="button" @click="dismissSuccessMessage"></button>
       </div>
       <div class="card">
         <div class="card-body">
@@ -50,5 +50,5 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-  @import './Profile.scss';
+@import './Profile.scss';
 </style>

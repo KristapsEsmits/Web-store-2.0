@@ -74,7 +74,7 @@ onMounted(() => {
     </div>
   </div>
 </template>
-  
+
 <style scoped>
 @import './Dashboard.scss';
 </style>

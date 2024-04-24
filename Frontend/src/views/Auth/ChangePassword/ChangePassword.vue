@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import {onMounted, ref} from 'vue';
 import axios from 'axios';
 import router from '../../../router';
 
@@ -15,7 +15,7 @@ onMounted(async () => {
     user.value = response.data;
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      await router.push({ name: 'login' });
+      await router.push({name: 'login'});
     }
   }
 });
@@ -27,8 +27,8 @@ const changePassword = async () => {
       new_password: newPassword.value,
       password_confirmation: newPasswordConfirmation.value,
     });
-    
-    router.push({ name: 'profile', query: { successMessage: response.data.message } });
+
+    router.push({name: 'profile', query: {successMessage: response.data.message}});
 
   } catch (error) {
     if (error.response && error.response.status === 422) {
@@ -47,32 +47,32 @@ const updateExit = () => {
 </script>
 
 <template>
-  <div class="container mt-5" v-if="user">
+  <div v-if="user" class="container mt-5">
     <div class="card">
       <div class="card-header">
         <h4 class="card-title">Change Password</h4>
       </div>
       <div class="card-body">
-        <ul class="alert alert-danger" v-if="Object.keys(errorList).length > 0">
-          <li class="mb-0 ms-3" v-for="(error, index) in errorList" :key="index">
+        <ul v-if="Object.keys(errorList).length > 0" class="alert alert-danger">
+          <li v-for="(error, index) in errorList" :key="index" class="mb-0 ms-3">
             {{ Array.isArray(error) ? error[0] : error }}
           </li>
         </ul>
         <div class="mb-3">
           <label for="currentPassword">Current Password</label>
-          <input type="password" v-model="currentPassword" class="form-control" />
+          <input v-model="currentPassword" class="form-control" type="password"/>
         </div>
         <div class="mb-3">
           <label for="newPassword">New Password</label>
-          <input type="password" v-model="newPassword" class="form-control" />
+          <input v-model="newPassword" class="form-control" type="password"/>
         </div>
         <div class="mb-3">
           <label for="confirmPassword">Confirm New Password</label>
-          <input type="password" v-model="newPasswordConfirmation" class="form-control" />
+          <input v-model="newPasswordConfirmation" class="form-control" type="password"/>
         </div>
         <div class="mb-3">
-          <button type="button" @click="changePassword" class="btn btn-primary">Change Password</button>
-          <button type="button" @click="updateExit" class="btn btn-danger">Cancel</button>
+          <button class="btn btn-primary" type="button" @click="changePassword">Change Password</button>
+          <button class="btn btn-danger" type="button" @click="updateExit">Cancel</button>
         </div>
       </div>
     </div>
@@ -80,5 +80,5 @@ const updateExit = () => {
 </template>
 
 <style scoped>
-  @import './ChangePassword.scss';
+@import './ChangePassword.scss';
 </style>

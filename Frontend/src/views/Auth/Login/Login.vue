@@ -34,42 +34,44 @@ const loginUser = async () => {
 </script>
 
 <template>
-    <div class="attribute-container">
-      <div class="logo">
-        <img src="\favicon.ico" alt="Logo" style="height: 60px; width: 60px;">
-      </div>
-      <div class="logoText">
-        <h1>Sign in to Frenko</h1>
-      </div>
+  <div class="attribute-container">
+    <div class="logo">
+      <img alt="Logo" src="\favicon.ico" style="height: 60px; width: 60px;">
     </div>
+    <div class="logoText">
+      <h1>Sign in to Frenko</h1>
+    </div>
+  </div>
 
-    <div class="card">
-      <div class="card-body">
-        <div v-if="errorMessage" class="alert alert-danger">
-          {{ errorMessage }}
+  <div class="card">
+    <div class="card-body">
+      <div v-if="errorMessage" class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+      <form>
+        <div class="form-floating mb-3">
+          <input id="floatingInput" v-model="form.email" class="form-control" placeholder="name@example.com"
+                 type="email">
+          <label for="floatingInput">Email address</label>
         </div>
-        <form>
-          <div class="form-floating mb-3">
-            <input type="email" id="floatingInput" class="form-control" v-model="form.email"
-                   placeholder="name@example.com">
-            <label for="floatingInput">Email address</label>
-          </div>
-          <div class="form-floating mb-2">
-            <input type="password" id="floatingInput" class="form-control" v-model="form.password"
-                   placeholder="Password">
-            <label for="floatingInput">Password</label>
-          </div>
-          <div class="text mb-3">
-            <a href="#!">Forgot password?</a>
-          </div>
-          <button type="button" @click="loginUser" class="btn btn-primary loginbtn">Login</button>
-        </form>
-      </div>
+        <div class="form-floating mb-2">
+          <input id="floatingInput" v-model="form.password" class="form-control" placeholder="Password"
+                 type="password">
+          <label for="floatingInput">Password</label>
+        </div>
+        <div class="text mb-3">
+          <a href="#!">Forgot password?</a>
+        </div>
+        <button class="btn btn-primary loginbtn" type="button" @click="loginUser">Login</button>
+      </form>
     </div>
+  </div>
 
-    <div class="noMember">
-      <p>Not a member? <RouterLink to="/register">Register</RouterLink></p>
-    </div>
+  <div class="noMember">
+    <p>Not a member?
+      <RouterLink to="/register">Register</RouterLink>
+    </p>
+  </div>
 </template>
 
 <style scoped>

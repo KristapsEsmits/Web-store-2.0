@@ -24,17 +24,17 @@ export default {
     handleImageUpload(event) {
       this.model.item.img = event.target.files[0];
     },
-    
-    async saveItem() {
-    const formData = new FormData();
-    formData.append('name', this.model.item.name);
-    formData.append('description', this.model.item.description);
-    formData.append('price', this.model.item.price);
-    formData.append('brand_id', this.model.item.brand_id); // Include 'brand_id'
-      formData.append('categories_id', this.model.item.categories_id);
-    formData.append('img', this.model.item.img);
 
-    try {
+    async saveItem() {
+      const formData = new FormData();
+      formData.append('name', this.model.item.name);
+      formData.append('description', this.model.item.description);
+      formData.append('price', this.model.item.price);
+      formData.append('brand_id', this.model.item.brand_id); // Include 'brand_id'
+      formData.append('categories_id', this.model.item.categories_id);
+      formData.append('img', this.model.item.img);
+
+      try {
         const res = await axios.post('/items', formData);
         const successMessage = res.data.message;
         this.$router.push('/admin/items?successMessage=' + successMessage);
@@ -46,16 +46,16 @@ export default {
         this.model.item.img = null;
 
         this.errorList = {};
-    } catch (error) {
+      } catch (error) {
         if (error.response && error.response.status === 422) {
-            this.errorList = error.response.data.errors;
+          this.errorList = error.response.data.errors;
         } else if (error.request) {
-            console.log(error.request);
+          console.log(error.request);
         } else {
-            console.log('Error', error.message);
+          console.log('Error', error.message);
         }
-    }
-},
+      }
+    },
 
 
     Exit() {
@@ -80,7 +80,7 @@ export default {
       }
     },
   },
-  mounted() { 
+  mounted() {
     this.getBrands();
     this.getCategories();
   },
@@ -89,52 +89,52 @@ export default {
 
 
 <template>
-    <div class="container mt-5">
-      <div class="card">
-        <div class="card-header">
-          <h4>Add Item</h4>
+  <div class="container mt-5">
+    <div class="card">
+      <div class="card-header">
+        <h4>Add Item</h4>
+      </div>
+      <div class="card-body">
+        <ul v-if="Object.keys(errorList).length > 0" class="alert alert-danger">
+          <li v-for="(error, index) in errorList" :key="index" class="mb-0 ms-3">
+            {{ error[0] }}
+          </li>
+        </ul>
+        <div class="input-group-prepend mb-3">
+          <label for="Brand">Category</label>
+          <select v-model="model.item.categories_id" class="custom-select form-control">
+            <option v-for="categories in categories" :key="categories.id" :value="categories.id">
+              {{ categories.category_name }}
+            </option>
+          </select>
         </div>
-        <div class="card-body">
-          <ul class="alert alert-danger" v-if="Object.keys(errorList).length > 0">
-            <li class="mb-0 ms-3" v-for="(error, index) in errorList" :key="index">
-              {{ error[0] }}
-            </li>
-          </ul>
-          <div class="input-group-prepend mb-3">
-            <label for="Brand">Category</label>
-            <select v-model="model.item.categories_id" class="custom-select form-control">
-              <option v-for="categories in categories" :key="categories.id" :value="categories.id">
-                {{ categories.category_name }}
-              </option>
-            </select>
-          </div>
-          <div class="input-group-prepend mb-3">
-            <label for="Brand">Brand</label>
-            <select v-model="model.item.brand_id" class="custom-select form-control">
-              <option v-for="brand in brands" :key="brand.id" :value="brand.id">{{ brand.name }}</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label for="Name">Name</label>
-            <input type="text" v-model="model.item.name" class="form-control" />
-          </div>
-          <div class="mb-3">
-            <label for="Name">Description</label>
-            <input type="text" v-model="model.item.description" class="form-control" />
-          </div>
-          <div class="mb-3">
-            <label for="Name">Price</label>
-            <input type="text" v-model="model.item.price" class="form-control" />
-          </div>
-          <div class="mb-3">
-            <label for="Image">Image</label>
-            <input type="file" @change="handleImageUpload" class="form-control" />
-          </div>
-          <div class="mb-3">
-            <button type="button" @click="saveItem" class="btn btn-primary">Save</button>
-            <button type="button" @click="Exit" class="btn btn-danger">Cancel</button>
-          </div>
+        <div class="input-group-prepend mb-3">
+          <label for="Brand">Brand</label>
+          <select v-model="model.item.brand_id" class="custom-select form-control">
+            <option v-for="brand in brands" :key="brand.id" :value="brand.id">{{ brand.name }}</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="Name">Name</label>
+          <input v-model="model.item.name" class="form-control" type="text"/>
+        </div>
+        <div class="mb-3">
+          <label for="Name">Description</label>
+          <input v-model="model.item.description" class="form-control" type="text"/>
+        </div>
+        <div class="mb-3">
+          <label for="Name">Price</label>
+          <input v-model="model.item.price" class="form-control" type="text"/>
+        </div>
+        <div class="mb-3">
+          <label for="Image">Image</label>
+          <input class="form-control" type="file" @change="handleImageUpload"/>
+        </div>
+        <div class="mb-3">
+          <button class="btn btn-primary" type="button" @click="saveItem">Save</button>
+          <button class="btn btn-danger" type="button" @click="Exit">Cancel</button>
         </div>
       </div>
     </div>
-  </template>
+  </div>
+</template>

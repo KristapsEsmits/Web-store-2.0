@@ -10,7 +10,7 @@ export default {
   name: 'categories',
   data() {
     return {
-        categories: [],
+      categories: [],
       successMessage: '',
     };
   },
@@ -32,24 +32,24 @@ export default {
     },
 
     deleteTest(categoriestId) {
-    if (confirm('Are you sure?')) {
-      axios.delete(`/categories/${categoriestId}/delete`)
-        .then((res) => {
-          this.successMessage = res.data.message;
-          this.getCategories();
-        })
-        .catch((error) => {
-          if (error.response && error.response.status === 422) {
-            console.error('Validation errors:', error.response.data.errors);
-          } else {
-            console.error('Error deleting test:', error.message);
-          }
-        });
-    }
-  },
+      if (confirm('Are you sure?')) {
+        axios.delete(`/categories/${categoriestId}/delete`)
+            .then((res) => {
+              this.successMessage = res.data.message;
+              this.getCategories();
+            })
+            .catch((error) => {
+              if (error.response && error.response.status === 422) {
+                console.error('Validation errors:', error.response.data.errors);
+              } else {
+                console.error('Error deleting test:', error.message);
+              }
+            });
+      }
+    },
 
     dismissSuccessMessage() {
-      this.successMessage = ''; 
+      this.successMessage = '';
     },
   },
 };
@@ -60,31 +60,32 @@ export default {
     <AdminNav :isSidebarOpen="isSidebarOpen" @toggleSidebar="toggleSidebar"/>
     <div v-if="successMessage" class="alert alert-success d-flex justify-content-between align-items-center">
       <span>{{ successMessage }}</span>
-      <button type="button" class="btn-close" @click="dismissSuccessMessage"></button>
+      <button class="btn-close" type="button" @click="dismissSuccessMessage"></button>
     </div>
     <div class="card">
       <div class="card-header">
         <h4 class="card-title">Categories
-          <router-link to="/admin/categories/create" class="btn btn-primary btn-round btn-fill float-end">Add Category</router-link>
+          <router-link class="btn btn-primary btn-round btn-fill float-end" to="/admin/categories/create">Add Category
+          </router-link>
         </h4>
       </div>
       <div class="card-body">
         <table class="table table-bordered">
           <thead>
-            <tr>
-              <th>Category ID</th>
-              <th>Category Name</th>
-            </tr>
+          <tr>
+            <th>Category ID</th>
+            <th>Category Name</th>
+          </tr>
           </thead>
           <tbody>
-            <tr v-for="(categories, index) in this.categories" :key="index">
-              <td>{{ categories.id}}</td>
-              <td>{{ categories.category_name }}</td>
-              <td class="d-flex justify-content-center">
-                <!-- <router-link :to="{path: '/test/'+test.id+'/edit'}" class="btn btn-success float-middle">Edit</router-link> -->
-                <button type="button" @click="deleteTest(categories.id)" class="btn btn-danger">Delete</button>
-              </td>
-            </tr>
+          <tr v-for="(categories, index) in this.categories" :key="index">
+            <td>{{ categories.id }}</td>
+            <td>{{ categories.category_name }}</td>
+            <td class="d-flex justify-content-center">
+              <!-- <router-link :to="{path: '/test/'+test.id+'/edit'}" class="btn btn-success float-middle">Edit</router-link> -->
+              <button class="btn btn-danger" type="button" @click="deleteTest(categories.id)">Delete</button>
+            </td>
+          </tr>
           </tbody>
         </table>
       </div>
@@ -93,12 +94,12 @@ export default {
 </template>
 
 <style scoped>
-  .card {
-    margin-top: 20px;
-    margin-left: 20px;
-  }
+.card {
+  margin-top: 20px;
+  margin-left: 20px;
+}
 
-  .wrapper {
-    display: flex;
-  }
+.wrapper {
+  display: flex;
+}
 </style>
