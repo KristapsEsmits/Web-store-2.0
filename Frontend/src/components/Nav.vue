@@ -99,10 +99,10 @@ export default {
 
             <ul class="navbar-nav ml-auto">
               <li class="nav-item">
-                <button class="btn">
+                <RouterLink class="nav-link" to="/favorites">
                   <i class="bi bi-star"></i>
                   Favorites
-                </button>
+                </RouterLink>
               </li>
 
               <li class="nav-item">

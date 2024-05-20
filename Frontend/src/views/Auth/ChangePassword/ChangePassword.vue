@@ -4,7 +4,7 @@ import axios from 'axios';
 import router from '../../../router';
 
 const user = ref(null);
-const currentPassword = ref(''); // Define currentPassword
+const currentPassword = ref('');
 const newPassword = ref('');
 const newPasswordConfirmation = ref('');
 const errorList = ref({});
@@ -23,13 +23,12 @@ onMounted(async () => {
 const changePassword = async () => {
   try {
     const response = await axios.put(`/profile/change-password/${user.value.id}`, {
-      current_password: currentPassword.value, // Use currentPassword.value
-      new_password: newPassword.value,
+      current_password: currentPassword.value,
+      password: newPassword.value,
       password_confirmation: newPasswordConfirmation.value,
     });
 
     router.push({name: 'profile', query: {successMessage: response.data.message}});
-
   } catch (error) {
     if (error.response && error.response.status === 422) {
       errorList.value = error.response.data.errors;
@@ -43,7 +42,6 @@ const changePassword = async () => {
 const updateExit = () => {
   router.push('/profile');
 };
-
 </script>
 
 <template>
@@ -60,15 +58,15 @@ const updateExit = () => {
         </ul>
         <div class="mb-3">
           <label for="currentPassword">Current Password</label>
-          <input v-model="currentPassword" class="form-control" type="password"/>
+          <input id="currentPassword" v-model="currentPassword" class="form-control" type="password"/>
         </div>
         <div class="mb-3">
           <label for="newPassword">New Password</label>
-          <input v-model="newPassword" class="form-control" type="password"/>
+          <input id="newPassword" v-model="newPassword" class="form-control" type="password"/>
         </div>
         <div class="mb-3">
           <label for="confirmPassword">Confirm New Password</label>
-          <input v-model="newPasswordConfirmation" class="form-control" type="password"/>
+          <input id="confirmPassword" v-model="newPasswordConfirmation" class="form-control" type="password"/>
         </div>
         <div class="mb-3">
           <button class="btn btn-primary" type="button" @click="changePassword">Change Password</button>

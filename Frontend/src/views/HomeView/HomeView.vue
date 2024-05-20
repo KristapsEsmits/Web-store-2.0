@@ -1,16 +1,9 @@
 <template>
   <div class="home-wrapper">
-    <div id="carouselExampleIndicators" class="carousel slide mb-4" data-bs-ride="carousel"
-         style="margin: auto;">
+    <div id="carouselExampleIndicators" class="carousel slide mb-4" data-bs-ride="carousel" style="margin: auto;">
       <div class="carousel-inner">
-        <div class="carousel-item active">
-          <img alt="First slide" class="d-block w-100" src="/1.webp">
-        </div>
-        <div class="carousel-item">
-          <img alt="Second slide" class="d-block w-100" src="/2.webp">
-        </div>
-        <div class="carousel-item">
-          <img alt="Third slide" class="d-block w-100" src="/3.webp">
+        <div v-for="(image, index) in carouselImages" :key="index" :class="['carousel-item', { active: index === 0 }]">
+          <img :alt="image.alt" :src="image.src" class="d-block w-100">
         </div>
       </div>
       <a class="carousel-control-prev" data-bs-slide="prev" href="#carouselExampleIndicators" role="button">
@@ -31,23 +24,22 @@
     <div class="row">
       <div v-for="item in items" :key="item.id" class="col-auto mb-4">
         <div class="card">
-          <router-link :to="{path: '/product/'+item.id+''}" class="card-link">
+          <router-link :to="{ path: '/product/' + item.id }" class="card-link">
             <div class="img-container">
-              <img v-if="item.img" :src="'http://localhost:8000/storage/uploads/' + item.img" alt="Item Image"
-                   class="img">
+              <img v-if="item.img" :src="getImageUrl(item.img)" alt="Item Image" class="img">
             </div>
             <div class="card-body">
-              <button class="badge badge-pill badge-secondary">{{ item.categories_id }}</button>
+              <button class="badge badge-pill badge-secondary">{{ item.category_name }}</button>
               <h5 class="card-title">{{ item.name }}</h5>
               <h5 class="card-title">{{ item.price }}€</h5>
             </div>
           </router-link>
           <div class="button-container">
-            <button class="btn">
+            <button class="btn" @click="addToCart(item.id)">
               <i class="bi bi-cart"></i>
               Cart
             </button>
-            <button class="btn">
+            <button class="btn" @click="addToFavorites(item.id)">
               <i class="bi bi-star"></i>
               Favorites
             </button>
@@ -56,8 +48,8 @@
       </div>
     </div>
   </div>
-
 </template>
+
 
 <script>
 import HomeView from './HomeView.js';

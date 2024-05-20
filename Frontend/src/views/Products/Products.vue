@@ -25,15 +25,15 @@
 
   <div class="container">
     <div class="row">
-      <div v-for="item in items" :key="item.id" class="col-auto mb-4">
+      <div v-for="item in filteredItems" :key="item.id" class="col-auto mb-4">
         <div class="card">
-          <router-link :to="{path: '/product/'+item.id+''}" class="card-link">
+          <router-link :to="{ path: '/product/' + item.id }" class="card-link">
             <div class="img-container">
               <img v-if="item.img" :src="'http://localhost:8000/storage/uploads/' + item.img" alt="Item Image"
                    class="img">
             </div>
             <div class="card-body">
-              <button class="badge badge-pill badge-secondary">{{ item.categories_id }}</button>
+              <button class="badge badge-pill badge-secondary">{{ item.category_name }}</button>
               <h5 class="card-title">{{ item.name }}</h5>
               <h5 class="card-title">{{ item.price }}€</h5>
             </div>
@@ -43,7 +43,7 @@
               <i class="bi bi-cart"></i>
               Cart
             </button>
-            <button class="btn">
+            <button class="btn" @click="addToFavorites(item.id)">
               <i class="bi bi-star"></i>
               Favorites
             </button>
@@ -62,6 +62,8 @@ export default {
   data() {
     return {
       items: [],
+      categories: [],
+      brands: [],
       filters: {
         category: '',
         brand: '',
@@ -72,31 +74,99 @@ export default {
   },
 
   mounted() {
-    this.getItems();
+    this.getItemsAndCategories();
+  },
+
+  computed: {
+    filteredItems() {
+      return this.items.filter(item => {
+        return (
+            (!this.filters.category || item.categories_id === this.filters.category) &&
+            (!this.filters.brand || item.brand_id === this.filters.brand) &&
+            (!this.filters.minPrice || item.price >= this.filters.minPrice) &&
+            (!this.filters.maxPrice || item.price <= this.filters.maxPrice)
+        );
+      });
+    }
   },
 
   methods: {
-    getItems() {
-      axios.get('/front-page-items').then((res) => {
-        this.items = res.data.items;
-        this.items.forEach(item => {
-          const relatedTableId = item.categories_id;
-          axios.get(`/categories`).then((response) => {
-            const categories = response.data.categories.filter(category => category.id === parseInt(relatedTableId));
+    async getItemsAndCategories() {
+      try {
+        const [itemsResponse, categoriesResponse, brandsResponse] = await Promise.all([
+          axios.get('/front-page-items'),
+          axios.get('/categories'),
+          axios.get('/brands')
+        ]);
 
-            const categoriesName = categories.map(category => category.category_name);
+        const items = itemsResponse.data.items;
+        const categories = categoriesResponse.data.categories;
+        const brands = brandsResponse.data.brands;
 
-            item.categories_id = categoriesName[0];
-
-          }).catch((error) => {
-            console.error('Error fetching related data:', error);
-          });
+        // Create a map of category IDs to category names for quick lookup
+        const categoryMap = {};
+        categories.forEach(category => {
+          categoryMap[category.id] = category.category_name;
         });
-      });
+
+        // Assign category names to items
+        this.items = items.map(item => {
+          return {
+            ...item,
+            category_name: categoryMap[item.categories_id] || 'Unknown'
+          };
+        });
+
+        this.categories = categories;
+        this.brands = brands;
+      } catch (error) {
+        console.error('Error fetching items, categories, or brands:', error);
+      }
     },
-  },
+
+    async getItems() {
+      try {
+        const params = {
+          category: this.filters.category,
+          brand: this.filters.brand,
+          minPrice: this.filters.minPrice,
+          maxPrice: this.filters.maxPrice
+        };
+
+        const response = await axios.get('/front-page-items', {params});
+
+        const items = response.data.items;
+
+        const categoryMap = {};
+        this.categories.forEach(category => {
+          categoryMap[category.id] = category.category_name;
+        });
+
+        this.items = items.map(item => {
+          return {
+            ...item,
+            category_name: categoryMap[item.categories_id] || 'Unknown'
+          };
+        });
+      } catch (error) {
+        console.error('Error fetching filtered items:', error);
+      }
+    },
+
+    addToFavorites(itemId) {
+      const userId = this.loggedInUserId;
+      axios.post('/favorite-item', {user_id: userId, item_id: itemId})
+          .then(response => {
+            console.log(response.data.message);
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+    }
+  }
 };
 </script>
+
 
 <style scoped>
 @import "./Products.scss";

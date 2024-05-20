@@ -1,46 +1,76 @@
 import axios from 'axios';
 
 export default {
-    name: 'items',
-    data() {
-        return {
-            items: [],
-        };
+  name: 'items',
+  data() {
+    return {
+      items: [],
+      categories: {},
+      carouselImages: [
+        {src: '/1.webp', alt: 'First slide'},
+        {src: '/2.webp', alt: 'Second slide'},
+        {src: '/3.webp', alt: 'Third slide'}
+      ],
+      user: null
+    };
+  },
+  async mounted() {
+    await this.getItemsAndCategories();
+    await this.fetchUserData();
+  },
+  methods: {
+    async getItemsAndCategories() {
+      try {
+        // Fetch items and categories concurrently
+        const [itemsResponse, categoriesResponse] = await Promise.all([
+          axios.get('http://127.0.0.1:8000/api/front-page-items'),
+          axios.get('http://127.0.0.1:8000/api/categories')
+        ]);
+
+        const items = itemsResponse.data.items;
+        const categories = categoriesResponse.data.categories;
+
+        // Create a map of category IDs to category names for quick lookup
+        const categoryMap = {};
+        categories.forEach(category => {
+          categoryMap[category.id] = category.category_name;
+        });
+
+        this.items = items.map(item => {
+          return {
+            ...item,
+            category_name: categoryMap[item.categories_id] || 'Unknown'
+          };
+        });
+      } catch (error) {
+        console.error('Error fetching items or categories:', error);
+      }
     },
-    mounted() {
-        this.getItems();
+    async fetchUserData() {
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/api/user');
+        this.user = response.data;
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
     },
-    methods: {
-        getItems() {
-            axios.get('/front-page-items').then((res) => {
-                this.items = res.data.items;
-                this.items.forEach(item => {
-                    const relatedTableId = item.categories_id;
-                    axios.get(`/categories`).then((response) => {
-                        const categories = response.data.categories.filter(category => category.id === parseInt(relatedTableId));
-
-                        const categoriesName = categories.map(category => category.category_name);
-
-                        item.categories_id = categoriesName[0];
-
-                    }).catch((error) => {
-                        console.error('Error fetching related data:', error);
-                    });
-                });
-            });
-        },
-
-        addToFavorites(itemId) {
-            const userId = this.loggedInUserId; // You need to define the logged-in user ID
-            axios.post('/favorite-item', {user_id: userId, item_id: itemId})
-                .then(response => {
-                    console.log(response.data.message);
-                    // Optionally, show a success message or update UI
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    // Optionally, show an error message or handle the error
-                });
+    getImageUrl(image) {
+      return `http://localhost:8000/storage/uploads/${image}`;
+    },
+    addToCart(itemId) {
+    },
+    async addToFavorites(itemId) {
+      try {
+        const userId = this.user.id;
+        const response = await axios.post('http://127.0.0.1:8000/api/favorites', {user_id: userId, item_id: itemId});
+        console.log(response.data.message);
+      } catch (error) {
+        if (error.response && error.response.status === 409) {
+          console.error('Item already in favorites');
+        } else {
+          console.error('Error adding to favorites:', error);
         }
-    },
+      }
+    }
+  }
 };

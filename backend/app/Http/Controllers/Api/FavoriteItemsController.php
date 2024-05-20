@@ -2,21 +2,20 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Favorites;
+use App\Models\FavoriteItems;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class FavoriteItemsController extends Controller
 {
-
     public function index()
     {
-        $categories = Favorites::all();
-        if ($categories->count() > 0) {
+        $favorites = FavoriteItems::all();
+        if ($favorites->count() > 0) {
             return response()->json([
                 'status' => 200,
-                'categories' => $categories,
+                'favorites' => $favorites,
             ], 200);
         } else {
             return response()->json([
@@ -28,23 +27,44 @@ class FavoriteItemsController extends Controller
 
     public function store(Request $request)
     {
-        $favoriteItem = new Favorites();
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|exists:users,id',
+            'item_id' => 'required|exists:items,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 422,
+                'errors' => $validator->messages(),
+            ], 422);
+        }
+
+        $existingFavorite = FavoriteItems::where('user_id', $request->user_id)
+            ->where('item_id', $request->item_id)
+            ->first();
+
+        if ($existingFavorite) {
+            return response()->json([
+                'status' => 409,
+                'message' => 'Item already in favorites',
+            ], 409);
+        }
+
+        $favoriteItem = new FavoriteItems();
         $favoriteItem->user_id = $request->user_id;
         $favoriteItem->item_id = $request->item_id;
         $favoriteItem->save();
 
-        // Optionally, return a response indicating success
-        return response()->json(['message' => 'Favorite item saved successfully']);
+        return response()->json(['message' => 'Favorite item saved successfully'], 200);
     }
-
 
     public function show($id)
     {
-        $categories = Favorites::find($id);
-        if ($categories) {
+        $favorite = FavoriteItems::find($id);
+        if ($favorite) {
             return response()->json([
                 'status' => 200,
-                'categories' => $categories,
+                'favorite' => $favorite,
             ], 200);
         } else {
             return response()->json([

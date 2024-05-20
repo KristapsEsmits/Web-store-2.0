@@ -56,6 +56,15 @@
   text-decoration: none;
 }
 
+.loading-message, .sorry-message {
+  text-align: center;
+  margin: 20px 0;
+
+  h2 {
+    color: #ff0000;
+  }
+}
+
 @media screen and (max-width: 575px) {
   .row {
     margin: 0;

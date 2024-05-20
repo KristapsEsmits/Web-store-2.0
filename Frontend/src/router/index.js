@@ -99,6 +99,11 @@ const router = createRouter({
             name: '/admin/categories/:id/edit',
             component: () => import('../views/Admin/categories/edit-categories/edit-categories.vue'),
         },
+        {
+            path: '/favorites',
+            name: '/favorites',
+            component: () => import('../views/Favorites/Favorites.vue'),
+        },
     ]
 })
 
