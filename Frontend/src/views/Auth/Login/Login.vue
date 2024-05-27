@@ -10,7 +10,6 @@ const form = ref({
 });
 
 const errorMessage = ref(null);
-const successMessage = ref(null);
 
 const loginUser = async () => {
   try {
@@ -20,6 +19,7 @@ const loginUser = async () => {
     });
 
     localStorage.setItem('access_token', res.data.access_token);
+    localStorage.setItem('user', JSON.stringify(res.data.user)); // Ensure user object includes admin property
     axios.defaults.headers.authorization = `Bearer ${res.data.access_token}`;
     router.push('/');
   } catch (error) {
@@ -36,7 +36,7 @@ const loginUser = async () => {
 <template>
   <div class="attribute-container">
     <div class="logo">
-      <img alt="Logo" src="\favicon.ico" style="height: 60px; width: 60px;">
+      <img alt="Logo" src="/favicon.ico" style="height: 60px; width: 60px;">
     </div>
     <div class="logoText">
       <h1>Sign in to Frenko</h1>

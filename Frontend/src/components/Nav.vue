@@ -75,9 +75,26 @@ export default {
         this.categories = res.data.categories;
       });
     },
+
+    navigateToCart() {
+      if (!this.isLoggedIn) {
+        this.$router.push('/login');
+      } else {
+        this.$router.push('/cart');
+      }
+    },
+
+    navigateToFavorites() {
+      if (!this.isLoggedIn) {
+        this.$router.push('/login');
+      } else {
+        this.$router.push('/favorites');
+      }
+    }
   },
 };
 </script>
+
 
 <template>
   <header class="bar">
@@ -116,18 +133,17 @@ export default {
 
             <ul class="navbar-nav ml-auto">
               <li class="nav-item">
-                <RouterLink class="nav-link" to="/favorites">
+                <a class="nav-link" @click.prevent="navigateToFavorites">
                   <i class="bi bi-star"></i>
                   Favorites <span v-if="favoritesCount">({{ favoritesCount }})</span>
-                </RouterLink>
+                </a>
               </li>
 
               <li class="nav-item">
-                <RouterLink class="nav-link" to="/cart">
+                <a class="nav-link" @click.prevent="navigateToCart">
                   <i class="bi bi-cart"></i>
                   Cart <span v-if="cartCount">({{ cartCount }})</span>
-                </RouterLink>
-                
+                </a>
               </li>
 
               <li v-if="!isLoggedIn" class="nav-item">
@@ -174,3 +190,4 @@ export default {
   z-index: 100;
 }
 </style>
+

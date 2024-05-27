@@ -1,115 +1,148 @@
-import {createRouter, createWebHistory} from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router';
+
+const routes = [
+    {
+        path: '/',
+        name: 'home',
+        component: () => import('../views/HomeView/HomeView.vue'),
+        meta: { tabName: 'Home' },
+    },
+    {
+        path: '/login',
+        name: 'login',
+        component: () => import('../views/Auth/Login/Login.vue'),
+        meta: { requiresGuest: true },
+    },
+    {
+        path: '/register',
+        name: 'register',
+        component: () => import('../views/Auth/Register/Register.vue'),
+        meta: { requiresGuest: true },
+    },
+    {
+        path: '/admin',
+        name: 'admin',
+        component: () => import('../views/Admin/Dashboard/Admin.vue'),
+        meta: { requiresAdmin: true },
+    },
+    {
+        path: '/profile',
+        name: 'profile',
+        component: () => import('../views/Auth/Profile/Profile.vue'),
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/profile/edit',
+        name: 'profile/edit',
+        component: () => import('../views/Auth/EditData/EditData.vue'),
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/profile/change-password',
+        name: 'profile/change-password',
+        component: () => import('../views/Auth/ChangePassword/ChangePassword.vue'),
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/admin/brands',
+        name: 'admin/brands',
+        component: () => import('../views/Admin/Brands/Brands.vue'),
+        meta: { requiresAdmin: true }
+    },
+    {
+        path: '/admin/brands/create',
+        name: 'admin/brands/create',
+        component: () => import('../views/Admin/Brands/Create.vue'),
+        meta: { requiresAdmin: true }
+    },
+    {
+        path: '/admin/brands/:id/edit',
+        name: 'admin/brands/edit',
+        component: () => import('../views/Admin/Brands/Edit.vue'),
+        meta: { requiresAdmin: true }
+    },
+    {
+        path: '/brands',
+        name: 'brands',
+        component: () => import('../views/Brands/Brands.vue'),
+    },
+    {
+        path: '/brand/:id/products',
+        name: 'brand-products',
+        component: () => import('../views/BrandProducts/BrandProducts.vue'),
+    },
+    {
+        path: '/products',
+        name: 'products',
+        component: () => import('../views/Products/Products.vue'),
+    },
+    {
+        path: '/product/:id',
+        name: 'product',
+        component: () => import('../views/ProductView/ProductView.vue'),
+    },
+    {
+        path: '/admin/items',
+        name: 'admin/items',
+        component: () => import('../views/Admin/Items/Items.vue'),
+        meta: { requiresAdmin: true }
+    },
+    {
+        path: '/admin/items/create',
+        name: 'admin/items/create',
+        component: () => import('../views/Admin/Items/Create.vue'),
+        meta: { requiresAdmin: true }
+    },
+    {
+        path: '/admin/categories',
+        name: 'admin/categories',
+        component: () => import('../views/Admin/categories/categories-table/categories.vue'),
+        meta: { requiresAdmin: true }
+    },
+    {
+        path: '/admin/categories/create',
+        name: 'admin/categories/create',
+        component: () => import('../views/Admin/categories/create-categories/create-categories.vue'),
+        meta: { requiresAdmin: true }
+    },
+    {
+        path: '/admin/categories/:id/edit',
+        name: 'admin/categories/edit',
+        component: () => import('../views/Admin/categories/edit-categories/edit-categories.vue'),
+        meta: { requiresAdmin: true }
+    },
+    {
+        path: '/favorites',
+        name: 'favorites',
+        component: () => import('../views/Favorites/Favorites.vue'),
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/cart',
+        name: 'cart',
+        component: () => import('../views/Cart/Cart.vue'),
+        meta: { requiresAuth: true }
+    },
+];
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
-    routes: [
-        {
-            path: '/',
-            name: 'home',
-            component: () => import('../views/HomeView/HomeView.vue'),
-            meta: {tabName: 'Home'},
-        },
-        {
-            path: '/login',
-            name: 'login',
-            component: () => import('../views/Auth/Login/Login.vue'),
-        },
-        {
-            path: '/register',
-            name: 'register',
-            component: () => import('../views/Auth/Register/Register.vue'),
-        },
-        {
-            path: '/admin',
-            name: 'admin',
-            component: () => import('../views/Admin/Dashboard/Admin.vue'),
-        },
-        {
-            path: '/profile',
-            name: 'profile',
-            component: () => import('../views/Auth/Profile/Profile.vue'),
-        },
-        {
-            path: '/profile/edit',
-            name: 'profile/edit',
-            component: () => import('../views/Auth/EditData/EditData.vue'),
-        },
-        {
-            path: '/profile/change-password',
-            name: 'profile/change-password',
-            component: () => import('../views/Auth/ChangePassword/ChangePassword.vue'),
-        },
-        {
-            path: '/admin/brands',
-            name: 'admin/brands',
-            component: () => import('../views/Admin/Brands/Brands.vue'),
-        },
-        {
-            path: '/admin/brands/create',
-            name: 'admin/brands/create',
-            component: () => import('../views/Admin/Brands/Create.vue'),
-        },
-        {
-            path: '/admin/brands/:id/edit',
-            name: 'admin/brands/edit',
-            component: () => import('../views/Admin/Brands/Edit.vue'),
-        },
-        {
-            path: '/brands',
-            name: 'brands',
-            component: () => import('../views/Brands/Brands.vue'),
-        },
-        {
-            path: '/brand/:id/products',
-            name: 'brand-products',
-            component: () => import('../views/BrandProducts/BrandProducts.vue'),
-        },
-        {
-            path: '/products',
-            name: 'products',
-            component: () => import('../views/Products/Products.vue'),
-        },
-        {
-            path: '/product/:id',
-            name: 'product',
-            component: () => import('../views/ProductView/ProductView.vue'),
-        },
-        {
-            path: '/admin/items',
-            name: 'admin/items',
-            component: () => import('../views/Admin/Items/Items.vue'),
-        },
-        {
-            path: '/admin/items/create',
-            name: 'admin/items/create',
-            component: () => import('../views/Admin/Items/Create.vue'),
-        },
-        {
-            path: '/admin/categories',
-            name: '/admin/categories',
-            component: () => import('../views/Admin/categories/categories-table/categories.vue'),
-        },
-        {
-            path: '/admin/categories/create',
-            name: '/admin/categories/create',
-            component: () => import('../views/Admin/categories/create-categories/create-categories.vue'),
-        },
-        {
-            path: '/admin/categories/:id/edit',
-            name: '/admin/categories/:id/edit',
-            component: () => import('../views/Admin/categories/edit-categories/edit-categories.vue'),
-        },
-        {
-            path: '/favorites',
-            name: '/favorites',
-            component: () => import('../views/Favorites/Favorites.vue'),
-        },
-        {
-            path: '/cart',
-            name: '/cart',
-            component: () => import('../views/Cart/Cart.vue'),
-        },
-    ]
-})
+    routes,
+});
 
-export default router
+router.beforeEach((to, from, next) => {
+    const isLoggedIn = !!localStorage.getItem('access_token');
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    if (to.matched.some(record => record.meta.requiresAuth) && !isLoggedIn) {
+        next({ name: 'login' });
+    } else if (to.matched.some(record => record.meta.requiresAdmin) && (!user || user.admin !== 1)) {
+        next({ name: 'login' });
+    } else if (to.matched.some(record => record.meta.requiresGuest) && isLoggedIn) {
+        next({ name: 'home' });
+    } else {
+        next();
+    }
+});
+
+export default router;

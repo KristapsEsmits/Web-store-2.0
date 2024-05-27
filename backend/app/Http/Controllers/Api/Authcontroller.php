@@ -19,6 +19,7 @@ class AuthController extends Controller
             'password' => 'required|string|max:255|confirmed',
             'phone' => 'required|numeric|digits_between:4,16|unique:users',
             'email' => 'required|email|unique:users',
+            'admin' => 'boolean',
         ]);
 
         $validated['password'] = bcrypt($validated['password']);
@@ -46,12 +47,12 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'User logged in successfully!',
                 'access_token' => $token,
+                'user' => $user,
             ], 200);
         } else {
             return response()->json([
                 'message' => 'Invalid credentials!',
             ], 401);
-
         }
     }
 
@@ -72,7 +73,6 @@ class AuthController extends Controller
     {
         $user = User::findOrFail($id);
 
-        // Validate the request data
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'surname' => 'required|string|max:255',
@@ -84,6 +84,7 @@ class AuthController extends Controller
                 'max:255',
                 Rule::unique('users')->ignore($user->id),
             ],
+            'admin' => 'boolean',
         ]);
 
         if ($validator->fails()) {
@@ -94,26 +95,7 @@ class AuthController extends Controller
             ], 422);
         }
 
-        // Checks if email or phone number has changed
-        if ($request->email !== $user->email || $request->phone !== $user->phone) {
-            // Checks if the new email or phone number is already used by other users
-            if (
-                User::where('email', $request->email)->where('id', '!=', $user->id)->exists() ||
-                User::where('phone', $request->phone)->where('id', '!=', $user->id)->exists()
-            ) {
-                return response()->json([
-                    'status' => 422,
-                    'message' => 'Email or phone number is already in use by other users.',
-                ], 422);
-            }
-        }
-
-        $user->update([
-            'name' => $request->name,
-            'surname' => $request->surname,
-            'phone' => $request->phone,
-            'email' => $request->email,
-        ]);
+        $user->update($request->all());
 
         return response()->json([
             'status' => 200,
@@ -145,7 +127,6 @@ class AuthController extends Controller
             ], 422);
         }
 
-        // Check if the provided current password matches the stored password
         if (password_verify($request->current_password, $user->password)) {
             $user->update([
                 'password' => bcrypt($request->password),
@@ -174,3 +155,4 @@ class AuthController extends Controller
         ], 200);
     }
 }
+
