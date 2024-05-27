@@ -93,6 +93,9 @@ Route::get('user-amount', [AuthController::class, 'userAmount']);
 
 // Cart API
 Route::get('cart/user/{userId}', [CartController::class, 'getUserCart']);
+Route::delete('cart/clear/{userId}', [CartController::class, 'clearCartByUserId']);
+Route::get('cart/user/{userId}/count', [CartController::class, 'getUserCartCount']);
+Route::delete('cart/{id}', [CartController::class, 'destroyByCartId']);
 
 // Purchase API
 Route::post('purchases', [PurchaseController::class, 'store']);

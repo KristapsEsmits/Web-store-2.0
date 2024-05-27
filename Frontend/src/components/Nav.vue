@@ -9,6 +9,7 @@ export default {
       user: null,
       categories: [],
       favoritesCount: 0,
+      cartCount: 0,
     };
   },
 
@@ -17,6 +18,7 @@ export default {
     if (this.isLoggedIn) {
       await this.fetchUserData();
       await this.fetchFavoritesCount();
+      await this.fetchCartCount();
     }
     this.getCategories();
   },
@@ -42,6 +44,17 @@ export default {
           this.favoritesCount = response.data.count;
         } catch (error) {
           console.error('Error fetching favorites count:', error);
+        }
+      }
+    },
+
+    async fetchCartCount() {
+      if (this.user && this.user.id) {
+        try {
+          const response = await axios.get(`/cart/user/${this.user.id}/count`);
+          this.cartCount = response.data.count;
+        } catch (error) {
+          console.error('Error fetching cart count:', error);
         }
       }
     },
@@ -111,7 +124,8 @@ export default {
 
               <li class="nav-item">
                 <RouterLink class="nav-link" to="/cart">
-                  <i class="bi bi-cart"></i>Cart
+                  <i class="bi bi-cart"></i>
+                  Cart <span v-if="cartCount">({{ cartCount }})</span>
                 </RouterLink>
                 
               </li>

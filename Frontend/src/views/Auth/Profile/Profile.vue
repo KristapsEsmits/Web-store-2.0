@@ -1,7 +1,9 @@
 <script setup>
-import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import {onMounted, ref} from 'vue';
+import {useRouter} from 'vue-router';
 import axios from 'axios';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const user = ref(null);
 const isLoading = ref(true);
@@ -18,16 +20,58 @@ const groupPurchasesByTime = (purchases) => {
   purchases.forEach(purchase => {
     const date = new Date(purchase.created_at);
     const roundedTime = new Date(Math.round(date.getTime() / 10000) * 10000).toLocaleTimeString();
-    if (!grouped[roundedTime]) {
-      grouped[roundedTime] = {
+    const fullDate = date.toLocaleDateString();
+    if (!grouped[`${fullDate} ${roundedTime}`]) {
+      grouped[`${fullDate} ${roundedTime}`] = {
         items: [],
-        totalPrice: 0
+        totalPrice: 0,
+        createdAt: purchase.created_at
       };
     }
-    grouped[roundedTime].items.push(purchase);
-    grouped[roundedTime].totalPrice += parseFloat(purchase.total_price);
+    grouped[`${fullDate} ${roundedTime}`].items.push(purchase);
+    grouped[`${fullDate} ${roundedTime}`].totalPrice += parseFloat(purchase.total_price);
   });
   return grouped;
+};
+
+const generatePDF = (time, purchaseGroup) => {
+  const doc = new jsPDF();
+  let yPosition = 20;
+
+  doc.setFontSize(18);
+  doc.text('Frenko', 105, yPosition, null, null, 'center');
+  yPosition += 10;
+
+  doc.setFontSize(14);
+  doc.text('Purchase History', 105, yPosition, null, null, 'center');
+  yPosition += 10;
+
+  doc.setFontSize(12);
+  doc.text(`Purchased At: ${purchaseGroup.createdAt}`, 10, yPosition);
+  yPosition += 10;
+
+  doc.setLineWidth(0.5);
+  doc.line(10, yPosition, 200, yPosition);
+  yPosition += 10;
+
+  purchaseGroup.items.forEach(purchase => {
+    doc.setFontSize(12);
+    doc.text(`Item: ${purchase.item.name}`, 10, yPosition);
+    yPosition += 5;
+
+    doc.text(`Price: ${purchase.total_price}€`, 10, yPosition);
+    yPosition += 10;
+  });
+
+  doc.setLineWidth(0.5);
+  doc.line(10, yPosition, 200, yPosition);
+  yPosition += 10;
+
+  doc.setFontSize(12);
+  doc.text(`Total price: ${purchaseGroup.totalPrice.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}€`, 10, yPosition);
+  yPosition += 10;
+
+  doc.save(`purchase_history_${time}.pdf`);
 };
 
 onMounted(async () => {
@@ -45,7 +89,6 @@ onMounted(async () => {
     isLoading.value = false;
   }
 });
-
 </script>
 
 <template>
@@ -60,8 +103,8 @@ onMounted(async () => {
           <router-link :to="{ path: '/profile/change-password' }" class="float-end nav-link">Change password</router-link>
           <router-link :to="{ path: '/profile/edit' }" class="actionBtn float-end nav-link">Update data</router-link>
           <h1>{{ user?.name }} {{ user?.surname }}</h1>
-          <h2>Number {{ user?.phone }}</h2>
-          <h2>Email {{ user?.email }}</h2>
+          <h2>Number: {{ user?.phone }}</h2>
+          <h2>Email: {{ user?.email }}</h2>
         </div>
       </div>
 
@@ -73,8 +116,11 @@ onMounted(async () => {
             <div v-else>
               <ul class="list-group">
                 <li v-for="(purchaseGroup, time) in purchaseHistory" :key="time" class="list-group-item">
-                  <div>
-                    <strong>Purchased At:</strong> {{ time }}
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <strong>Purchased At:</strong> {{ created_at }}{{ time }}
+                    </div>
+                    <button class="btn btn-primary" @click="generatePDF(time, purchaseGroup)">Print as PDF</button>
                   </div>
                   <ul>
                     <li v-for="purchase in purchaseGroup.items" :key="purchase.id">
@@ -86,7 +132,7 @@ onMounted(async () => {
                       </div>
                     </li>
                   </ul>
-                  <h2>Total price: {{ purchaseGroup.totalPrice }}€</h2>
+                  <h2>Total price: {{ purchaseGroup.totalPrice.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') }}€</h2>
                 </li>
               </ul>
             </div>
@@ -96,11 +142,6 @@ onMounted(async () => {
     </div>
   </main>
 </template>
-
-
-<style scoped>
-@import './Profile.scss';
-</style>
 
 <style scoped>
 @import './Profile.scss';
