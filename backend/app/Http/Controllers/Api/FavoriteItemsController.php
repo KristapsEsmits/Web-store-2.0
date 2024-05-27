@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Api;
 
 use App\Models\FavoriteItems;
@@ -71,6 +70,44 @@ class FavoriteItemsController extends Controller
                 'status' => 404,
                 'message' => 'No listing found',
             ], 404);
+        }
+    }
+
+    public function userFavoritesCount($userId)
+    {
+        $count = FavoriteItems::where('user_id', $userId)->count();
+        return response()->json([
+            'status' => 200,
+            'count' => $count,
+        ], 200);
+    }
+
+    public function isFavorite($userId, $itemId)
+    {
+        $isFavorite = FavoriteItems::where('user_id', $userId)->where('item_id', $itemId)->exists();
+        return response()->json([
+            'status' => 200,
+            'isFavorite' => $isFavorite,
+        ], 200);
+    }
+
+    public function destroyByItemId(Request $request)
+    {
+        try {
+            $userId = Auth::id();
+            $itemId = $request->input('item_id');
+            $favorite = FavoriteItems::where('user_id', $userId)
+                ->where('item_id', $itemId)
+                ->first();
+
+            if ($favorite) {
+                $favorite->delete();
+                return response()->json(['message' => 'Favorite item removed successfully'], 200);
+            } else {
+                return response()->json(['message' => 'Favorite item not found'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Server error while removing favorite item', 'error' => $e->getMessage()], 500);
         }
     }
 }

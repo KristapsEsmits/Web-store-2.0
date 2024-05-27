@@ -2,21 +2,25 @@
 import axios from 'axios';
 
 export default {
-  name: 'Register',
+  name: 'NavBar',
   data() {
     return {
       isLoggedIn: false,
       user: null,
       categories: [],
+      favoritesCount: 0,
     };
   },
 
   async created() {
     this.isLoggedIn = await this.isUserLoggedIn();
     if (this.isLoggedIn) {
-      this.fetchUserData();
+      await this.fetchUserData();
+      await this.fetchFavoritesCount();
     }
+    this.getCategories();
   },
+
   methods: {
     async isUserLoggedIn() {
       return !!localStorage.getItem('access_token');
@@ -28,7 +32,17 @@ export default {
         this.user = response.data;
       } catch (error) {
         console.error('Error fetching user data:', error);
-        // Handle error accordingly
+      }
+    },
+
+    async fetchFavoritesCount() {
+      if (this.user && this.user.id) {
+        try {
+          const response = await axios.get(`/user/${this.user.id}/favorites-count`);
+          this.favoritesCount = response.data.count;
+        } catch (error) {
+          console.error('Error fetching favorites count:', error);
+        }
       }
     },
 
@@ -44,14 +58,10 @@ export default {
     },
 
     getCategories() {
-      axios.get('/api/categories').then((res) => {
+      axios.get('/categories').then((res) => {
         this.categories = res.data.categories;
       });
     },
-  },
-
-  mounted() {
-    this.getCategories();
   },
 };
 </script>
@@ -84,12 +94,6 @@ export default {
                 </a>
                 <ul aria-labelledby="navbarDropdown" class="dropdown-menu">
                   <RouterLink class="nav-link" to="/products">All Products</RouterLink>
-                  <li v-for="category in categories" :key="category.id">
-                    <RouterLink :to="'/products/' + category.id" class="dropdown-item">{{
-                        category.category_name
-                      }}
-                    </RouterLink>
-                  </li>
                 </ul>
               </li>
               <li class="nav-item">
@@ -101,15 +105,15 @@ export default {
               <li class="nav-item">
                 <RouterLink class="nav-link" to="/favorites">
                   <i class="bi bi-star"></i>
-                  Favorites
+                  Favorites <span v-if="favoritesCount">({{ favoritesCount }})</span>
                 </RouterLink>
               </li>
 
               <li class="nav-item">
-                <button class="btn">
-                  <i class="bi bi-cart"></i>
-                  Cart
-                </button>
+                <RouterLink class="nav-link" to="/cart">
+                  <i class="bi bi-cart"></i>Cart
+                </RouterLink>
+                
               </li>
 
               <li v-if="!isLoggedIn" class="nav-item">

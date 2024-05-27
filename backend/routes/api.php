@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\BrandsController;
 use App\Http\Controllers\Api\ItemsController;
 use App\Http\Controllers\Api\CategoriesContoller;
 use App\Http\Controllers\Api\FavoriteItemsController;
+use App\Http\Controllers\Api\CartController;
+use App\Http\Controllers\Api\PurchaseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,7 +49,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('favorites', [FavoriteItemsController::class, 'store']);
     Route::get('favorites', [FavoriteItemsController::class, 'index']);
     Route::get('favorites/{id}', [FavoriteItemsController::class, 'show']);
+    Route::get('favorites/user', [FavoriteItemsController::class, 'getUserFavorites']);
+    Route::delete('favorites/item', [FavoriteItemsController::class, 'destroyByItemId']);
 
+    // Cart
+    Route::post('cart', [CartController::class, 'store']);
+    Route::get('cart', [CartController::class, 'index']);
+    Route::get('cart/{id}', [CartController::class, 'show']);
+    Route::get('cart/user', [CartController::class, 'getUserCart']);
+    Route::delete('cart/{id}', [CartController::class, 'destroyByCartId']);
 });
 
 // Auth API
@@ -71,6 +81,20 @@ Route::get('categories/{id}', [CategoriesContoller::class, 'show']);
 
 // Favorite Items API
 Route::get('favorites', [FavoriteItemsController::class, 'index']);
+Route::get('user/{id}/favorites-count', [FavoriteItemsController::class, 'userFavoritesCount']);
+Route::get('user/{userId}/favorite/{itemId}', [FavoriteItemsController::class, 'isFavorite']);
+Route::delete('favorites/{favoriteId}', [FavoriteItemsController::class, 'destroyByFavoriteId']);
+Route::delete('favorites/item', [FavoriteItemsController::class, 'destroyByItemId']);
+Route::get('favorites/user/{userId}', [FavoriteItemsController::class, 'getUserFavorites']);
 
-//Users API
+// Users API
 Route::get('user-amount', [AuthController::class, 'userAmount']);
+
+
+// Cart API
+Route::get('cart/user/{userId}', [CartController::class, 'getUserCart']);
+
+// Purchase API
+Route::post('purchases', [PurchaseController::class, 'store']);
+Route::get('purchases/user/{userId}', [PurchaseController::class, 'getUserPurchases']);
+

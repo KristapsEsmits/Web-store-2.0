@@ -52,7 +52,7 @@
         return `http://127.0.0.1:8000/storage/uploads/${image}`;
       },
       removeFromFavorites(itemId) {
-        const userId = this.loggedInUserId; // Ensure this is defined
+        const userId = this.loggedInUserId; 
         axios.delete(`http://127.0.0.1:8000/api/favorites/${itemId}`, { data: { user_id: userId } })
           .then(response => {
             console.log(response.data.message);
