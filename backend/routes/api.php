@@ -103,4 +103,3 @@ Route::delete('cart/{id}', [CartController::class, 'destroyByCartId']);
 Route::post('purchases', [PurchaseController::class, 'store']);
 Route::get('purchases/user/{userId}', [PurchaseController::class, 'getUserPurchases']);
 Route::patch('purchases/{id}/status', [PurchaseController::class, 'updateStatus']);
-

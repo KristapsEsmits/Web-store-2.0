@@ -82,7 +82,7 @@ export default {
             <td>{{ categories.id }}</td>
             <td>{{ categories.category_name }}</td>
             <td class="d-flex justify-content-center">
-              <!-- <router-link :to="{path: '/test/'+test.id+'/edit'}" class="btn btn-success float-middle">Edit</router-link> -->
+              <router-link :to="{path: '/admin/categories/'+categories.id+'/edit'}" class="btn btn-success float-middle">Edit</router-link>
               <button class="btn btn-danger" type="button" @click="deleteTest(categories.id)">Delete</button>
             </td>
           </tr>

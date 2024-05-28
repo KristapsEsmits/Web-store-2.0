@@ -6,7 +6,7 @@ import {onMounted, ref} from 'vue';
 const isSidebarOpen = ref(false);
 const numberOfItems = ref(0);
 const numberOfBrands = ref(0);
-const numberOfUsers = ref(0); // Define numberOfUsers ref
+const numberOfUsers = ref(0);
 
 const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value;

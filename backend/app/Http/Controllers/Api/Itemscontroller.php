@@ -29,11 +29,11 @@ class ItemsController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:40',
+            'name' => 'required|string',
             'description' => 'required|string|max:1000',
             'price' => 'required|numeric',
-            'brand_id' => 'required|exists:brands,id', // Ensure brand_id exists in the 'brands' table
-            'categories_id' => 'required|exists:categories,id', // Ensure categories_id exists in the 'categories' table
+            'brand_id' => 'required|exists:brands,id',
+            'categories_id' => 'required|exists:categories,id',
             'img' => 'required|image|mimes:jpeg,png,jpg,gif,svg,',
         ]);
 
@@ -51,8 +51,8 @@ class ItemsController extends Controller
                 'name' => $request->name,
                 'description' => $request->description,
                 'price' => $request->price,
-                'brand_id' => $request->brand_id, // Add this line to store brand_id
-                'categories_id' => $request->categories_id, // Add this line to store categories_id
+                'brand_id' => $request->brand_id,
+                'categories_id' => $request->categories_id,
                 'img' => $randomString . '.' . $request->file('img')->getClientOriginalExtension(),
             ]);
 

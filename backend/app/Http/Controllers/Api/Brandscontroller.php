@@ -134,17 +134,10 @@ class BrandsController extends Controller
                     ]);
                 }
 
-                if ($brands) {
-                    return response()->json([
-                        'status' => 200,
-                        'message' => 'Data updated successfully!',
-                    ], 200);
-                } else {
-                    return response()->json([
-                        'status' => 404,
-                        'message' => 'No listing found!',
-                    ], 404);
-                }
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Data updated successfully!',
+                ], 200);
             }
         } else {
             return response()->json([
