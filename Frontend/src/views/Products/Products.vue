@@ -19,7 +19,6 @@
       </select>
       <input v-model.number="filters.minPrice" placeholder="Min Price" type="number">
       <input v-model.number="filters.maxPrice" placeholder="Max Price" type="number">
-      <button @click="getItems">Apply Filters</button>
     </div>
   </div>
 
@@ -109,7 +108,6 @@ export default {
           categoryMap[category.id] = category.category_name;
         });
 
-        // Assign category names to items
         this.items = items.map(item => {
           return {
             ...item,

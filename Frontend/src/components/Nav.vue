@@ -23,6 +23,13 @@ export default {
     this.getCategories();
   },
 
+  computed: {
+    isAdmin() {
+      console.log('User data:', this.user); // Log user data for debugging
+      return this.user && this.user.admin === 1; // Check if the user is an admin
+    }
+  },
+
   methods: {
     async isUserLoggedIn() {
       return !!localStorage.getItem('access_token');
@@ -32,6 +39,7 @@ export default {
       try {
         const response = await axios.get('/user');
         this.user = response.data;
+        console.log('Fetched user data:', this.user); // Log fetched user data for debugging
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -94,7 +102,6 @@ export default {
   },
 };
 </script>
-
 
 <template>
   <header class="bar">
@@ -160,7 +167,7 @@ export default {
                   <li>
                     <RouterLink class="dropdown-item" to="/profile">My Profile</RouterLink>
                   </li>
-                  <li class="nav-item">
+                  <li v-if="isAdmin" class="nav-item">
                     <RouterLink class="dropdown-item" to="/admin">Admin</RouterLink>
                   </li>
                   <li class="dropdown-divider"></li>
@@ -190,4 +197,3 @@ export default {
   z-index: 100;
 }
 </style>
-

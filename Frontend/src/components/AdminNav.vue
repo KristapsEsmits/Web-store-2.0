@@ -29,6 +29,13 @@
         </router-link>
       </li>
 
+      <li>
+        <router-link to="/admin/purchases">
+          <button v-if="isSidebarOpen" class="btn"><i class="bi bi-box-seam"></i></button>
+          <button v-else class="btn">Purchases</button>
+        </router-link>
+      </li>
+
       <li style="margin-top: auto;">
         <button class="btn toggle-btn" @click="toggleSidebar">
           <span v-if="isSidebarOpen">⯇</span>

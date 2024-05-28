@@ -1,6 +1,6 @@
 <script setup>
-import {onMounted, ref} from 'vue';
-import {useRouter} from 'vue-router';
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -25,7 +25,8 @@ const groupPurchasesByTime = (purchases) => {
       grouped[`${fullDate} ${roundedTime}`] = {
         items: [],
         totalPrice: 0,
-        createdAt: purchase.created_at
+        createdAt: purchase.created_at,
+        status: purchase.status
       };
     }
     grouped[`${fullDate} ${roundedTime}`].items.push(purchase);
@@ -115,10 +116,10 @@ onMounted(async () => {
             <div v-if="Object.keys(purchaseHistory).length === 0">No purchases found.</div>
             <div v-else>
               <ul class="list-group">
-                <li v-for="(purchaseGroup, time) in purchaseHistory" :key="time" class="list-group-item">
+                <li v-for="(purchaseGroup, time) in purchaseHistory" :key="time" :class="{'bg-lightgreen': purchaseGroup.status === 'closed'}" class="list-group-item">
                   <div class="d-flex justify-content-between align-items-center">
                     <div>
-                      <strong>Purchased At:</strong> {{ created_at }}{{ time }}
+                      <strong>Purchased At:</strong> {{ time }}
                     </div>
                     <button class="btn btn-primary" @click="generatePDF(time, purchaseGroup)">Print as PDF</button>
                   </div>
@@ -144,5 +145,7 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-@import './Profile.scss';
+.bg-lightgreen {
+  background-color: rgb(191, 253, 191);
+}
 </style>

@@ -83,9 +83,11 @@ Route::get('categories/{id}', [CategoriesContoller::class, 'show']);
 Route::get('favorites', [FavoriteItemsController::class, 'index']);
 Route::get('user/{id}/favorites-count', [FavoriteItemsController::class, 'userFavoritesCount']);
 Route::get('user/{userId}/favorite/{itemId}', [FavoriteItemsController::class, 'isFavorite']);
-Route::delete('favorites/{favoriteId}', [FavoriteItemsController::class, 'destroyByFavoriteId']);
 Route::delete('favorites/item', [FavoriteItemsController::class, 'destroyByItemId']);
 Route::get('favorites/user/{userId}', [FavoriteItemsController::class, 'getUserFavorites']);
+Route::get('favorites/user/{userId}', [FavoriteItemsController::class, 'userFavorites']);
+Route::delete('favorites/user/{userId}/clear', [FavoriteItemsController::class, 'clearUserFavorites']);
+
 
 // Users API
 Route::get('user-amount', [AuthController::class, 'userAmount']);
@@ -100,4 +102,5 @@ Route::delete('cart/{id}', [CartController::class, 'destroyByCartId']);
 // Purchase API
 Route::post('purchases', [PurchaseController::class, 'store']);
 Route::get('purchases/user/{userId}', [PurchaseController::class, 'getUserPurchases']);
+Route::patch('purchases/{id}/status', [PurchaseController::class, 'updateStatus']);
 

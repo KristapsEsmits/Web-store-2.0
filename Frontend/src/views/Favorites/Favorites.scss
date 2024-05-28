@@ -1,0 +1,26 @@
+.container {
+    display: flex;
+    justify-content: center;
+    justify-self: center;
+    max-width: auto !important;
+    padding: 0;
+}
+
+.card {
+    overflow: hidden;
+    width: 220px;
+    height: 340px;
+    border: 1px solid #ccc;
+  
+    .img-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 160px;
+      margin: 5px;
+    }
+  
+    .card-body {
+      padding-top: 0;
+    }
+  }

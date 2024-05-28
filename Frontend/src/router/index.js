@@ -112,6 +112,12 @@ const routes = [
         meta: { requiresAdmin: true }
     },
     {
+        path: '/admin/purchases',
+        name: 'admin/purchases',
+        component: () => import('../views/Admin/Purchases/Purchases.vue'),
+        meta: { requiresAdmin: true }
+    },
+    {
         path: '/favorites',
         name: 'favorites',
         component: () => import('../views/Favorites/Favorites.vue'),

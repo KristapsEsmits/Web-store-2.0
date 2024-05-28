@@ -1,9 +1,11 @@
 <?php
+
 namespace App\Http\Controllers\Api;
 
 use App\Models\FavoriteItems;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class FavoriteItemsController extends Controller
@@ -21,6 +23,33 @@ class FavoriteItemsController extends Controller
                 'status' => 404,
                 'message' => 'No data found!',
             ], 404);
+        }
+    }
+
+    public function userFavorites($userId)
+    {
+        try {
+            $favorites = FavoriteItems::where('user_id', $userId)
+                ->with('item')
+                ->get();
+
+            if ($favorites->isEmpty()) {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'No favorites found for this user.',
+                ], 404);
+            }
+
+            return response()->json([
+                'status' => 200,
+                'favorites' => $favorites,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'Server error while fetching favorite items.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -94,8 +123,9 @@ class FavoriteItemsController extends Controller
     public function destroyByItemId(Request $request)
     {
         try {
-            $userId = Auth::id();
+            $userId = $request->input('user_id');
             $itemId = $request->input('item_id');
+
             $favorite = FavoriteItems::where('user_id', $userId)
                 ->where('item_id', $itemId)
                 ->first();
@@ -108,6 +138,17 @@ class FavoriteItemsController extends Controller
             }
         } catch (\Exception $e) {
             return response()->json(['message' => 'Server error while removing favorite item', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+
+    public function clearUserFavorites($userId)
+    {
+        try {
+            FavoriteItems::where('user_id', $userId)->delete();
+            return response()->json(['message' => 'All favorite items removed successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Server error while removing favorite items', 'error' => $e->getMessage()], 500);
         }
     }
 }
