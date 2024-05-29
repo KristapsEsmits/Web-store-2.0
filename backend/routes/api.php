@@ -74,6 +74,7 @@ Route::put('brands/{id}/edit', [BrandsController::class, 'update']);
 Route::get('items', [ItemsController::class, 'index']);
 Route::get('items/{id}', [ItemsController::class, 'show']);
 Route::get('/front-page-items', [ItemsController::class, 'frontPageItems']);
+Route::get('/items/search', [ItemsController::class, 'searchItems']);
 
 // Categories API
 Route::get('categories', [CategoriesContoller::class, 'index']);
@@ -88,9 +89,11 @@ Route::get('favorites/user/{userId}', [FavoriteItemsController::class, 'getUserF
 Route::get('favorites/user/{userId}', [FavoriteItemsController::class, 'userFavorites']);
 Route::delete('favorites/user/{userId}/clear', [FavoriteItemsController::class, 'clearUserFavorites']);
 
-
 // Users API
 Route::get('user-amount', [AuthController::class, 'userAmount']);
+Route::get('user/{userId}/counts', [AuthController::class, 'getUserCounts']);
+Route::post('user/favorites-status', [FavoriteItemsController::class, 'getFavoritesStatus']);
+Route::post('user/cart-status', [CartController::class, 'getCartStatus']);
 
 
 // Cart API
@@ -98,6 +101,8 @@ Route::get('cart/user/{userId}', [CartController::class, 'getUserCart']);
 Route::delete('cart/clear/{userId}', [CartController::class, 'clearCartByUserId']);
 Route::get('cart/user/{userId}/count', [CartController::class, 'getUserCartCount']);
 Route::delete('cart/{id}', [CartController::class, 'destroyByCartId']);
+Route::get('cart/user/{userId}/item/{itemId}', [CartController::class, 'isItemInCart']);
+
 
 // Purchase API
 Route::post('purchases', [PurchaseController::class, 'store']);

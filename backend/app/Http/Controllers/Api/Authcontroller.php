@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Models\FavoriteItems;
+use App\Models\Cart;
 
 class AuthController extends Controller
 {
@@ -154,5 +156,18 @@ class AuthController extends Controller
             'user_count' => $userCount,
         ], 200);
     }
+
+    public function getUserCounts($userId)
+    {
+        $favoritesCount = FavoriteItems::where('user_id', $userId)->count();
+        $cartCount = Cart::where('user_id', $userId)->count();
+
+        return response()->json([
+            'status' => 200,
+            'favoritesCount' => $favoritesCount,
+            'cartCount' => $cartCount,
+        ], 200);
+    }
+
 }
 

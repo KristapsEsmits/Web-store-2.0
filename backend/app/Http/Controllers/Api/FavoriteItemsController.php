@@ -151,4 +151,22 @@ class FavoriteItemsController extends Controller
             return response()->json(['message' => 'Server error while removing favorite items', 'error' => $e->getMessage()], 500);
         }
     }
+
+    public function getFavoritesStatus(Request $request)
+    {
+        $userId = $request->input('userId');
+        $itemIds = $request->input('itemIds');
+
+        $favorites = FavoriteItems::where('user_id', $userId)
+            ->whereIn('item_id', $itemIds)
+            ->pluck('item_id')
+            ->toArray();
+
+        $favoritesStatus = array_fill_keys($itemIds, false);
+        foreach ($favorites as $itemId) {
+            $favoritesStatus[$itemId] = true;
+        }
+
+        return response()->json($favoritesStatus);
+    }
 }

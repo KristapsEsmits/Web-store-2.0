@@ -70,7 +70,6 @@ class ItemsController extends Controller
         }
     }
 
-
     public function show($id)
     {
         $items = Items::find($id);
@@ -127,5 +126,12 @@ class ItemsController extends Controller
                 'message' => 'No data found!',
             ], 404);
         }
+    }
+
+    public function searchItems(Request $request)
+    {
+        $name = $request->query('name');
+        $items = Items::where('name', 'LIKE', "%$name%")->get();
+        return response()->json(['items' => $items]);
     }
 }

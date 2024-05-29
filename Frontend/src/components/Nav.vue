@@ -1,108 +1,3 @@
-<script>
-import axios from 'axios';
-
-export default {
-  name: 'NavBar',
-  data() {
-    return {
-      isLoggedIn: false,
-      user: null,
-      categories: [],
-      favoritesCount: 0,
-      cartCount: 0,
-    };
-  },
-
-  async created() {
-    this.isLoggedIn = await this.isUserLoggedIn();
-    if (this.isLoggedIn) {
-      await this.fetchUserData();
-      await this.fetchFavoritesCount();
-      await this.fetchCartCount();
-    }
-    this.getCategories();
-  },
-
-  computed: {
-    isAdmin() {
-      console.log('User data:', this.user); // Log user data for debugging
-      return this.user && this.user.admin === 1; // Check if the user is an admin
-    }
-  },
-
-  methods: {
-    async isUserLoggedIn() {
-      return !!localStorage.getItem('access_token');
-    },
-
-    async fetchUserData() {
-      try {
-        const response = await axios.get('/user');
-        this.user = response.data;
-        console.log('Fetched user data:', this.user); // Log fetched user data for debugging
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    },
-
-    async fetchFavoritesCount() {
-      if (this.user && this.user.id) {
-        try {
-          const response = await axios.get(`/user/${this.user.id}/favorites-count`);
-          this.favoritesCount = response.data.count;
-        } catch (error) {
-          console.error('Error fetching favorites count:', error);
-        }
-      }
-    },
-
-    async fetchCartCount() {
-      if (this.user && this.user.id) {
-        try {
-          const response = await axios.get(`/cart/user/${this.user.id}/count`);
-          this.cartCount = response.data.count;
-        } catch (error) {
-          console.error('Error fetching cart count:', error);
-        }
-      }
-    },
-
-    async logout() {
-      try {
-        await axios.get('/logout');
-        localStorage.removeItem('access_token');
-        this.isLoggedIn = false;
-        this.$router.push('/login');
-      } catch (error) {
-        console.log(error);
-      }
-    },
-
-    getCategories() {
-      axios.get('/categories').then((res) => {
-        this.categories = res.data.categories;
-      });
-    },
-
-    navigateToCart() {
-      if (!this.isLoggedIn) {
-        this.$router.push('/login');
-      } else {
-        this.$router.push('/cart');
-      }
-    },
-
-    navigateToFavorites() {
-      if (!this.isLoggedIn) {
-        this.$router.push('/login');
-      } else {
-        this.$router.push('/favorites');
-      }
-    }
-  },
-};
-</script>
-
 <template>
   <header class="bar">
     <div class="wrapper">
@@ -125,8 +20,7 @@ export default {
               </li>
               <li class="nav-item dropdown">
                 <a id="navbarDropdown" aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
-                   href="#"
-                   role="button">
+                   href="#" role="button">
                   Products
                 </a>
                 <ul aria-labelledby="navbarDropdown" class="dropdown-menu">
@@ -137,6 +31,20 @@ export default {
                 <RouterLink class="nav-link" to="/brands">Brands</RouterLink>
               </li>
             </ul>
+
+            <form class="d-flex">
+              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
+                     v-model="searchText" @input="searchItems">
+              <div class="dropdown" v-if="isSearchActive">
+                <ul class="dropdown-menu show">
+                  <li v-for="item in searchResults" :key="item.id">
+                    <RouterLink class="dropdown-item" :to="'/product/' + item.id" @click="clearSearch">
+                      {{ item.name }}
+                    </RouterLink>
+                  </li>
+                </ul>
+              </div>
+            </form>
 
             <ul class="navbar-nav ml-auto">
               <li class="nav-item">
@@ -187,6 +95,126 @@ export default {
   </header>
 </template>
 
+<script>
+import axios from 'axios';
+
+export default {
+  name: 'NavBar',
+  data() {
+    return {
+      isLoggedIn: false,
+      user: null,
+      categories: [],
+      favoritesCount: 0,
+      cartCount: 0,
+      searchText: '',
+      searchResults: [],
+      isSearchActive: false,
+    };
+  },
+
+  async created() {
+    this.isLoggedIn = await this.isUserLoggedIn();
+    if (this.isLoggedIn) {
+      await this.fetchUserData();
+      await this.fetchUserCounts();
+    }
+    this.getCategories();
+  },
+
+  computed: {
+    isAdmin() {
+      return this.user && this.user.admin === 1;
+    }
+  },
+
+  methods: {
+    async isUserLoggedIn() {
+      return !!localStorage.getItem('access_token');
+    },
+
+    async fetchUserData() {
+      try {
+        const response = await axios.get('/user');
+        this.user = response.data;
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    },
+
+    async fetchUserCounts() {
+      if (this.user && this.user.id) {
+        try {
+          const response = await axios.get(`/user/${this.user.id}/counts`);
+          this.favoritesCount = response.data.favoritesCount;
+          this.cartCount = response.data.cartCount;
+        } catch (error) {
+          console.error('Error fetching user counts:', error);
+        }
+      }
+    },
+
+    async logout() {
+      try {
+        await axios.get('/logout');
+        localStorage.removeItem('access_token');
+        this.isLoggedIn = false;
+        this.$router.push('/login');
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    getCategories() {
+      axios.get('/categories').then((res) => {
+        this.categories = res.data.categories;
+      });
+    },
+
+    navigateToCart() {
+      if (!this.isLoggedIn) {
+        this.$router.push('/login');
+      } else {
+        this.$router.push('/cart');
+      }
+    },
+
+    navigateToFavorites() {
+      if (!this.isLoggedIn) {
+        this.$router.push('/login');
+      } else {
+        this.$router.push('/favorites');
+      }
+    },
+
+    async searchItems() {
+      if (this.searchText.trim().length > 0) {
+        try {
+          const response = await axios.get(`/items/search`, {
+            params: {
+              name: this.searchText,
+            },
+          });
+          this.searchResults = response.data.items.slice(0, 5); // Limit to 5 results
+          this.isSearchActive = true;
+        } catch (error) {
+          console.error('Error searching items:', error);
+        }
+      } else {
+        this.isSearchActive = false;
+        this.searchResults = [];
+      }
+    },
+
+    clearSearch() {
+      this.searchText = '';
+      this.isSearchActive = false;
+      this.searchResults = [];
+    },
+  },
+};
+</script>
+
 <style scoped>
 .bar {
   background-color: #f8f9fa;
@@ -196,4 +224,19 @@ export default {
   width: 100%;
   z-index: 100;
 }
+
+.dropdown-menu.show {
+  display: block;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.dropdown-item {
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: #f1f1f1;
+}
 </style>
+

@@ -1,12 +1,21 @@
 <template>
-  <h1 class="title">Your Favorite Items</h1>
   <div class="container">
-    <div class="row">
-      <div class="col-12 mb-4 text-end" v-if="favoriteItems.length > 0">
-        <button class="btn btn-danger" @click="clearAllFavorites">Clear All Favorites</button>
+    <div class="row" v-if="loading">
+      <div class="col-12 text-center">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    </div>
+    <div class="row" v-else>
+      <div class="container2" v-if="favoriteItems.length > 0">
+        <div class="col-12 mb-4 text-end">
+          <button class="btn btn-danger" @click="clearAllFavorites">Clear All Favorites</button>
+        </div>
       </div>
       <div v-else class="col-12 text-center">
-        <p>There's nothing here, try browsing for something.</p>
+        <img src="/no_favorite.png" class="no_favorites_img">
+        <h2>There's nothing here, try <RouterLink class="toProducts" to="/products">browsing</RouterLink> for something.</h2>
       </div>
       <div v-for="item in favoriteItems" :key="item.item.id" class="col-auto mb-4">
         <div class="card">
@@ -52,6 +61,7 @@ export default {
     return {
       favoriteItems: [],
       loggedInUserId: null,
+      loading: true,
     };
   },
   async mounted() {
@@ -79,6 +89,9 @@ export default {
         })
         .catch((error) => {
           console.error('Error fetching favorite items:', error);
+        })
+        .finally(() => {
+          this.loading = false;
         });
     },
     getImageUrl(image) {
@@ -97,7 +110,7 @@ export default {
         });
     },
     removeFromCart(itemId) {
-      axios.delete(`http://127.0.0.1:8000/api/cart/${itemId}`, { data: { user_id: this.loggedInUserId } })
+      axios.delete(`http://127.0.0.1:8000/api/cart/item`, { data: { user_id: this.loggedInUserId, item_id: itemId } })
         .then(response => {
           const item = this.favoriteItems.find(fav => fav.item.id === itemId);
           if (item) {
@@ -145,11 +158,11 @@ export default {
 
 <style scoped>
 .container {
-  display: flex;
-  justify-content: center;
-  justify-self: center;
-  max-width: auto !important;
-  padding: 0;
+  padding-top: 50px;
+}
+
+.container2 {
+  margin: auto;
 }
 
 .card {
@@ -157,6 +170,10 @@ export default {
   width: 220px;
   height: 340px;
   border: 1px solid #ccc;
+}
+
+.toProducts {
+  color: #000000;
 }
 
 .img-container {
@@ -208,6 +225,13 @@ export default {
   text-align: center;
 }
 
+.no_favorites_img {
+  width: 300px;
+  height: 300px;
+  margin: 0 auto;
+  user-select: none;
+}
+
 @media screen and (min-width: 768px) {
   .card:hover .button-container {
     opacity: 1;
@@ -220,5 +244,15 @@ export default {
       transform: scale(1.1);
     }
   }
+
+  .no_favorites_img {
+    width: 400px;
+    height: 400px;
+  }
+}
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+  margin-top: 50px;
 }
 </style>

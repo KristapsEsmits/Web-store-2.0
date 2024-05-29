@@ -36,20 +36,20 @@
           </router-link>
           <div class="button-container">
             <button v-if="item.isInCart" class="btn" @click="removeFromCart(item.id)">
-                <i class="bi bi-cart"></i>
-                Remove
+              <i class="bi bi-cart"></i>
+              Remove
             </button>
             <button v-else class="btn" @click="addToCart(item.id)">
-                <i class="bi bi-cart"></i>
-                Cart
+              <i class="bi bi-cart"></i>
+              Cart
             </button>
             <button v-if="item.isFavorite" class="btn" @click="removeFromFavoritesByItemId(item.id)">
-                <i class="bi bi-star-fill"></i>
-                Remove
+              <i class="bi bi-star-fill"></i>
+              Remove
             </button>
             <button v-else class="btn" @click="addToFavorites(item.id)">
-                <i class="bi bi-star"></i>
-                Favorite
+              <i class="bi bi-star"></i>
+              Favorite
             </button>
           </div>
         </div>
@@ -57,6 +57,7 @@
     </div>
   </div>
 </template>
+
 
 
 <script>
