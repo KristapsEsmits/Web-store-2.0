@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Models\FavoriteItems;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class FavoriteItemsController extends Controller
@@ -123,8 +122,8 @@ class FavoriteItemsController extends Controller
     public function destroyByItemId(Request $request)
     {
         try {
-            $userId = $request->input('user_id');
-            $itemId = $request->input('item_id');
+            $userId = $request->route('user_id');
+            $itemId = $request->route('item_id');
 
             $favorite = FavoriteItems::where('user_id', $userId)
                 ->where('item_id', $itemId)

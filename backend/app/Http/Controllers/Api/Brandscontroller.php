@@ -97,14 +97,21 @@ class BrandsController extends Controller
     public function update(Request $request, int $id)
     {
         $brands = Brands::find($id);
+        \Log::info('Incoming request data: ', $request->all());
+        \Log::info('Incoming request headers: ', $request->headers->all());
+
 
         if ($brands) {
+            // Log the presence of the 'name' key in the request
+            \Log::info('Checking if name exists in the request: ', ['name_exists' => $request->has('name')]);
+
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:40',
-                'img' => $request->hasFile('img') ? 'image|mimes:jpeg,png,jpg,gif,svg' : '',
+                'img' => $request->hasFile('img') ? 'image|mimes:jpeg,png,jpg,gif,svg' : 'nullable',
             ]);
 
             if ($validator->fails()) {
+                \Log::info('Validation failed: ', $validator->messages()->toArray());
                 return response()->json([
                     'status' => 422,
                     'message' => 'Bad Request data wrong!',
@@ -115,7 +122,6 @@ class BrandsController extends Controller
                     $randomString = Str::random(10);
                     $imgPath = $request->file('img')->storeAs('uploads', $randomString . '.' . $request->file('img')->getClientOriginalExtension(), 'public');
 
-                    // Delete old image if it exists
                     if ($brands->img) {
                         $oldImagePath = public_path("/storage/uploads/{$brands->img}");
                         if (file_exists($oldImagePath)) {
@@ -128,7 +134,6 @@ class BrandsController extends Controller
                         'img' => $randomString . '.' . $request->file('img')->getClientOriginalExtension(),
                     ]);
                 } else {
-                    // No new image is being uploaded
                     $brands->update([
                         'name' => $request->name,
                     ]);
@@ -146,6 +151,7 @@ class BrandsController extends Controller
             ], 404);
         }
     }
+
 
     // Delete brand and its image
     public function destroy($id)

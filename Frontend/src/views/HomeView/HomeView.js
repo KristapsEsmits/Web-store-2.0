@@ -21,7 +21,6 @@ export default {
   methods: {
     async getItemsAndCategories() {
       try {
-        // Fetch user, items, and categories in parallel
         const [userResponse, itemsResponse, categoriesResponse] = await Promise.all([
           axios.get('http://127.0.0.1:8000/api/user'),
           axios.get('http://127.0.0.1:8000/api/front-page-items'),
@@ -37,7 +36,6 @@ export default {
           categoryMap[category.id] = category.category_name;
         });
 
-        // Fetch favorite and cart statuses in batch
         if (this.user) {
           const itemIds = items.map(item => item.id);
           const [favoritesResponse, cartResponse] = await Promise.all([
@@ -96,9 +94,7 @@ export default {
     async removeFromFavoritesByItemId(itemId) {
       try {
         const userId = this.user.id;
-        const response = await axios.delete(`http://127.0.0.1:8000/api/favorites/item`, {
-          data: { user_id: userId, item_id: itemId }
-        });
+        const response = await axios.delete(`http://localhost:8000/api/favorites/item/${itemId}-${userId}`)
         console.log(response.data.message);
         this.updateItemFavoriteStatus(itemId, false);
       } catch (error) {
@@ -107,6 +103,22 @@ export default {
           console.error('Detailed error:', error.response.data.error);
         } else {
           console.error('Error removing from favorites:', error.message);
+        }
+      }
+    },
+
+    async removeFromCart(itemId) {
+      try {
+        const userId = this.user.id;
+        const response = await axios.delete(`http://localhost:8000/api/cart/item/${itemId}-${userId}`)
+        console.log(response.data.message);
+        this.updateItemCartStatus(itemId, false);
+      } catch (error) {
+        if (error.response) {
+          console.error('Error removing from cart:', error.response.data.message);
+          console.error('Detailed error:', error.response.data.error);
+        } else {
+          console.error('Error removing from cart:', error.message);
         }
       }
     },
@@ -129,24 +141,6 @@ export default {
           console.error('Item already in cart');
         } else {
           console.error('Error adding to cart:', error);
-        }
-      }
-    },
-
-    async removeFromCart(itemId) {
-      try {
-        const userId = this.user.id;
-        const response = await axios.delete(`http://127.0.0.1:8000/api/cart/item`, {
-          data: { user_id: userId, item_id: itemId }
-        });
-        console.log(response.data.message);
-        this.updateItemCartStatus(itemId, false);
-      } catch (error) {
-        if (error.response) {
-          console.error('Error removing from cart:', error.response.data.message);
-          console.error('Detailed error:', error.response.data.error);
-        } else {
-          console.error('Error removing from cart:', error.message);
         }
       }
     },

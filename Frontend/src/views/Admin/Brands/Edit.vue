@@ -41,27 +41,31 @@ export default {
     },
 
     updateBrands() {
-      var list = this;
+      let list = this;
       const formData = new FormData();
       formData.append('name', this.model.brands.name);
       formData.append('img', this.model.brands.img);
-      console.log(formData);
 
-      axios.put(`/brands/${this.brandsId}/edit`, formData)
-          .then((res) => {
-            this.$router.push('/admin/brands');
-            alert(res.data.message);
-            this.errorList = '';
-          })
-          .catch(function (error) {
-            if (error.response.status == 422) {
-              list.errorList = error.response.data.errors;
-            } else if (error.request) {
-              console.log(error.request);
-            } else {
-              console.log('Error', error.message);
-            }
-          });
+      axios.put(`/brands/${this.brandsId}/edit`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Accept': 'application/json'
+        }
+      })
+      .then((res) => {
+        this.$router.push('/admin/brands');
+        alert(res.data.message);
+        this.errorList = '';
+      })
+      .catch(function (error) {
+        if (error.response.status == 422) {
+          list.errorList = error.response.data.errors;
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log('Error', error.message);
+        }
+      });
     },
 
     Exit() {
@@ -99,5 +103,3 @@ export default {
     </div>
   </div>
 </template>
-
-  

@@ -50,14 +50,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('favorites', [FavoriteItemsController::class, 'index']);
     Route::get('favorites/{id}', [FavoriteItemsController::class, 'show']);
     Route::get('favorites/user', [FavoriteItemsController::class, 'getUserFavorites']);
-    Route::delete('favorites/item', [FavoriteItemsController::class, 'destroyByItemId']);
 
     // Cart
     Route::post('cart', [CartController::class, 'store']);
     Route::get('cart', [CartController::class, 'index']);
     Route::get('cart/{id}', [CartController::class, 'show']);
     Route::get('cart/user', [CartController::class, 'getUserCart']);
-    Route::delete('cart/{id}', [CartController::class, 'destroyByCartId']);
 });
 
 // Auth API
@@ -84,7 +82,7 @@ Route::get('categories/{id}', [CategoriesContoller::class, 'show']);
 Route::get('favorites', [FavoriteItemsController::class, 'index']);
 Route::get('user/{id}/favorites-count', [FavoriteItemsController::class, 'userFavoritesCount']);
 Route::get('user/{userId}/favorite/{itemId}', [FavoriteItemsController::class, 'isFavorite']);
-Route::delete('favorites/item', [FavoriteItemsController::class, 'destroyByItemId']);
+Route::delete('favorites/item/{item_id}-{user_id}', [FavoriteItemsController::class, 'destroyByItemId']);
 Route::get('favorites/user/{userId}', [FavoriteItemsController::class, 'getUserFavorites']);
 Route::get('favorites/user/{userId}', [FavoriteItemsController::class, 'userFavorites']);
 Route::delete('favorites/user/{userId}/clear', [FavoriteItemsController::class, 'clearUserFavorites']);
@@ -100,7 +98,7 @@ Route::post('user/cart-status', [CartController::class, 'getCartStatus']);
 Route::get('cart/user/{userId}', [CartController::class, 'getUserCart']);
 Route::delete('cart/clear/{userId}', [CartController::class, 'clearCartByUserId']);
 Route::get('cart/user/{userId}/count', [CartController::class, 'getUserCartCount']);
-Route::delete('cart/{id}', [CartController::class, 'destroyByCartId']);
+Route::delete('cart/item/{item_id}-{user_id}', [CartController::class, 'destroyByCartId']);
 Route::get('cart/user/{userId}/item/{itemId}', [CartController::class, 'isItemInCart']);
 
 
