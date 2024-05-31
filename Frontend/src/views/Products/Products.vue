@@ -21,47 +21,58 @@
 
   <div class="container">
     <div class="row">
-      <div v-for="item in filteredItems" :key="item.id" class="col-auto mb-4">
-        <div class="card">
-          <router-link :to="{ path: '/product/' + item.id }" class="card-link">
-            <div class="img-container">
-              <img v-if="item.img" :src="getImageUrl(item.img)" alt="Item Image" class="img">
+      <template v-if="isLoading">
+        <div v-for="n in 4" :key="n" class="col-auto mb-4">
+          <SkeletonItemCard />
+        </div>
+      </template>
+      <template v-else>
+        <div v-for="item in filteredItems" :key="item.id" class="col-auto mb-4">
+          <div class="card">
+            <router-link :to="{ path: '/product/' + item.id }" class="card-link">
+              <div class="img-container">
+                <img v-if="item.img" :src="getImageUrl(item.img)" alt="Item Image" class="img">
+              </div>
+              <div class="card-body">
+                <button class="badge badge-pill badge-secondary">{{ item.category_name }}</button>
+                <h5 class="card-title">{{ item.name }}</h5>
+                <h5 class="card-title">{{ item.price }}€</h5>
+              </div>
+            </router-link>
+            <div class="button-container">
+              <button v-if="item.isInCart" class="btn" @click="removeFromCart(item.id)">
+                <i class="bi bi-cart"></i>
+                Remove
+              </button>
+              <button v-else class="btn" @click="addToCart(item.id)">
+                <i class="bi bi-cart"></i>
+                Cart
+              </button>
+              <button v-if="item.isFavorite" class="btn" @click="removeFromFavoritesByItemId(item.id)">
+                <i class="bi bi-star-fill"></i>
+                Remove
+              </button>
+              <button v-else class="btn" @click="addToFavorites(item.id)">
+                <i class="bi bi-star"></i>
+                Favorite
+              </button>
             </div>
-            <div class="card-body">
-              <button class="badge badge-pill badge-secondary">{{ item.category_name }}</button>
-              <h5 class="card-title">{{ item.name }}</h5>
-              <h5 class="card-title">{{ item.price }}€</h5>
-            </div>
-          </router-link>
-          <div class="button-container">
-            <button v-if="item.isInCart" class="btn" @click="removeFromCart(item.id)">
-              <i class="bi bi-cart"></i>
-              Remove
-            </button>
-            <button v-else class="btn" @click="addToCart(item.id)">
-              <i class="bi bi-cart"></i>
-              Cart
-            </button>
-            <button v-if="item.isFavorite" class="btn" @click="removeFromFavoritesByItemId(item.id)">
-              <i class="bi bi-star-fill"></i>
-              Remove
-            </button>
-            <button v-else class="btn" @click="addToFavorites(item.id)">
-              <i class="bi bi-star"></i>
-              Favorite
-            </button>
           </div>
         </div>
-      </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import SkeletonItemCard from '@/components/SkeletonItemCard.vue';
 
 export default {
-  name: 'items',
+  name: 'AllProducts',
+  components: {
+    SkeletonItemCard,
+  },
   data() {
     return {
       items: [],
@@ -74,6 +85,7 @@ export default {
         maxPrice: null
       },
       user: null,
+      isLoading: true,
     };
   },
 
@@ -100,7 +112,7 @@ export default {
       try {
         const [userResponse, itemsResponse, categoriesResponse, brandsResponse] = await Promise.all([
           axios.get('http://127.0.0.1:8000/api/user'),
-          axios.get('http://127.0.0.1:8000/api/front-page-items'),
+          axios.get('http://127.0.0.1:8000/api/items'),
           axios.get('http://127.0.0.1:8000/api/categories'),
           axios.get('http://127.0.0.1:8000/api/brands')
         ]);
@@ -142,6 +154,8 @@ export default {
         this.brands = brands;
       } catch (error) {
         console.error('Error fetching items, categories, or brands:', error);
+      } finally {
+        this.isLoading = false;
       }
     },
 
@@ -151,32 +165,6 @@ export default {
         this.user = response.data;
       } catch (error) {
         console.error('Error fetching user data:', error);
-      }
-    },
-
-    async getItems() {
-      try {
-        const params = {
-          category: this.filters.category,
-          brand: this.filters.brand,
-          minPrice: this.filters.minPrice,
-          maxPrice: this.filters.maxPrice
-        };
-
-        const response = await axios.get('http://127.0.0.1:8000/api/front-page-items', {params});
-        const items = response.data.items;
-
-        const categoryMap = {};
-        this.categories.forEach(category => {
-          categoryMap[category.id] = category.category_name;
-        });
-
-        this.items = items.map(item => ({
-          ...item,
-          category_name: categoryMap[item.categories_id] || 'Unknown'
-        }));
-      } catch (error) {
-        console.error('Error fetching filtered items:', error);
       }
     },
 
@@ -190,6 +178,7 @@ export default {
         const response = await axios.post('http://127.0.0.1:8000/api/favorites', { user_id: userId, item_id: itemId });
         console.log(response.data.message);
         this.updateItemFavoriteStatus(itemId, true);
+        document.dispatchEvent(new CustomEvent('favorites-updated'));
       } catch (error) {
         if (error.response && error.response.status === 409) {
           console.error('Item already in favorites');
@@ -205,6 +194,7 @@ export default {
         const response = await axios.delete(`http://localhost:8000/api/favorites/item/${itemId}-${userId}`);
         console.log(response.data.message);
         this.updateItemFavoriteStatus(itemId, false);
+        document.dispatchEvent(new CustomEvent('favorites-updated'));
       } catch (error) {
         if (error.response) {
           console.error('Error removing from favorites:', error.response.data.message);
@@ -221,6 +211,7 @@ export default {
         const response = await axios.delete(`http://localhost:8000/api/cart/item/${itemId}-${userId}`);
         console.log(response.data.message);
         this.updateItemCartStatus(itemId, false);
+        document.dispatchEvent(new CustomEvent('cart-updated'));
       } catch (error) {
         if (error.response) {
           console.error('Error removing from cart:', error.response.data.message);
@@ -244,6 +235,7 @@ export default {
         const response = await axios.post('http://127.0.0.1:8000/api/cart', { user_id: userId, item_id: itemId });
         console.log(response.data.message);
         this.updateItemCartStatus(itemId, true);
+        document.dispatchEvent(new CustomEvent('cart-updated'));
       } catch (error) {
         if (error.response && error.response.status === 409) {
           console.error('Item already in cart');
@@ -262,6 +254,7 @@ export default {
   }
 };
 </script>
+
 
 <style scoped>
 .header {

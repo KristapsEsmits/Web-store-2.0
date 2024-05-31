@@ -26,29 +26,34 @@ export default {
       axios.get(`/brands/${brandsId}/edit`).then((res) => {
         this.model.brands = res.data.brands;
       })
-
-          .catch((error) => {
-            if (error.response) {
-              if (error.response.status == 404) {
-                this.$router.push('/brands');
-              }
-            }
-          });
+      .catch((error) => {
+        if (error.response) {
+          if (error.response.status == 404) {
+            this.$router.push('/brands');
+          }
+        }
+      });
     },
 
     handleImageUpload(event) {
-      this.model.brands.img = event.target.files[0];
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.model.brands.img = e.target.result;
+      };
+      reader.readAsDataURL(file);
     },
 
     updateBrands() {
       let list = this;
-      const formData = new FormData();
-      formData.append('name', this.model.brands.name);
-      formData.append('img', this.model.brands.img);
+      const data = {
+        name: this.model.brands.name,
+        img: this.model.brands.img,
+      };
 
-      axios.put(`/brands/${this.brandsId}/edit`, formData, {
+      axios.put(`/brands/${this.brandsId}/edit`, data, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'application/json',
           'Accept': 'application/json'
         }
       })

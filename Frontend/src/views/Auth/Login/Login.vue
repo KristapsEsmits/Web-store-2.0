@@ -19,8 +19,11 @@ const loginUser = async () => {
     });
 
     localStorage.setItem('access_token', res.data.access_token);
-    localStorage.setItem('user', JSON.stringify(res.data.user)); // Ensure user object includes admin property
+    localStorage.setItem('user', JSON.stringify(res.data.user));
     axios.defaults.headers.authorization = `Bearer ${res.data.access_token}`;
+
+    document.dispatchEvent(new Event('login'));
+
     router.push('/');
   } catch (error) {
     if (error.response && error.response.status === 401) {

@@ -3,7 +3,7 @@
     <div class="wrapper">
       <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-          <RouterLink class="navbar-brand" to="/">
+          <RouterLink class="navbar-brand" to="/" @click="collapseNavbar">
             <img alt="Logo" src="/favicon.ico" style="height: 30px; width: 30px;">
             Frenko
           </RouterLink>
@@ -16,7 +16,7 @@
           <div id="navbarSupportedContent" class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <RouterLink class="nav-link" to="/">Home</RouterLink>
+                <RouterLink class="nav-link" to="/" @click="collapseNavbar">Home</RouterLink>
               </li>
               <li class="nav-item dropdown">
                 <a id="navbarDropdown" aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
@@ -24,15 +24,15 @@
                   Products
                 </a>
                 <ul aria-labelledby="navbarDropdown" class="dropdown-menu">
-                  <RouterLink class="nav-link" to="/products">All Products</RouterLink>
+                  <RouterLink class="nav-link" to="/products" @click="collapseNavbar">All Products</RouterLink>
                 </ul>
               </li>
               <li class="nav-item">
-                <RouterLink class="nav-link" to="/brands">Brands</RouterLink>
+                <RouterLink class="nav-link" to="/brands" @click="collapseNavbar">Brands</RouterLink>
               </li>
             </ul>
 
-            <form class="d-flex">
+            <form id="search-form" class="d-flex">
               <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
                      v-model="searchText" @input="searchItems">
               <div class="dropdown" v-if="isSearchActive">
@@ -61,11 +61,11 @@
                 </a>
               </li>
 
-              <li v-if="!isLoggedIn" class="nav-item">
-                <RouterLink class="nav-link" to="/login">Login</RouterLink>
+              <li v-if="!isLoggedIn" class="nav-item" id="login-link">
+                <RouterLink class="nav-link" to="/login" @click="collapseNavbar">Login</RouterLink>
               </li>
 
-              <li v-if="isLoggedIn" class="nav-item dropdown">
+              <li v-if="isLoggedIn" class="nav-item dropdown" id="user-dropdown">
                 <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
                    role="button">
                   <i class="bi bi-person-fill"></i>
@@ -73,10 +73,10 @@
                 </a>
                 <ul aria-labelledby="navbarDropdown" class="dropdown-menu">
                   <li>
-                    <RouterLink class="dropdown-item" to="/profile">My Profile</RouterLink>
+                    <RouterLink class="dropdown-item" to="/profile" @click="collapseNavbar">My Profile</RouterLink>
                   </li>
                   <li v-if="isAdmin" class="nav-item">
-                    <RouterLink class="dropdown-item" to="/admin">Admin</RouterLink>
+                    <RouterLink class="dropdown-item" to="/admin" @click="collapseNavbar">Admin</RouterLink>
                   </li>
                   <li class="dropdown-divider"></li>
                   <li class="nav-item">
@@ -114,12 +114,17 @@ export default {
   },
 
   async created() {
-    this.isLoggedIn = await this.isUserLoggedIn();
-    if (this.isLoggedIn) {
-      await this.fetchUserData();
-      await this.fetchUserCounts();
-    }
-    this.getCategories();
+    this.checkLoginState();
+
+    document.addEventListener('login', this.onLogin);
+    document.addEventListener('favorites-updated', this.updateFavoritesCount);
+    document.addEventListener('cart-updated', this.updateCartCount);
+  },
+
+  beforeDestroy() {
+    document.removeEventListener('login', this.onLogin);
+    document.removeEventListener('favorites-updated', this.updateFavoritesCount);
+    document.removeEventListener('cart-updated', this.updateCartCount);
   },
 
   computed: {
@@ -129,6 +134,14 @@ export default {
   },
 
   methods: {
+    async checkLoginState() {
+      this.isLoggedIn = await this.isUserLoggedIn();
+      if (this.isLoggedIn) {
+        await this.fetchUserData();
+        await this.fetchUserCounts();
+      }
+    },
+
     async isUserLoggedIn() {
       return !!localStorage.getItem('access_token');
     },
@@ -159,16 +172,13 @@ export default {
         await axios.get('/logout');
         localStorage.removeItem('access_token');
         this.isLoggedIn = false;
+        this.user = null;
+        this.updateNavbar();
         this.$router.push('/login');
+        document.dispatchEvent(new Event('logout'));
       } catch (error) {
         console.log(error);
       }
-    },
-
-    getCategories() {
-      axios.get('/categories').then((res) => {
-        this.categories = res.data.categories;
-      });
     },
 
     navigateToCart() {
@@ -177,6 +187,7 @@ export default {
       } else {
         this.$router.push('/cart');
       }
+      this.collapseNavbar();
     },
 
     navigateToFavorites() {
@@ -185,6 +196,7 @@ export default {
       } else {
         this.$router.push('/favorites');
       }
+      this.collapseNavbar();
     },
 
     async searchItems() {
@@ -195,7 +207,7 @@ export default {
               name: this.searchText,
             },
           });
-          this.searchResults = response.data.items.slice(0, 5); // Limit to 5 results
+          this.searchResults = response.data.items.slice(0, 5);
           this.isSearchActive = true;
         } catch (error) {
           console.error('Error searching items:', error);
@@ -211,9 +223,62 @@ export default {
       this.isSearchActive = false;
       this.searchResults = [];
     },
+
+    collapseNavbar() {
+      const navbar = document.getElementById('navbarSupportedContent');
+      if (navbar.classList.contains('show')) {
+        this.$nextTick(() => {
+          const button = document.querySelector('.navbar-toggler');
+          if (button) {
+            button.click();
+          }
+        });
+      }
+    },
+
+    async onLogin() {
+      this.isLoggedIn = true;
+      await this.fetchUserData();
+      await this.fetchUserCounts();
+      this.updateNavbar();
+    },
+
+    onLogout() {
+      this.isLoggedIn = false;
+      this.user = null;
+      this.updateNavbar();
+    },
+
+    async updateFavoritesCount() {
+      if (this.user && this.user.id) {
+        try {
+          const response = await axios.get(`/user/${this.user.id}/counts`);
+          this.favoritesCount = response.data.favoritesCount;
+        } catch (error) {
+          console.error('Error updating favorites count:', error);
+        }
+      }
+    },
+
+    async updateCartCount() {
+      if (this.user && this.user.id) {
+        try {
+          const response = await axios.get(`/user/${this.user.id}/counts`);
+          this.cartCount = response.data.cartCount;
+        } catch (error) {
+          console.error('Error updating cart count:', error);
+        }
+      }
+    },
+
+    updateNavbar() {
+      this.$forceUpdate();
+    }
   },
 };
 </script>
+
+
 
 <style scoped>
 .bar {
@@ -239,4 +304,3 @@ export default {
   background-color: #f1f1f1;
 }
 </style>
-

@@ -94,21 +94,27 @@ const routes = [
         meta: { requiresAdmin: true }
     },
     {
+        path: '/admin/items/:id/edit',
+        name: 'admin/items/edit',
+        component: () => import('../views/Admin/Items/Edit.vue'),
+        meta: { requiresAdmin: true }
+    },
+    {
         path: '/admin/categories',
         name: 'admin/categories',
-        component: () => import('../views/Admin/categories/categories-table/categories.vue'),
+        component: () => import('../views/Admin/categories/categories.vue'),
         meta: { requiresAdmin: true }
     },
     {
         path: '/admin/categories/create',
         name: 'admin/categories/create',
-        component: () => import('../views/Admin/categories/create-categories/create-categories.vue'),
+        component: () => import('../views/Admin/categories/create-categories.vue'),
         meta: { requiresAdmin: true }
     },
     {
         path: '/admin/categories/:id/edit',
         name: 'admin/categories/edit',
-        component: () => import('../views/Admin/categories/edit-categories/edit-categories.vue'),
+        component: () => import('../views/Admin/categories/EditCategories.vue'),
         meta: { requiresAdmin: true }
     },
     {

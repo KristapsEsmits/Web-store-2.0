@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\CategoriesContoller;
 use App\Http\Controllers\Api\FavoriteItemsController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\PurchaseController;
+use App\Http\Controllers\Api\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -65,7 +66,7 @@ Route::post('login', [AuthController::class, 'login']);
 // Brands API
 Route::get('brands/{id}', [BrandsController::class, 'show']);
 Route::get('brands', [BrandsController::class, 'index']);
-Route::get('brands/{id}/products', [BrandsController::class, 'index']);
+Route::get('brands/{brandId}/products', [ItemsController::class, 'getItemsByBrand']);
 Route::put('brands/{id}/edit', [BrandsController::class, 'update']);
 
 // Items API
@@ -73,6 +74,7 @@ Route::get('items', [ItemsController::class, 'index']);
 Route::get('items/{id}', [ItemsController::class, 'show']);
 Route::get('/front-page-items', [ItemsController::class, 'frontPageItems']);
 Route::get('/items/search', [ItemsController::class, 'searchItems']);
+Route::get('items-category-count', [ItemsController::class, 'getCategoryItemCount']);
 
 // Categories API
 Route::get('categories', [CategoriesContoller::class, 'index']);
@@ -92,7 +94,7 @@ Route::get('user-amount', [AuthController::class, 'userAmount']);
 Route::get('user/{userId}/counts', [AuthController::class, 'getUserCounts']);
 Route::post('user/favorites-status', [FavoriteItemsController::class, 'getFavoritesStatus']);
 Route::post('user/cart-status', [CartController::class, 'getCartStatus']);
-
+Route::get('/user-registrations', [UserController::class, 'getUserRegistrations']);
 
 // Cart API
 Route::get('cart/user/{userId}', [CartController::class, 'getUserCart']);
@@ -101,8 +103,8 @@ Route::get('cart/user/{userId}/count', [CartController::class, 'getUserCartCount
 Route::delete('cart/item/{item_id}-{user_id}', [CartController::class, 'destroyByCartId']);
 Route::get('cart/user/{userId}/item/{itemId}', [CartController::class, 'isItemInCart']);
 
-
 // Purchase API
 Route::post('purchases', [PurchaseController::class, 'store']);
 Route::get('purchases/user/{userId}', [PurchaseController::class, 'getUserPurchases']);
 Route::patch('purchases/{id}/status', [PurchaseController::class, 'updateStatus']);
+Route::get('total-spending-per-day', [PurchaseController::class, 'getTotalSpendingPerDay']);

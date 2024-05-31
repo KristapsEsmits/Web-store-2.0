@@ -24,4 +24,9 @@ class Items extends Model
     {
         return $this->belongsTo(Brands::class);
     }
+
+    public function category()
+    {
+        return $this->belongsTo(Categories::class, 'categories_id');
+    }
 }

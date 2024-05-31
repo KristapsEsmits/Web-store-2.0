@@ -16,7 +16,7 @@
       </div>
       <div v-else class="col-12 text-center">
         <img src="/no_favorite.png" class="no_favorites_img">
-        <h2>There's nothing here, try <router-link class="toProducts" to="/products">browsing</router-link> for something.</h2>
+        <h2>There's no favorites here, try <router-link class="toProducts" to="/products">browsing</router-link> for something.</h2>
       </div>
       <div class="row">
         <div v-for="item in favoriteItems" :key="item.item.id" class="col-auto mb-4">
@@ -55,7 +55,6 @@
     </div>
   </div>
 </template>
-
 
 <script>
 import axios from 'axios';
@@ -133,6 +132,7 @@ export default {
         const response = await axios.post('http://127.0.0.1:8000/api/cart', { user_id: userId, item_id: itemId });
         console.log(response.data.message);
         this.updateItemCartStatus(itemId, true);
+        document.dispatchEvent(new CustomEvent('cart-updated'));
       } catch (error) {
         if (error.response && error.response.status === 409) {
           console.error('Item already in cart');
@@ -144,9 +144,10 @@ export default {
     async removeFromCart(itemId) {
       try {
         const userId = this.user.id;
-        const response = await axios.delete(`http://127.0.0.1:8000/api/cart/item/${itemId}-${userId}`);
+        const response = await axios.delete(`http://localhost:8000/api/cart/item/${itemId}-${userId}`);
         console.log(response.data.message);
         this.updateItemCartStatus(itemId, false);
+        document.dispatchEvent(new CustomEvent('cart-updated'));
       } catch (error) {
         if (error.response) {
           console.error('Error removing from cart:', error.response.data.message);
@@ -162,6 +163,7 @@ export default {
         const response = await axios.post('http://127.0.0.1:8000/api/favorites', { user_id: userId, item_id: itemId });
         console.log(response.data.message);
         this.updateItemFavoriteStatus(itemId, true);
+        document.dispatchEvent(new CustomEvent('favorites-updated'));
       } catch (error) {
         if (error.response && error.response.status === 409) {
           console.error('Item already in favorites');
@@ -176,6 +178,7 @@ export default {
         const response = await axios.delete(`http://localhost:8000/api/favorites/item/${itemId}-${userId}`);
         console.log(response.data.message);
         this.favoriteItems = this.favoriteItems.filter(item => item.item.id !== itemId);
+        document.dispatchEvent(new CustomEvent('favorites-updated'));
         if (this.favoriteItems.length === 0) {
           this.loading = true;
           await this.fetchFavoriteItems();
@@ -195,6 +198,7 @@ export default {
         .then(response => {
           console.log(response.data.message);
           this.favoriteItems = [];
+          document.dispatchEvent(new CustomEvent('favorites-updated'));
         })
         .catch(error => {
           console.error('Error clearing all favorites:', error);
@@ -216,6 +220,7 @@ export default {
 };
 </script>
 
+
 <style scoped>
 .header {
   text-align: center;
@@ -225,6 +230,10 @@ export default {
 .container {
   max-width: auto !important;
   padding: 0;
+}
+
+.toProducts{
+  color: #000;
 }
 
 .row {

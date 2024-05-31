@@ -72,6 +72,12 @@ class CategoriesContoller extends Controller
         }
     }
 
+    public function getCategories()
+    {
+        $categories = Categories::all();
+        return response()->json(['categories' => $categories], 200);
+    }
+
     public function edit($id)
     {
         $categories = Categories::find($id);

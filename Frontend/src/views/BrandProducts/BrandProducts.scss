@@ -1,92 +1,92 @@
-.header {
-  text-align: center;
-  margin: 20px 0 20px 0;
-}
+// .header {
+//   text-align: center;
+//   margin: 20px 0 20px 0;
+// }
 
-.container {
-  max-width: auto !important;
-  padding: 0;
-}
+// .container {
+//   max-width: auto !important;
+//   padding: 0;
+// }
 
 
-.card {
-  overflow: hidden;
-  width: 220px;
-  height: 340px;
-  border: 1px solid #ccc;
+// .card {
+//   overflow: hidden;
+//   width: 220px;
+//   height: 340px;
+//   border: 1px solid #ccc;
 
-  .img-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 160px;
-    margin: 5px;
-  }
+//   .img-container {
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     height: 160px;
+//     margin: 5px;
+//   }
 
-  .card-body {
-    padding-top: 0;
-  }
-}
+//   .card-body {
+//     padding-top: 0;
+//   }
+// }
 
-.img {
-  max-width: 215px;
-  max-height: 160px;
-}
+// .img {
+//   max-width: 215px;
+//   max-height: 160px;
+// }
 
-.card-link {
-  text-decoration: none;
-  color: inherit;
-}
+// .card-link {
+//   text-decoration: none;
+//   color: inherit;
+// }
 
-.button-container {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  opacity: 1;
-  z-index: 100;
-}
+// .button-container {
+//   position: absolute;
+//   bottom: 0;
+//   left: 0;
+//   width: 100%;
+//   text-align: center;
+//   opacity: 1;
+//   z-index: 100;
+// }
 
-.badge {
-  color: #000;
-  background-color: #f3f3f3;
-  border: none;
-  border-width: 1px;
-  text-decoration: none;
-}
+// .badge {
+//   color: #000;
+//   background-color: #f3f3f3;
+//   border: none;
+//   border-width: 1px;
+//   text-decoration: none;
+// }
 
-.loading-message, .sorry-message {
-  text-align: center;
-  margin: 20px 0;
+// .loading-message, .sorry-message {
+//   text-align: center;
+//   margin: 20px 0;
 
-  h2 {
-    color: #ff0000;
-  }
-}
+//   h2 {
+//     color: #ff0000;
+//   }
+// }
 
-@media screen and (max-width: 575px) {
-  .row {
-    margin: 0;
-  }
-}
+// @media screen and (max-width: 575px) {
+//   .row {
+//     margin: 0;
+//   }
+// }
 
-@media screen and (max-width: 767px) {
-  .row {
-    justify-content: center;
-  }
-}
+// @media screen and (max-width: 767px) {
+//   .row {
+//     justify-content: center;
+//   }
+// }
 
-@media screen and (min-width: 768px) {
-  .card:hover .button-container {
-    opacity: 1;
-  }
+// @media screen and (min-width: 768px) {
+//   .card:hover .button-container {
+//     opacity: 1;
+//   }
 
-  .card {
-    transition: transform 0.3s;
+//   .card {
+//     transition: transform 0.3s;
 
-    &:hover {
-      transform: scale(1.1);
-    }
-  }
-}
+//     &:hover {
+//       transform: scale(1.1);
+//     }
+//   }
+// }

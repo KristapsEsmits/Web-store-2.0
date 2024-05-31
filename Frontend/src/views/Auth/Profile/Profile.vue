@@ -88,6 +88,7 @@ onMounted(async () => {
     }
   } finally {
     isLoading.value = false;
+  
   }
 });
 </script>
@@ -116,7 +117,7 @@ onMounted(async () => {
             <div v-if="Object.keys(purchaseHistory).length === 0">No purchases found.</div>
             <div v-else>
               <ul class="list-group">
-                <li v-for="(purchaseGroup, time) in purchaseHistory" :key="time" :class="{'bg-lightgreen': purchaseGroup.status === 'closed'}" class="list-group-item">
+                <li v-for="(purchaseGroup, time) in purchaseHistory" :key="time" :class="{'bg-lightgreen': purchaseGroup.items.status === 'closed'}" class="list-group-item">
                   <div class="d-flex justify-content-between align-items-center">
                     <div>
                       <strong>Purchased At:</strong> {{ time }}
@@ -147,5 +148,20 @@ onMounted(async () => {
 <style scoped>
 .bg-lightgreen {
   background-color: rgb(191, 253, 191);
+}
+
+.card {
+  margin-top: 20px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.actionBtn {
+  margin-right: 20px !important;
+}
+
+.print_btn {
+  margin-left: auto;
 }
 </style>

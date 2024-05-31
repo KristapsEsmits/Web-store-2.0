@@ -90,7 +90,7 @@ export default {
                    style="max-width: 90px; max-height: 70px;">
             </td>
             <td class="d-flex justify-content-center">
-              <!-- <router-link :to="{ path: '/admin/items/' + item.id + '/edit' }" class="btn btn-success float-middle">Edit</router-link> -->
+              <router-link :to="{ path: '/admin/items/' + item.id + '/edit' }" class="btn btn-success float-middle">Edit</router-link>
               <button class="btn btn-danger" type="button" @click="deleteItems(item.id)">Delete</button>
             </td>
           </tr>

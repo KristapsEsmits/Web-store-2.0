@@ -30,7 +30,7 @@ export default {
       formData.append('name', this.model.item.name);
       formData.append('description', this.model.item.description);
       formData.append('price', this.model.item.price);
-      formData.append('brand_id', this.model.item.brand_id); // Include 'brand_id'
+      formData.append('brand_id', this.model.item.brand_id);
       formData.append('categories_id', this.model.item.categories_id);
       formData.append('img', this.model.item.img);
 

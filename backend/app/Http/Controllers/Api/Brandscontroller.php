@@ -97,13 +97,8 @@ class BrandsController extends Controller
     public function update(Request $request, int $id)
     {
         $brands = Brands::find($id);
-        \Log::info('Incoming request data: ', $request->all());
-        \Log::info('Incoming request headers: ', $request->headers->all());
-
 
         if ($brands) {
-            // Log the presence of the 'name' key in the request
-            \Log::info('Checking if name exists in the request: ', ['name_exists' => $request->has('name')]);
 
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:40',
@@ -111,7 +106,6 @@ class BrandsController extends Controller
             ]);
 
             if ($validator->fails()) {
-                \Log::info('Validation failed: ', $validator->messages()->toArray());
                 return response()->json([
                     'status' => 422,
                     'message' => 'Bad Request data wrong!',
@@ -152,8 +146,6 @@ class BrandsController extends Controller
         }
     }
 
-
-    // Delete brand and its image
     public function destroy($id)
     {
         $brand = Brands::find($id);

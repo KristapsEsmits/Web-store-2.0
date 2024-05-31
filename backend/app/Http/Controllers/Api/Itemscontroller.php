@@ -86,6 +86,85 @@ class ItemsController extends Controller
         }
     }
 
+    public function edit($id)
+    {
+        $item = Items::find($id);
+        if ($item) {
+            return response()->json([
+                'status' => 200,
+                'items' => $item,
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'No listing found',
+            ], 404);
+        }
+    }
+
+    public function update(Request $request, int $id)
+    {
+        $item = Items::find($id);
+
+        if ($item) {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|string',
+                'description' => 'required|string|max:1000',
+                'price' => 'required|numeric',
+                'brand_id' => 'required|exists:brands,id',
+                'categories_id' => 'required|exists:categories,id',
+                'img' => $request->hasFile('img') ? 'image|mimes:jpeg,png,jpg,gif,svg' : 'nullable',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 422,
+                    'message' => 'Bad Request data wrong!',
+                    'errors' => $validator->messages(),
+                ], 422);
+            } else {
+                if ($request->hasFile('img')) {
+                    $randomString = Str::random(10);
+                    $imgPath = $request->file('img')->storeAs('uploads', $randomString . '.' . $request->file('img')->getClientOriginalExtension(), 'public');
+
+                    if ($item->img) {
+                        $oldImagePath = public_path("/storage/uploads/{$item->img}");
+                        if (file_exists($oldImagePath)) {
+                            unlink($oldImagePath);
+                        }
+                    }
+
+                    $item->update([
+                        'name' => $request->name,
+                        'description' => $request->description,
+                        'price' => $request->price,
+                        'brand_id' => $request->brand_id,
+                        'categories_id' => $request->categories_id,
+                        'img' => $randomString . '.' . $request->file('img')->getClientOriginalExtension(),
+                    ]);
+                } else {
+                    $item->update([
+                        'name' => $request->name,
+                        'description' => $request->description,
+                        'price' => $request->price,
+                        'brand_id' => $request->brand_id,
+                        'categories_id' => $request->categories_id,
+                    ]);
+                }
+
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Data updated successfully!',
+                ], 200);
+            }
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'No listing found',
+            ], 404);
+        }
+    }
+
     public function destroy($id)
     {
         $item = Items::find($id);
@@ -133,5 +212,39 @@ class ItemsController extends Controller
         $name = $request->query('name');
         $items = Items::where('name', 'LIKE', "%$name%")->get();
         return response()->json(['items' => $items]);
+    }
+
+    public function getCategoryItemCount()
+    {
+        $categoryCounts = Items::selectRaw('categories_id, COUNT(*) as item_count')
+            ->groupBy('categories_id')
+            ->with('category')
+            ->get();
+
+        $data = $categoryCounts->map(function ($item) {
+            return [
+                'category_name' => $item->category->category_name,
+                'item_count' => $item->item_count,
+            ];
+        });
+
+        return response()->json(['category_counts' => $data]);
+    }
+
+    public function getItemsByBrand($brandId)
+    {
+        $items = Items::where('brand_id', $brandId)->get();
+
+        if ($items->count() > 0) {
+            return response()->json([
+                'status' => 200,
+                'items' => $items,
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'No items found for this brand!',
+            ], 404);
+        }
     }
 }
