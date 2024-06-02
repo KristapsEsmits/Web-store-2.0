@@ -1,13 +1,11 @@
 <script setup>
-import AdminNav from '../../../components/AdminNav.vue';
 import axios from 'axios';
-import { onMounted, ref } from 'vue';
-import { Chart, registerables } from 'chart.js';
+import {onMounted, ref} from 'vue';
+import {Chart, registerables} from 'chart.js';
 import 'chartjs-adapter-date-fns';
 
 Chart.register(...registerables);
 
-const isSidebarOpen = ref(false);
 const numberOfItems = ref(0);
 const numberOfBrands = ref(0);
 const numberOfUsers = ref(0);
@@ -15,71 +13,67 @@ const userRegistrationData = ref([]);
 const categoryItemCounts = ref([]);
 const dailySpendingData = ref([]);
 
-const toggleSidebar = () => {
-  isSidebarOpen.value = !isSidebarOpen.value;
-};
-
 const fetchNumberOfItems = () => {
   axios.get('/items')
-    .then((res) => {
-      numberOfItems.value = res.data.items.length;
-    })
-    .catch((error) => {
-      console.error('Error fetching items:', error);
-    });
+      .then((res) => {
+        numberOfItems.value = res.data.items.length;
+      })
+      .catch((error) => {
+        console.error('Error fetching items:', error);
+      });
 };
 
 const fetchNumberOfBrands = () => {
   axios.get('/brands')
-    .then((res) => {
-      numberOfBrands.value = res.data.brands.length;
-    })
-    .catch((error) => {
-      console.error('Error fetching brands:', error);
-    });
+      .then((res) => {
+        numberOfBrands.value = res.data.brands.length;
+      })
+      .catch((error) => {
+        console.error('Error fetching brands:', error);
+      });
 };
 
 const fetchNumberOfUsers = () => {
   axios.get('/user-amount')
-    .then((res) => {
-      numberOfUsers.value = res.data.user_count;
-    })
-    .catch((error) => {
-      console.error('Error fetching registered users:', error);
-    });
+      .then((res) => {
+        numberOfUsers.value = res.data.user_count;
+      })
+      .catch((error) => {
+        console.error('Error fetching registered users:', error);
+      });
 };
 
 const fetchUserRegistrationData = () => {
   axios.get('/user-registrations')
-    .then((res) => {
-      userRegistrationData.value = res.data.registrations;
-      renderUserRegistrationChart();
-    })
-    .catch((error) => {
-      console.error('Error fetching user registration data:', error);
-    });
+      .then((res) => {
+        userRegistrationData.value = res.data.registrations;
+        renderUserRegistrationChart();
+      })
+      .catch((error) => {
+        console.error('Error fetching user registration data:', error);
+      });
 };
 
 const fetchCategoryItemCounts = () => {
   axios.get('/items-category-count')
-    .then((res) => {
-      categoryItemCounts.value = res.data.category_counts;
-      renderCategoryItemCountChart();
-    })
-    .catch((error) => {
-      console.error('Error fetching category item counts:', error);
-    });
+      .then((res) => {
+        categoryItemCounts.value = res.data.category_counts;
+        renderCategoryItemCountChart();
+      })
+      .catch((error) => {
+        console.error('Error fetching category item counts:', error);
+      });
 };
 
 const fetchDailySpendingData = () => {
   axios.get('/total-spending-per-day')
-    .then((res) => {
-      dailySpendingData.value = res.data.data;
-      renderDailySpendingChart();
-    })
-    .catch((error) => {
-      console.error('Error fetching daily spending data:', error);
-    });
+      .then((res) => {
+        dailySpendingData.value = res.data.data;
+        renderDailySpendingChart();
+      })
+      .catch((error) => {
+        console.error('Error fetching daily spending data:', error);
+      });
 };
 
 const renderUserRegistrationChart = () => {
@@ -100,6 +94,7 @@ const renderUserRegistrationChart = () => {
       }],
     },
     options: {
+      maintainAspectRatio: false,
       scales: {
         x: {
           type: 'time',
@@ -150,6 +145,7 @@ const renderCategoryItemCountChart = () => {
       }],
     },
     options: {
+      maintainAspectRatio: false,
       responsive: true,
       plugins: {
         legend: {
@@ -178,6 +174,7 @@ const renderDailySpendingChart = () => {
       }],
     },
     options: {
+      maintainAspectRatio: false,
       scales: {
         x: {
           type: 'time',
@@ -209,9 +206,8 @@ onMounted(() => {
 
 <template>
   <div class="wrapper">
-    <AdminNav :isSidebarOpen="isSidebarOpen" @toggleSidebar="toggleSidebar" />
-    <div class="title">
-      <h1>Admin Dashboard</h1>
+    <div class="content">
+      <h1>Dashboard</h1>
       <div class="stats-wrapper">
         <div class="card">
           <h2 class="card-title">Number of listings</h2>
@@ -226,26 +222,110 @@ onMounted(() => {
           <p class="card-desc">{{ numberOfUsers }}</p>
         </div>
       </div>
-      <div class="chart-container">
-        <canvas id="userRegistrationChart"></canvas>
-      </div>
-      <div class="chart-container">
-        <canvas id="categoryItemCountChart"></canvas>
-      </div>
-      <div class="chart-container">
-        <canvas id="dailySpendingChart"></canvas>
+      <div class="chart-wrapper">
+        <div class="chart-container">
+          <canvas id="userRegistrationChart"></canvas>
+        </div>
+        <div class="chart-container">
+          <canvas id="categoryItemCountChart"></canvas>
+        </div>
+        <div class="chart-container">
+          <canvas id="dailySpendingChart"></canvas>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-@import './Dashboard.scss';
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
+}
+
+.stats-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.card {
+  flex: 1 1 calc(33.333% - 40px);
+  max-width: calc(33.333% - 40px);
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.card-title {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+
+.card-desc {
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.chart-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: center;
+}
 
 .chart-container {
+  position: relative;
   width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-  margin-top: 20px;
+  height: 400px; /* Fixed height for charts */
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 768px) {
+  .chart-wrapper {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .chart-container {
+    flex: 1 1 calc(33.333% - 40px);
+    max-width: calc(33.333% - 40px);
+    height: 400px; /* Ensure the charts are of consistent height */
+  }
+}
+
+@media (max-width: 767px) {
+  .stats-wrapper {
+    flex-direction: column;
+  }
+
+  .card {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  .chart-wrapper {
+    flex-direction: column;
+  }
+
+  .chart-container {
+    flex: 1 1 100%;
+    max-width: 100%;
+    height: auto;
+  }
 }
 </style>

@@ -46,10 +46,13 @@ const updateExit = () => {
 
 <template>
   <div v-if="user" class="container mt-5">
+    <div class="logo">
+      <img alt="Logo" src="\favicon.ico" style="height: 60px; width: 60px;">
+    </div>
+    <div class="logoText">
+      <h1>Change Password</h1>
+    </div>
     <div class="card">
-      <div class="card-header">
-        <h4 class="card-title">Change Password</h4>
-      </div>
       <div class="card-body">
         <ul v-if="Object.keys(errorList).length > 0" class="alert alert-danger">
           <li v-for="(error, index) in errorList" :key="index" class="mb-0 ms-3">
@@ -68,8 +71,8 @@ const updateExit = () => {
           <label for="confirmPassword">Confirm New Password</label>
           <input id="confirmPassword" v-model="newPasswordConfirmation" class="form-control" type="password"/>
         </div>
-        <div class="mb-3">
-          <button class="btn btn-primary" type="button" @click="changePassword">Change Password</button>
+        <div class="action-btns">
+          <button class="btn btn-primary change-btn" type="button" @click="changePassword">Change Password</button>
           <button class="btn btn-danger" type="button" @click="updateExit">Cancel</button>
         </div>
       </div>
@@ -78,5 +81,43 @@ const updateExit = () => {
 </template>
 
 <style scoped>
-@import './ChangePassword.scss';
+.action-btns {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.change-btn {
+  margin-right: 10px;
+}
+
+.logo, .logoText {
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 15px;
+}
+
+.card {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.card-body {
+  padding: 1rem;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 10px;
+  }
+
+  .card-body {
+    padding: 10px;
+  }
+}
 </style>

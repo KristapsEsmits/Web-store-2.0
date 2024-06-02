@@ -1,17 +1,21 @@
 <template>
   <div class="home-wrapper">
-    <div id="carouselExampleIndicators" class="carousel slide mb-4" data-bs-ride="carousel" style="margin: auto;">
-      <div class="carousel-inner">
-        <div v-for="(image, index) in carouselImages" :key="index" :class="['carousel-item', { active: index === 0 }]">
-          <img :alt="image.alt" :src="image.src" class="d-block w-100">
+    <div class="row no-gutters-carousel">
+      <div id="carouselExampleIndicators" class="carousel slide mb-4" data-bs-ride="carousel"
+           style="margin: auto !important;">
+        <div class="carousel-inner">
+          <div v-for="(image, index) in carouselImages" :key="index"
+               :class="['carousel-item', { active: index === 0 }]">
+            <img :alt="image.alt" :src="image.src" class="d-block w-100">
+          </div>
         </div>
+        <a class="carousel-control-prev" data-bs-slide="prev" href="#carouselExampleIndicators" role="button">
+          <span aria-hidden="true" class="carousel-control-prev-icon"></span>
+        </a>
+        <a class="carousel-control-next" data-bs-slide="next" href="#carouselExampleIndicators" role="button">
+          <span aria-hidden="true" class="carousel-control-next-icon"></span>
+        </a>
       </div>
-      <a class="carousel-control-prev" data-bs-slide="prev" href="#carouselExampleIndicators" role="button">
-        <span aria-hidden="true" class="carousel-control-prev-icon"></span>
-      </a>
-      <a class="carousel-control-next" data-bs-slide="next" href="#carouselExampleIndicators" role="button">
-        <span aria-hidden="true" class="carousel-control-next-icon"></span>
-      </a>
     </div>
   </div>
 
@@ -24,7 +28,7 @@
     <div class="row">
       <template v-if="isLoading">
         <div v-for="n in 4" :key="n" class="col-auto mb-4">
-          <SkeletonItemCard />
+          <SkeletonItemCard/>
         </div>
       </template>
       <template v-else>
@@ -41,19 +45,19 @@
               </div>
             </router-link>
             <div class="button-container">
-              <button v-if="item.isInCart" class="btn" @click="removeFromCart(item.id)">
+              <button v-if="user && item.isInCart" class="btn" @click="removeFromCart(item.id)">
                 <i class="bi bi-cart"></i>
                 Remove
               </button>
-              <button v-else class="btn" @click="addToCart(item.id)">
+              <button v-else class="btn" @click="handleCartClick(item.id)">
                 <i class="bi bi-cart"></i>
                 Cart
               </button>
-              <button v-if="item.isFavorite" class="btn" @click="removeFromFavoritesByItemId(item.id)">
+              <button v-if="user && item.isFavorite" class="btn" @click="removeFromFavoritesByItemId(item.id)">
                 <i class="bi bi-star-fill"></i>
                 Remove
               </button>
-              <button v-else class="btn" @click="addToFavorites(item.id)">
+              <button v-else class="btn" @click="handleFavoriteClick(item.id)">
                 <i class="bi bi-star"></i>
                 Favorite
               </button>
@@ -77,12 +81,12 @@ export default {
   data() {
     return {
       items: [],
-      categories: {},
+      categories: [],
       isLoading: true,
       carouselImages: [
-        { src: '/1.webp', alt: 'First slide' },
-        { src: '/2.webp', alt: 'Second slide' },
-        { src: '/3.webp', alt: 'Third slide' }
+        {src: '/1.webp', alt: 'First slide'},
+        {src: '/2.webp', alt: 'Second slide'},
+        {src: '/3.webp', alt: 'Third slide'}
       ],
       user: null
     };
@@ -94,26 +98,19 @@ export default {
   methods: {
     async getItemsAndCategories() {
       try {
-        const [userResponse, itemsResponse, categoriesResponse] = await Promise.all([
-          axios.get('http://127.0.0.1:8000/api/user'),
+        const [itemsResponse, categoriesResponse] = await Promise.all([
           axios.get('http://127.0.0.1:8000/api/front-page-items'),
           axios.get('http://127.0.0.1:8000/api/categories')
         ]);
 
-        this.user = userResponse.data;
         const items = itemsResponse.data.items;
         const categories = categoriesResponse.data.categories;
-
-        const categoryMap = {};
-        categories.forEach(category => {
-          categoryMap[category.id] = category.category_name;
-        });
 
         if (this.user) {
           const itemIds = items.map(item => item.id);
           const [favoritesResponse, cartResponse] = await Promise.all([
-            axios.post('http://127.0.0.1:8000/api/user/favorites-status', { userId: this.user.id, itemIds }),
-            axios.post('http://127.0.0.1:8000/api/user/cart-status', { userId: this.user.id, itemIds })
+            axios.post('http://127.0.0.1:8000/api/user/favorites-status', {userId: this.user.id, itemIds}),
+            axios.post('http://127.0.0.1:8000/api/user/cart-status', {userId: this.user.id, itemIds})
           ]);
 
           const favoriteStatuses = favoritesResponse.data;
@@ -121,16 +118,20 @@ export default {
 
           this.items = items.map(item => ({
             ...item,
-            category_name: categoryMap[item.categories_id] || 'Unknown',
+            category_name: this.getCategoryName(categories, item.categories_id),
             isFavorite: favoriteStatuses[item.id] || false,
             isInCart: cartStatuses[item.id] || false
           }));
         } else {
           this.items = items.map(item => ({
             ...item,
-            category_name: categoryMap[item.categories_id] || 'Unknown'
+            category_name: this.getCategoryName(categories, item.categories_id),
+            isFavorite: false,
+            isInCart: false
           }));
         }
+
+        this.categories = categories;
       } catch (error) {
         console.error('Error fetching items or categories:', error);
       } finally {
@@ -138,12 +139,26 @@ export default {
       }
     },
 
+    getCategoryName(categories, categoryId) {
+      const category = categories.find(cat => cat.id === categoryId);
+      return category ? category.category_name : 'Unknown';
+    },
+
     async fetchUserData() {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/user');
+        const response = await axios.get('http://127.0.0.1:8000/api/user', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+          }
+        });
         this.user = response.data;
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        if (error.response && error.response.status === 401) {
+          // User is not authenticated
+          this.user = null;
+        } else {
+          console.error('Error fetching user data:', error);
+        }
       }
     },
 
@@ -154,7 +169,7 @@ export default {
     async addToFavorites(itemId) {
       try {
         const userId = this.user.id;
-        const response = await axios.post('http://127.0.0.1:8000/api/favorites', { user_id: userId, item_id: itemId });
+        const response = await axios.post('http://127.0.0.1:8000/api/favorites', {user_id: userId, item_id: itemId});
         console.log(response.data.message);
         this.updateItemFavoriteStatus(itemId, true);
         document.dispatchEvent(new CustomEvent('favorites-updated'));
@@ -211,7 +226,7 @@ export default {
     async addToCart(itemId) {
       try {
         const userId = this.user.id;
-        const response = await axios.post('http://127.0.0.1:8000/api/cart', { user_id: userId, item_id: itemId });
+        const response = await axios.post('http://127.0.0.1:8000/api/cart', {user_id: userId, item_id: itemId});
         console.log(response.data.message);
         this.updateItemCartStatus(itemId, true);
         document.dispatchEvent(new CustomEvent('cart-updated'));
@@ -221,6 +236,22 @@ export default {
         } else {
           console.error('Error adding to cart:', error);
         }
+      }
+    },
+
+    handleCartClick(itemId) {
+      if (this.user) {
+        this.addToCart(itemId);
+      } else {
+        this.$router.push({path: '/login'});
+      }
+    },
+
+    handleFavoriteClick(itemId) {
+      if (this.user) {
+        this.addToFavorites(itemId);
+      } else {
+        this.$router.push({path: '/login'});
       }
     },
 
@@ -234,13 +265,31 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .container {
   display: flex;
   justify-content: center;
   justify-self: center;
-  max-width: auto !important;
   padding: 0;
+}
+
+.no-gutters-carousel {
+  --bs-gutter-x: 0;
+}
+
+.category-list li {
+  margin-bottom: 10px;
+}
+
+.category-list a {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  align-items: center;
+}
+
+.category-list i {
+  margin-right: 10px;
 }
 
 .newProducts {
@@ -304,6 +353,10 @@ export default {
   border: none;
   border-width: 1px;
   text-decoration: none;
+}
+
+.row {
+  justify-content: center;
 }
 
 @media screen and (max-width: 425px) {

@@ -1,6 +1,6 @@
 <script setup>
-import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import {onMounted, ref} from 'vue';
+import {useRouter} from 'vue-router';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -84,11 +84,10 @@ onMounted(async () => {
     purchaseHistory.value = groupPurchasesByTime(purchaseData.data.purchases);
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      await router.push({ name: 'login' });
+      await router.push({name: 'login'});
     }
   } finally {
     isLoading.value = false;
-  
   }
 });
 </script>
@@ -102,8 +101,10 @@ onMounted(async () => {
       </div>
       <div class="card">
         <div class="card-body">
-          <router-link :to="{ path: '/profile/change-password' }" class="float-end nav-link">Change password</router-link>
-          <router-link :to="{ path: '/profile/edit' }" class="actionBtn float-end nav-link">Update data</router-link>
+          <div class="profile-actions d-flex justify-content-end">
+            <router-link :to="{ path: '/profile/edit' }" class="actionBtn nav-link">Update data</router-link>
+            <router-link :to="{ path: '/profile/change-password' }" class="nav-link">Change password</router-link>
+          </div>
           <h1>{{ user?.name }} {{ user?.surname }}</h1>
           <h2>Number: {{ user?.phone }}</h2>
           <h2>Email: {{ user?.email }}</h2>
@@ -117,12 +118,13 @@ onMounted(async () => {
             <div v-if="Object.keys(purchaseHistory).length === 0">No purchases found.</div>
             <div v-else>
               <ul class="list-group">
-                <li v-for="(purchaseGroup, time) in purchaseHistory" :key="time" :class="{'bg-lightgreen': purchaseGroup.items.status === 'closed'}" class="list-group-item">
+                <li v-for="(purchaseGroup, time) in purchaseHistory" :key="time"
+                    :class="{'bg-lightgreen': purchaseGroup.items.status === 'closed'}" class="list-group-item">
                   <div class="d-flex justify-content-between align-items-center">
                     <div>
                       <strong>Purchased At:</strong> {{ time }}
                     </div>
-                    <button class="btn btn-primary" @click="generatePDF(time, purchaseGroup)">Print as PDF</button>
+                    <button class="btn btn-primary" @click="generatePDF(time, purchaseGroup)">Print PDF</button>
                   </div>
                   <ul>
                     <li v-for="purchase in purchaseGroup.items" :key="purchase.id">
@@ -151,17 +153,48 @@ onMounted(async () => {
 }
 
 .card {
-  margin-top: 20px;
-  max-width: 800px;
+  max-width: 100%;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 20px;
+}
+
+.profile-actions {
+  margin-bottom: 10px;
 }
 
 .actionBtn {
   margin-right: 20px !important;
 }
 
-.print_btn {
-  margin-left: auto;
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  h1, h2 {
+    font-size: 1.2em;
+  }
+
+  .card-body {
+    padding: 10px;
+  }
+
+  .btn {
+    font-size: 0.8em;
+  }
+
+  .list-group-item {
+    padding: 10px;
+  }
+
+  .profile-actions {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .actionBtn {
+    margin-right: 0 !important;
+  }
 }
 </style>

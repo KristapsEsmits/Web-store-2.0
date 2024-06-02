@@ -87,5 +87,23 @@ const updateExit = () => {
 </template>
 
 <style scoped>
-@import './EditData.scss';
+.logo, .logoText {
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  margin-top: 20px;
+}
+
+.card {
+  display: flex;
+  justify-content: center;
+  width: 380px;
+  margin: 0 auto;
+}
+
+.updateBtn {
+  margin-right: 5px;
+}
 </style>

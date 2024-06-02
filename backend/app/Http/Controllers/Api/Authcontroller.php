@@ -168,5 +168,4 @@ class AuthController extends Controller
             'cartCount' => $cartCount,
         ], 200);
     }
-
 }

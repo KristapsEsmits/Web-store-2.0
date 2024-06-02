@@ -91,6 +91,7 @@ export default {
 
 .row {
   margin: 0;
+  justify-content: center;
 }
 
 @media screen and (max-width: 991px) {

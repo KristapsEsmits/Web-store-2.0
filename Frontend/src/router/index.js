@@ -135,6 +135,12 @@ const routes = [
         component: () => import('../views/Cart/Cart.vue'),
         meta: { requiresAuth: true }
     },
+    {
+        path: '/thank-you',
+        name: 'thank-you',
+        component: () => import('../views/ThankYouPage/ThankYouPage.vue'),
+        meta: { requiresAuth: true }
+    },
 ];
 
 const router = createRouter({

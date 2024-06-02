@@ -19,20 +19,14 @@
                 <RouterLink class="nav-link" to="/" @click="collapseNavbar">Home</RouterLink>
               </li>
               <li class="nav-item dropdown">
-                <a id="navbarDropdown" aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
-                   href="#" role="button">
-                  Products
-                </a>
-                <ul aria-labelledby="navbarDropdown" class="dropdown-menu">
-                  <RouterLink class="nav-link" to="/products" @click="collapseNavbar">All Products</RouterLink>
-                </ul>
+                <RouterLink class="nav-link" to="/products" @click="collapseNavbar">Products</RouterLink>
               </li>
               <li class="nav-item">
                 <RouterLink class="nav-link" to="/brands" @click="collapseNavbar">Brands</RouterLink>
               </li>
             </ul>
 
-            <form id="search-form" class="d-flex">
+            <form id="search-form" class="d-flex position-relative" @submit.prevent>
               <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
                      v-model="searchText" @input="searchItems">
               <div class="dropdown" v-if="isSearchActive">
@@ -94,6 +88,7 @@
     </div>
   </header>
 </template>
+
 
 <script>
 import axios from 'axios';
@@ -200,23 +195,28 @@ export default {
     },
 
     async searchItems() {
-      if (this.searchText.trim().length > 0) {
+    if (this.searchText.trim().length > 0) {
         try {
-          const response = await axios.get(`/items/search`, {
-            params: {
-              name: this.searchText,
-            },
-          });
-          this.searchResults = response.data.items.slice(0, 5);
-          this.isSearchActive = true;
+            console.log('Searching for:', this.searchText);
+            const response = await axios.get('http://127.0.0.1:8000/api/items/search', {
+                params: {
+                    name: this.searchText,
+                },
+            });
+            console.log('Search response:', response.data);
+            this.searchResults = response.data.items.slice(0, 4);
+            this.isSearchActive = true;
         } catch (error) {
-          console.error('Error searching items:', error);
+            console.error('Error searching items:', error);
+            if (error.response) {
+                console.error('Error response:', error.response.data);
+            }
         }
-      } else {
+    } else {
         this.isSearchActive = false;
         this.searchResults = [];
-      }
-    },
+    }
+},
 
     clearSearch() {
       this.searchText = '';
@@ -279,7 +279,6 @@ export default {
 </script>
 
 
-
 <style scoped>
 .bar {
   background-color: #f8f9fa;
@@ -290,10 +289,19 @@ export default {
   z-index: 100;
 }
 
+.position-relative {
+  position: relative;
+}
+
 .dropdown-menu.show {
   display: block;
   max-height: 200px;
   overflow-y: auto;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
 }
 
 .dropdown-item {
