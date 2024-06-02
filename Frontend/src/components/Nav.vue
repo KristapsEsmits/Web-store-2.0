@@ -27,12 +27,12 @@
             </ul>
 
             <form id="search-form" class="d-flex position-relative" @submit.prevent>
-              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
-                     v-model="searchText" @input="searchItems">
-              <div class="dropdown" v-if="isSearchActive">
+              <input v-model="searchText" aria-label="Search" class="form-control me-2" placeholder="Search"
+                     type="search" @input="searchItems">
+              <div v-if="isSearchActive" class="dropdown">
                 <ul class="dropdown-menu show">
                   <li v-for="item in searchResults" :key="item.id">
-                    <RouterLink class="dropdown-item" :to="'/product/' + item.id" @click="clearSearch">
+                    <RouterLink :to="'/product/' + item.id" class="dropdown-item" @click="clearSearch">
                       {{ item.name }}
                     </RouterLink>
                   </li>
@@ -55,11 +55,11 @@
                 </a>
               </li>
 
-              <li v-if="!isLoggedIn" class="nav-item" id="login-link">
+              <li v-if="!isLoggedIn" id="login-link" class="nav-item">
                 <RouterLink class="nav-link" to="/login" @click="collapseNavbar">Login</RouterLink>
               </li>
 
-              <li v-if="isLoggedIn" class="nav-item dropdown" id="user-dropdown">
+              <li v-if="isLoggedIn" id="user-dropdown" class="nav-item dropdown">
                 <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
                    role="button">
                   <i class="bi bi-person-fill"></i>
@@ -195,28 +195,28 @@ export default {
     },
 
     async searchItems() {
-    if (this.searchText.trim().length > 0) {
+      if (this.searchText.trim().length > 0) {
         try {
-            console.log('Searching for:', this.searchText);
-            const response = await axios.get('http://127.0.0.1:8000/api/items/search', {
-                params: {
-                    name: this.searchText,
-                },
-            });
-            console.log('Search response:', response.data);
-            this.searchResults = response.data.items.slice(0, 4);
-            this.isSearchActive = true;
+          console.log('Searching for:', this.searchText);
+          const response = await axios.get('http://127.0.0.1:8000/api/items/search', {
+            params: {
+              name: this.searchText,
+            },
+          });
+          console.log('Search response:', response.data);
+          this.searchResults = response.data.items.slice(0, 4);
+          this.isSearchActive = true;
         } catch (error) {
-            console.error('Error searching items:', error);
-            if (error.response) {
-                console.error('Error response:', error.response.data);
-            }
+          console.error('Error searching items:', error);
+          if (error.response) {
+            console.error('Error response:', error.response.data);
+          }
         }
-    } else {
+      } else {
         this.isSearchActive = false;
         this.searchResults = [];
-    }
-},
+      }
+    },
 
     clearSearch() {
       this.searchText = '';
@@ -243,11 +243,6 @@ export default {
       this.updateNavbar();
     },
 
-    onLogout() {
-      this.isLoggedIn = false;
-      this.user = null;
-      this.updateNavbar();
-    },
 
     async updateFavoritesCount() {
       if (this.user && this.user.id) {

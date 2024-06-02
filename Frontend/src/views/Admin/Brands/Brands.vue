@@ -8,16 +8,18 @@
       <div class="card">
         <div class="card-header">
           <h4 class="card-title">Brands
-            <router-link class="btn btn-primary btn-round btn-fill float-end add_btn" to="/admin/brands/create">Add
+            <router-link class="btn btn-primary btn-round btn-fill float-end excel-btn" to="/admin/brands/create">Add
               Brand
             </router-link>
+            <button class="btn btn-warning btn-round btn-fill float-end excel-btn" @click="exportSelectedRows" :disabled="!isAnyRowSelected">Export Selected Rows</button>
           </h4>
         </div>
         <div class="card-body">
           <div class="table-responsive d-none d-md-block">
-            <table class="table table-bordered table-auto">
+            <table class="table table-bordered table-auto" id="brands-table">
               <thead>
               <tr>
+                <th><input type="checkbox" @change="toggleSelectAll" v-model="selectAll"></th>
                 <th>Brand ID</th>
                 <th>Brand Name</th>
                 <th>Brand Image Path</th>
@@ -27,6 +29,7 @@
               </thead>
               <tbody>
               <tr v-for="(brand, index) in brands" :key="index">
+                <td><input type="checkbox" v-model="selectedRows" :value="brand"></td>
                 <td>{{ brand.id }}</td>
                 <td>{{ brand.name }}</td>
                 <td>{{ brand.img }}</td>
@@ -44,11 +47,14 @@
             </table>
           </div>
           <div class="d-block d-md-none">
+            <div class="select-all-mobile">
+              <input type="checkbox" @change="toggleSelectAll" v-model="selectAll"> Select All
+            </div>
             <div v-for="(brand, index) in brands" :key="index" class="card mb-3">
               <div class="card-body">
-                <h5 class="card-title">{{ brand.name }}</h5>
-                <p class="card-text">ID: {{ brand.id }}</p>
-                <p class="card-text">Image Path: {{ brand.img }}</p>
+                <h5 class="card-title"> <input class="checkbox-btn" type="checkbox" v-model="selectedRows" :value="brand">{{ brand.name }}</h5>
+                <p class="card-text"><strong>ID:</strong> {{ brand.id }}</p>
+                <p class="card-text"><strong>Image Path:</strong> {{ brand.img }}</p>
                 <img :src="'http://localhost:8000/storage/uploads/' + brand.img" alt="Brand Image"
                      style="max-width: 90px; max-height: 70px;">
                 <div class="action-btns">
@@ -66,13 +72,16 @@
 </template>
 
 <script setup>
-import {onMounted, ref} from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import axios from 'axios';
-import {useRoute} from 'vue-router';
+import { useRoute } from 'vue-router';
+import * as XLSX from 'xlsx';
 
 const brands = ref([]);
 const successMessage = ref('');
 const route = useRoute();
+const selectedRows = ref([]);
+const selectAll = ref(false);
 
 const getBrands = async () => {
   try {
@@ -101,6 +110,29 @@ const deleteBrands = async (brandId) => {
 
 const dismissSuccessMessage = () => {
   successMessage.value = '';
+};
+
+const exportSelectedRows = () => {
+  const data = selectedRows.value.map(brand => ({
+    id: brand.id,
+    name: brand.name,
+    imgPath: brand.img
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(data);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Selected Brands');
+  XLSX.writeFile(workbook, 'selected_brands.xlsx');
+};
+
+const isAnyRowSelected = computed(() => selectedRows.value.length > 0);
+
+const toggleSelectAll = () => {
+  if (selectAll.value) {
+    selectedRows.value = [...brands.value];
+  } else {
+    selectedRows.value = [];
+  }
 };
 
 onMounted(() => {
@@ -137,6 +169,12 @@ onMounted(() => {
   white-space: nowrap;
 }
 
+.excel-btn {
+  margin-right: 10px;
+  margin-top: 10px;
+  max-width: 98%;
+}
+
 .image-cell img {
   max-width: 90px;
   max-height: 70px;
@@ -148,10 +186,8 @@ onMounted(() => {
     margin-right: 10px;
   }
 
-  .card-header {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
+  .checkbox-btn {
+    align-self: flex-start;
   }
 
   .card-title {
@@ -161,6 +197,16 @@ onMounted(() => {
   .btn-round {
     width: 100%;
     text-align: center;
+  }
+
+  .select-all-mobile {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+  }
+
+  .select-all-mobile input {
+    margin-right: 10px;
   }
 }
 
@@ -178,16 +224,16 @@ onMounted(() => {
   margin-bottom: 0.75rem;
 }
 
+.checkbox-btn {
+  align-self: flex-start;
+}
+
 .card .card-body .card-text {
   margin-bottom: 0.75rem;
 }
 
 .card .card-body .d-flex {
   margin-top: auto;
-}
-
-.add_btn {
-  margin-top: 10px;
 }
 
 .action-btns {

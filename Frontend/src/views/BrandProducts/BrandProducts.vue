@@ -40,7 +40,7 @@
                     </div>
                     <div class="card-body">
                       <button class="badge badge-pill badge-secondary">{{ item.category_name }}</button>
-                      <h5 class="card-title">{{ item.name }}</h5>
+                      <h5 class="card-title">{{ truncateName(item.name) }}</h5>
                       <h5 class="card-title">{{ item.price }}€</h5>
                     </div>
                   </router-link>
@@ -243,6 +243,14 @@ export default {
       }
     },
 
+    truncateName(name) {
+      const maxLength = 33;
+      if (name.length > maxLength) {
+        return name.substring(0, maxLength) + '...';
+      }
+      return name;
+    },
+
     async addToCart(itemId) {
       try {
         const userId = this.user.id;
@@ -385,8 +393,8 @@ export default {
   .col-12 {
     flex: 0 0 100%;
     max-width: 100%;
-    padding-left: 15px; /* Added padding */
-    padding-right: 15px; /* Added padding */
+    padding-left: 15px;
+    padding-right: 15px;
   }
 }
 

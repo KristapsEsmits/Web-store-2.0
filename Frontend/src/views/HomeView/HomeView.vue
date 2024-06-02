@@ -27,12 +27,12 @@
   <div class="container">
     <div class="row">
       <template v-if="isLoading">
-        <div v-for="n in 4" :key="n" class="col-auto mb-4">
+        <div v-for="n in 4" :key="n" class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
           <SkeletonItemCard/>
         </div>
       </template>
       <template v-else>
-        <div v-for="item in items" :key="item.id" class="col-auto mb-4">
+        <div v-for="item in items" :key="item.id" class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
           <div class="card">
             <router-link :to="{ path: '/product/' + item.id }" class="card-link">
               <div class="img-container">
@@ -40,7 +40,7 @@
               </div>
               <div class="card-body">
                 <button class="badge badge-pill badge-secondary">{{ item.category_name }}</button>
-                <h5 class="card-title">{{ item.name }}</h5>
+                <h5 class="card-title">{{ truncateName(item.name) }}</h5>
                 <h5 class="card-title">{{ item.price }}€</h5>
               </div>
             </router-link>
@@ -74,7 +74,7 @@ import axios from 'axios';
 import SkeletonItemCard from '@/components/SkeletonItemCard.vue';
 
 export default {
-  name: 'items',
+  name: 'HomeView',
   components: {
     SkeletonItemCard,
   },
@@ -154,7 +154,6 @@ export default {
         this.user = response.data;
       } catch (error) {
         if (error.response && error.response.status === 401) {
-          // User is not authenticated
           this.user = null;
         } else {
           console.error('Error fetching user data:', error);
@@ -164,6 +163,14 @@ export default {
 
     getImageUrl(image) {
       return `http://localhost:8000/storage/uploads/${image}`;
+    },
+
+    truncateName(name) {
+      const maxLength = 33;
+      if (name.length > maxLength) {
+        return name.substring(0, maxLength) + '...';
+      }
+      return name;
     },
 
     async addToFavorites(itemId) {
@@ -216,13 +223,6 @@ export default {
       }
     },
 
-    updateItemFavoriteStatus(itemId, isFavorite) {
-      const item = this.items.find(item => item.id === itemId);
-      if (item) {
-        item.isFavorite = isFavorite;
-      }
-    },
-
     async addToCart(itemId) {
       try {
         const userId = this.user.id;
@@ -255,6 +255,13 @@ export default {
       }
     },
 
+    updateItemFavoriteStatus(itemId, isFavorite) {
+      const item = this.items.find(item => item.id === itemId);
+      if (item) {
+        item.isFavorite = isFavorite;
+      }
+    },
+
     updateItemCartStatus(itemId, isInCart) {
       const item = this.items.find(item => item.id === itemId);
       if (item) {
@@ -267,29 +274,12 @@ export default {
 
 <style scoped>
 .container {
-  display: flex;
-  justify-content: center;
-  justify-self: center;
+  justify-content: flex-start;
   padding: 0;
 }
 
 .no-gutters-carousel {
   --bs-gutter-x: 0;
-}
-
-.category-list li {
-  margin-bottom: 10px;
-}
-
-.category-list a {
-  text-decoration: none;
-  color: inherit;
-  display: flex;
-  align-items: center;
-}
-
-.category-list i {
-  margin-right: 10px;
 }
 
 .newProducts {
@@ -300,21 +290,21 @@ export default {
 
 .card {
   overflow: hidden;
-  width: 220px;
+  width: 100%;
   height: 340px;
   border: 1px solid #ccc;
+}
 
-  .img-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 160px;
-    margin: 5px;
-  }
+.img-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 160px;
+  margin: 5px;
+}
 
-  .card-body {
-    padding-top: 0;
-  }
+.card-body {
+  padding-top: 0;
 }
 
 .img {
@@ -344,7 +334,6 @@ export default {
   width: 100%;
   text-align: center;
   opacity: 1;
-  z-index: 100;
 }
 
 .badge {
@@ -356,7 +345,7 @@ export default {
 }
 
 .row {
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 @media screen and (max-width: 425px) {
@@ -387,7 +376,7 @@ export default {
 
 @media screen and (min-width: 1020px) {
   .newProducts {
-    margin: 30px 100px 30px 100px;
+    margin: 30px 100px;
   }
 
   .carousel {

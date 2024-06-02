@@ -29,7 +29,7 @@ class BrandsController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:40',
+            'name' => 'required|string|max:40|unique:brands,name',
             'img' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
         ]);
 

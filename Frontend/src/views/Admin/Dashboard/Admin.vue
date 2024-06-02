@@ -59,6 +59,7 @@ const fetchCategoryItemCounts = () => {
       .then((res) => {
         categoryItemCounts.value = res.data.category_counts;
         renderCategoryItemCountChart();
+        console.log(res.value);
       })
       .catch((error) => {
         console.error('Error fetching category item counts:', error);
@@ -116,6 +117,7 @@ const renderUserRegistrationChart = () => {
 
 const renderCategoryItemCountChart = () => {
   const ctx = document.getElementById('categoryItemCountChart').getContext('2d');
+  console.log(categoryItemCounts.value);
   const labels = categoryItemCounts.value.map(entry => entry.category_name);
   const data = categoryItemCounts.value.map(entry => entry.item_count);
 
@@ -287,7 +289,7 @@ onMounted(() => {
 .chart-container {
   position: relative;
   width: 100%;
-  height: 400px; /* Fixed height for charts */
+  height: 400px;
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -304,7 +306,7 @@ onMounted(() => {
   .chart-container {
     flex: 1 1 calc(33.333% - 40px);
     max-width: calc(33.333% - 40px);
-    height: 400px; /* Ensure the charts are of consistent height */
+    height: 400px;
   }
 }
 

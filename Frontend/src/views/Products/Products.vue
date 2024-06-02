@@ -9,9 +9,8 @@
         <h2>Filters</h2>
         <select v-model="filters.category" class="form-select">
           <option value="">All Categories</option>
-          <option v-for="category in categories" :key="category.id" :value="category.id">{{
-              category.category_name
-            }}
+          <option v-for="category in categories" :key="category.id" :value="category.id">
+            {{ category.category_name }}
           </option>
         </select>
         <select v-model="filters.brand" class="form-select">
@@ -39,7 +38,7 @@
                 </div>
                 <div class="card-body">
                   <button class="badge badge-pill badge-secondary">{{ item.category_name }}</button>
-                  <h5 class="card-title">{{ item.name }}</h5>
+                  <h5 class="card-title">{{ truncateName(item.name) }}</h5>
                   <h5 class="card-title">{{ item.price }}€</h5>
                 </div>
               </router-link>
@@ -103,10 +102,10 @@ export default {
     filteredItems() {
       return this.items.filter(item => {
         return (
-            (!this.filters.category || item.categories_id === this.filters.category) &&
-            (!this.filters.brand || item.brand_id === this.filters.brand) &&
-            (!this.filters.minPrice || item.price >= this.filters.minPrice) &&
-            (!this.filters.maxPrice || item.price <= this.filters.maxPrice)
+          (!this.filters.category || item.categories_id === this.filters.category) &&
+          (!this.filters.brand || item.brand_id === this.filters.brand) &&
+          (!this.filters.minPrice || item.price >= this.filters.minPrice) &&
+          (!this.filters.maxPrice || item.price <= this.filters.maxPrice)
         );
       });
     }
@@ -172,7 +171,6 @@ export default {
         this.user = response.data;
       } catch (error) {
         if (error.response && error.response.status === 401) {
-          // User is not authenticated
           this.user = null;
         } else {
           console.error('Error fetching user data:', error);
@@ -182,6 +180,14 @@ export default {
 
     getImageUrl(image) {
       return `http://localhost:8000/storage/uploads/${image}`;
+    },
+
+    truncateName(name) {
+      const maxLength = 33;
+      if (name.length > maxLength) {
+        return name.substring(0, maxLength) + '...';
+      }
+      return name;
     },
 
     async addToFavorites(itemId) {

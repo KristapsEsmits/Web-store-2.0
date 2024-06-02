@@ -248,4 +248,32 @@ class ItemsController extends Controller
         }
     }
 
+    public function getSimilarItems($id)
+    {
+        $currentItem = Items::find($id);
+
+        if (!$currentItem) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Item not found',
+            ], 404);
+        }
+
+        $similarItems = Items::where('categories_id', $currentItem->categories_id)
+            ->where('id', '!=', $id)
+            ->take(4)
+            ->get();
+
+        if ($similarItems->count() > 0) {
+            return response()->json([
+                'status' => 200,
+                'items' => $similarItems,
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'No similar items found',
+            ], 404);
+        }
+    }
 }

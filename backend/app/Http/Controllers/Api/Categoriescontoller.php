@@ -28,7 +28,7 @@ class CategoriesContoller extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'category_name' => 'required|string|max:40',
+            'category_name' => 'required|string|max:40|unique:categories,category_name',
         ]);
 
         if ($validator->fails()) {

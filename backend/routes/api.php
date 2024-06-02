@@ -75,6 +75,7 @@ Route::get('items/{id}', [ItemsController::class, 'show']);
 Route::get('/front-page-items', [ItemsController::class, 'frontPageItems']);
 Route::get('/items/search', [ItemsController::class, 'searchItems']);
 Route::get('items-category-count', [ItemsController::class, 'getCategoryItemCount']);
+Route::get('/items/similar/{id}', [ItemsController::class, 'getSimilarItems']);
 
 // Categories API
 Route::get('categories', [CategoriesContoller::class, 'index']);
