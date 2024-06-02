@@ -5,7 +5,7 @@
         <img :src="getImageUrl(items.img)" alt="Item Image" class="product-image">
         <p class="small-print">*The product may differ from the one shown in the picture. The picture may show parts
           that are not included in the delivery package.</p>
-        <h2>Description:</h2>
+        <h2 class="ml-left">Description:</h2>
         <p class="description">{{ items.description }}</p>
       </div>
       <div class="details-container">
@@ -41,7 +41,7 @@
       <div class="row">
         <template v-if="isLoading">
           <div v-for="n in 4" :key="n" class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-            <SkeletonItemCard/>
+            <SkeletonItemCard />
           </div>
         </template>
         <template v-else>
@@ -94,7 +94,7 @@ export default {
   },
   data() {
     return {
-      items: [],
+      items: {},
       similarItems: [],
       user: null,
       isLoading: true,
@@ -154,7 +154,7 @@ export default {
       if (this.user) {
         await this.addToCart(itemId);
       } else {
-        this.$router.push({path: '/login'});
+        this.$router.push({ path: '/login' });
       }
     },
 
@@ -166,14 +166,14 @@ export default {
       if (this.user) {
         await this.addToFavorites(itemId);
       } else {
-        this.$router.push({path: '/login'});
+        this.$router.push({ path: '/login' });
       }
     },
 
     async addToCart(itemId) {
       try {
         const userId = this.user.id;
-        const response = await axios.post('http://127.0.0.1:8000/api/cart', {user_id: userId, item_id: itemId});
+        const response = await axios.post('http://127.0.0.1:8000/api/cart', { user_id: userId, item_id: itemId });
         console.log(response.data.message);
         this.updateItemCartStatus(itemId, true);
         document.dispatchEvent(new CustomEvent('cart-updated'));
@@ -214,7 +214,7 @@ export default {
     async addToFavorites(itemId) {
       try {
         const userId = this.user.id;
-        const response = await axios.post('http://127.0.0.1:8000/api/favorites', {user_id: userId, item_id: itemId});
+        const response = await axios.post('http://127.0.0.1:8000/api/favorites', { user_id: userId, item_id: itemId });
         console.log(response.data.message);
         this.updateItemFavoriteStatus(itemId, true);
         document.dispatchEvent(new CustomEvent('favorites-updated'));
@@ -248,12 +248,24 @@ export default {
       if (this.items && this.items.id === itemId) {
         this.items.isFavorite = isFavorite;
       }
+      this.similarItems = this.similarItems.map(item => {
+        if (item.id === itemId) {
+          return { ...item, isFavorite };
+        }
+        return item;
+      });
     },
 
     updateItemCartStatus(itemId, isInCart) {
       if (this.items && this.items.id === itemId) {
         this.items.isInCart = isInCart;
       }
+      this.similarItems = this.similarItems.map(item => {
+        if (item.id === itemId) {
+          return { ...item, isInCart };
+        }
+        return item;
+      });
     }
   }
 };
@@ -283,14 +295,16 @@ export default {
 
 .image-container {
   flex: 1 1 40%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .product-image {
   max-width: 250px;
   height: auto;
-  display: block;
   margin-bottom: 10px;
-  align-self: center;
 }
 
 .description {
@@ -382,6 +396,10 @@ export default {
   border: none;
   border-width: 1px;
   text-decoration: none;
+}
+
+.ml-left {
+align-self: flex-start; 
 }
 
 @media screen and (max-width: 575px) {
