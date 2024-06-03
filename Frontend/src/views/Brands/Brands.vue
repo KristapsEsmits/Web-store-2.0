@@ -23,10 +23,6 @@ export default {
         this.isLoading = false;
       });
     },
-    
-    goToBrandProducts(brandId) {
-      this.$router.push({ name: 'brand-products', params: { id: brandId } });
-    },
   },
 };
 </script>
@@ -39,7 +35,7 @@ export default {
     <div class="row">
       <template v-if="isLoading">
         <div v-for="n in 8" :key="n" class="col-auto mb-4">
-          <SkeletonLoader />
+          <SkeletonLoader/>
         </div>
       </template>
       <template v-else>
@@ -47,7 +43,7 @@ export default {
           <router-link :to="{ path: '/brand/' + brand.id + '/products' }" class="card-link">
             <div class="card">
               <img v-if="brand.img" :src="'http://localhost:8000/storage/uploads/' + brand.img" alt="Brand Image"
-                class="img" />
+                   class="img"/>
             </div>
           </router-link>
         </div>

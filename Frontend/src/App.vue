@@ -14,7 +14,6 @@ const isAdminRoute = computed(() => route.path.startsWith('/admin'));
     <Nav v-if="!isAdminRoute"/>
     <AdminNav v-else/>
     <router-view/>
-    <!-- <Footer /> -->
   </main>
 </template>
 

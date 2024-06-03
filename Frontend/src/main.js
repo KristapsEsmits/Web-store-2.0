@@ -12,7 +12,6 @@ const app = createApp(App);
 app.use(router);
 app.mount('#app');
 
-
 axios.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${localStorage.getItem('access_token')}`
     return config;

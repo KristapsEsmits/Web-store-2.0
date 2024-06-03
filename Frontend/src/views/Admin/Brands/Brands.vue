@@ -11,15 +11,17 @@
             <router-link class="btn btn-primary btn-round btn-fill float-end excel-btn" to="/admin/brands/create">Add
               Brand
             </router-link>
-            <button class="btn btn-warning btn-round btn-fill float-end excel-btn" @click="exportSelectedRows" :disabled="!isAnyRowSelected">Export Selected Rows</button>
+            <button :disabled="!isAnyRowSelected" class="btn btn-warning btn-round btn-fill float-end excel-btn"
+                    @click="exportSelectedRows">Export Selected Rows
+            </button>
           </h4>
         </div>
         <div class="card-body">
           <div class="table-responsive d-none d-md-block">
-            <table class="table table-bordered table-auto" id="brands-table">
+            <table id="brands-table" class="table table-bordered table-auto">
               <thead>
               <tr>
-                <th><input type="checkbox" @change="toggleSelectAll" v-model="selectAll"></th>
+                <th><input v-model="selectAll" type="checkbox" @change="toggleSelectAll"></th>
                 <th>Brand ID</th>
                 <th>Brand Name</th>
                 <th>Brand Image Path</th>
@@ -29,7 +31,7 @@
               </thead>
               <tbody>
               <tr v-for="(brand, index) in brands" :key="index">
-                <td><input type="checkbox" v-model="selectedRows" :value="brand"></td>
+                <td><input v-model="selectedRows" :value="brand" type="checkbox"></td>
                 <td>{{ brand.id }}</td>
                 <td>{{ brand.name }}</td>
                 <td>{{ brand.img }}</td>
@@ -48,11 +50,12 @@
           </div>
           <div class="d-block d-md-none">
             <div class="select-all-mobile">
-              <input type="checkbox" @change="toggleSelectAll" v-model="selectAll"> Select All
+              <input v-model="selectAll" type="checkbox" @change="toggleSelectAll"> Select All
             </div>
             <div v-for="(brand, index) in brands" :key="index" class="card mb-3">
               <div class="card-body">
-                <h5 class="card-title"> <input class="checkbox-btn" type="checkbox" v-model="selectedRows" :value="brand">{{ brand.name }}</h5>
+                <h5 class="card-title"><input v-model="selectedRows" :value="brand" class="checkbox-btn"
+                                              type="checkbox">{{ brand.name }}</h5>
                 <p class="card-text"><strong>ID:</strong> {{ brand.id }}</p>
                 <p class="card-text"><strong>Image Path:</strong> {{ brand.img }}</p>
                 <img :src="'http://localhost:8000/storage/uploads/' + brand.img" alt="Brand Image"
@@ -72,9 +75,9 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from 'vue';
+import {computed, onMounted, ref} from 'vue';
 import axios from 'axios';
-import { useRoute } from 'vue-router';
+import {useRoute} from 'vue-router';
 import * as XLSX from 'xlsx';
 
 const brands = ref([]);
@@ -97,7 +100,7 @@ const deleteBrands = async (brandId) => {
     try {
       const res = await axios.delete(`/brands/${brandId}/delete`);
       successMessage.value = res.data.message;
-      getBrands();
+      await getBrands();
     } catch (error) {
       if (error.response && error.response.status === 422) {
         console.error('Validation errors:', error.response.data.errors);

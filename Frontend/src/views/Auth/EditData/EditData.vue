@@ -28,7 +28,7 @@ const updateUser = async () => {
 
     const userResponse = await axios.get('/user');
     user.value = userResponse.data;
-    router.push({name: 'profile', query: {successMessage: response.data.message}});
+    await router.push({name: 'profile', query: {successMessage: response.data.message}});
 
   } catch (error) {
     if (error.response && error.response.status === 422) {
@@ -49,7 +49,7 @@ const updateExit = () => {
 <template>
   <div v-if="user" class="container mt-5">
     <div class="logo">
-      <img alt="Logo" src="\favicon.ico" style="height: 60px; width: 60px;">
+      <img alt="Logo" src="/favicon.ico" style="height: 60px; width: 60px;">
     </div>
     <div class="logoText">
       <h1>Profile information</h1>

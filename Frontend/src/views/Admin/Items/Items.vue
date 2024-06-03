@@ -8,53 +8,59 @@
       <div class="card">
         <div class="card-header">
           <h4 class="card-title">Items
-            <router-link class="btn btn-primary btn-round btn-fill float-end excel-btn" to="/admin/items/create">Add Item</router-link>
-            <button class="btn btn-warning btn-round btn-fill float-end excel-btn" @click="exportSelectedRows" :disabled="!isAnyRowSelected">Export Selected Rows</button>
+            <router-link class="btn btn-primary btn-round btn-fill float-end excel-btn" to="/admin/items/create">Add
+              Item
+            </router-link>
+            <button :disabled="!isAnyRowSelected" class="btn btn-warning btn-round btn-fill float-end excel-btn"
+                    @click="exportSelectedRows">Export Selected Rows
+            </button>
           </h4>
         </div>
         <div class="card-body">
           <div class="table-responsive d-none d-md-block">
             <table class="table table-bordered table-auto">
               <thead>
-                <tr>
-                  <th><input type="checkbox" @change="toggleSelectAll" v-model="selectAll"></th>
-                  <th>Item ID</th>
-                  <th>Name</th>
-                  <th>Description</th>
-                  <th>Price</th>
-                  <th>Img path</th>
-                  <th>Img</th>
-                  <th>Actions</th>
-                </tr>
+              <tr>
+                <th><input v-model="selectAll" type="checkbox" @change="toggleSelectAll"></th>
+                <th>Item ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Img path</th>
+                <th>Img</th>
+                <th>Actions</th>
+              </tr>
               </thead>
               <tbody>
-                <tr v-for="(item, index) in items" :key="index">
-                  <td><input type="checkbox" v-model="selectedRows" :value="item"></td>
-                  <td>{{ item.id }}</td>
-                  <td>{{ item.name }}</td>
-                  <td>{{ item.description }}</td>
-                  <td>{{ item.price }}</td>
-                  <td>{{ item.img }}</td>
-                  <td class="image-cell">
-                    <img :src="'http://localhost:8000/storage/uploads/' + item.img" alt="Item Image"
-                         style="max-width: 90px; max-height: 70px;">
-                  </td>
-                  <td class="d-flex justify-content-center">
-                    <router-link :to="{ path: '/admin/items/' + item.id + '/edit' }" class="btn btn-success me-2">Edit</router-link>
-                    <button class="btn btn-danger" type="button" @click="deleteItems(item.id)">Delete</button>
-                  </td>
-                </tr>
+              <tr v-for="(item, index) in items" :key="index">
+                <td><input v-model="selectedRows" :value="item" type="checkbox"></td>
+                <td>{{ item.id }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.description }}</td>
+                <td>{{ item.price }}</td>
+                <td>{{ item.img }}</td>
+                <td class="image-cell">
+                  <img :src="'http://localhost:8000/storage/uploads/' + item.img" alt="Item Image"
+                       style="max-width: 90px; max-height: 70px;">
+                </td>
+                <td class="d-flex justify-content-center">
+                  <router-link :to="{ path: '/admin/items/' + item.id + '/edit' }" class="btn btn-success me-2">Edit
+                  </router-link>
+                  <button class="btn btn-danger" type="button" @click="deleteItems(item.id)">Delete</button>
+                </td>
+              </tr>
               </tbody>
             </table>
           </div>
           <div class="d-block d-md-none">
             <div class="select-all-mobile">
-              <input type="checkbox" @change="toggleSelectAll" v-model="selectAll"> Select All
+              <input v-model="selectAll" type="checkbox" @change="toggleSelectAll"> Select All
             </div>
             <div v-for="(item, index) in items" :key="index" class="card mb-3">
               <div class="card-body">
-                
-                <h5 class="card-title"><input class="checkbox-btn" type="checkbox" v-model="selectedRows" :value="item"> {{ item.name }}</h5>
+
+                <h5 class="card-title"><input v-model="selectedRows" :value="item" class="checkbox-btn" type="checkbox">
+                  {{ item.name }}</h5>
                 <p class="card-text"><strong>ID:</strong> {{ item.id }}</p>
                 <p class="card-text"><strong>Description:</strong> {{ item.description }}</p>
                 <p class="card-text"><strong>Price:</strong> {{ item.price }}</p>
@@ -62,7 +68,8 @@
                 <img :src="'http://localhost:8000/storage/uploads/' + item.img" alt="Item Image"
                      style="max-width: 90px; max-height: 70px;">
                 <div class="action-btns">
-                  <router-link :to="{ path: '/admin/items/' + item.id + '/edit' }" class="btn btn-success me-2">Edit</router-link>
+                  <router-link :to="{ path: '/admin/items/' + item.id + '/edit' }" class="btn btn-success me-2">Edit
+                  </router-link>
                   <button class="btn btn-danger" type="button" @click="deleteItems(item.id)">Delete</button>
                 </div>
               </div>
@@ -75,9 +82,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import {computed, onMounted, ref} from 'vue';
 import axios from 'axios';
-import { useRoute } from 'vue-router';
+import {useRoute} from 'vue-router';
 import * as XLSX from 'xlsx';
 
 const items = ref([]);
@@ -100,7 +107,7 @@ const deleteItems = async (itemId) => {
     try {
       const res = await axios.delete(`/items/${itemId}/delete`);
       successMessage.value = res.data.message;
-      getItems();
+      await getItems();
     } catch (error) {
       if (error.response && error.response.status === 422) {
         console.error('Validation errors:', error.response.data.errors);
@@ -235,7 +242,7 @@ onMounted(() => {
 .card .card-body .card-text {
   white-space: normal;
   word-wrap: break-word;
-  overflow-wrap: break-word; 
+  overflow-wrap: break-word;
   margin-bottom: 0.75rem;
 }
 

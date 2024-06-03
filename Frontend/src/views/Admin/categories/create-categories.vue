@@ -52,7 +52,7 @@ export default {
       })
 
           .catch(function (error) {
-            if (error.response.status == 422) {
+            if (error.response.status === 422) {
               list.errorList = error.response.data.errors;
             } else if (error.request) {
               console.log(error.request);

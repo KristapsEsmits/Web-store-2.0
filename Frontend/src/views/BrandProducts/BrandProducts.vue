@@ -267,22 +267,6 @@ export default {
       }
     },
 
-    handleCartClick(itemId) {
-      if (this.user) {
-        this.addToCart(itemId);
-      } else {
-        this.$router.push({path: '/login'});
-      }
-    },
-
-    handleFavoriteClick(itemId) {
-      if (this.user) {
-        this.addToFavorites(itemId);
-      } else {
-        this.$router.push({path: '/login'});
-      }
-    },
-
     updateItemFavoriteStatus(itemId, isFavorite) {
       const item = this.items.find(item => item.id === itemId);
       if (item) {
@@ -384,8 +368,7 @@ export default {
 .badge {
   color: #000;
   background-color: #f3f3f3;
-  border: none;
-  border-width: 1px;
+  border: 1px none;
   text-decoration: none;
 }
 

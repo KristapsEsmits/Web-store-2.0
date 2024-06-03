@@ -28,7 +28,7 @@ const changePassword = async () => {
       password_confirmation: newPasswordConfirmation.value,
     });
 
-    router.push({name: 'profile', query: {successMessage: response.data.message}});
+    await router.push({name: 'profile', query: {successMessage: response.data.message}});
   } catch (error) {
     if (error.response && error.response.status === 422) {
       errorList.value = error.response.data.errors;

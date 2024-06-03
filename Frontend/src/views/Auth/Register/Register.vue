@@ -116,5 +116,39 @@ export default {
 </template>
 
 <style scoped>
-@import './Register.scss';
+.logo, .logoText {
+  display: flex;
+  justify-content: center;
+}
+
+.card {
+  display: flex;
+  justify-content: center;
+  width: 380px;
+  margin: 0 auto;
+}
+
+.registerbtn {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 40px;
+}
+
+.form-control:focus {
+  border-color: #b3b3b3;
+  box-shadow: none;
+}
+
+.Member {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+@media screen and (max-width: 375px) {
+  .card {
+    width: 300px;
+  }
+}
 </style>

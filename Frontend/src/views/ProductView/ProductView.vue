@@ -41,7 +41,7 @@
       <div class="row">
         <template v-if="isLoading">
           <div v-for="n in 4" :key="n" class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-            <SkeletonItemCard />
+            <SkeletonItemCard/>
           </div>
         </template>
         <template v-else>
@@ -112,7 +112,7 @@ export default {
       try {
         const response = await axios.get(`/items/${itemId}`);
         this.items = response.data.items;
-        this.fetchSimilarItems(itemId);
+        await this.fetchSimilarItems(itemId);
       } catch (error) {
         console.error('Error fetching item:', error);
       }
@@ -154,7 +154,7 @@ export default {
       if (this.user) {
         await this.addToCart(itemId);
       } else {
-        this.$router.push({ path: '/login' });
+        this.$router.push({path: '/login'});
       }
     },
 
@@ -166,14 +166,14 @@ export default {
       if (this.user) {
         await this.addToFavorites(itemId);
       } else {
-        this.$router.push({ path: '/login' });
+        this.$router.push({path: '/login'});
       }
     },
 
     async addToCart(itemId) {
       try {
         const userId = this.user.id;
-        const response = await axios.post('http://127.0.0.1:8000/api/cart', { user_id: userId, item_id: itemId });
+        const response = await axios.post('http://127.0.0.1:8000/api/cart', {user_id: userId, item_id: itemId});
         console.log(response.data.message);
         this.updateItemCartStatus(itemId, true);
         document.dispatchEvent(new CustomEvent('cart-updated'));
@@ -214,7 +214,7 @@ export default {
     async addToFavorites(itemId) {
       try {
         const userId = this.user.id;
-        const response = await axios.post('http://127.0.0.1:8000/api/favorites', { user_id: userId, item_id: itemId });
+        const response = await axios.post('http://127.0.0.1:8000/api/favorites', {user_id: userId, item_id: itemId});
         console.log(response.data.message);
         this.updateItemFavoriteStatus(itemId, true);
         document.dispatchEvent(new CustomEvent('favorites-updated'));
@@ -250,7 +250,7 @@ export default {
       }
       this.similarItems = this.similarItems.map(item => {
         if (item.id === itemId) {
-          return { ...item, isFavorite };
+          return {...item, isFavorite};
         }
         return item;
       });
@@ -262,7 +262,7 @@ export default {
       }
       this.similarItems = this.similarItems.map(item => {
         if (item.id === itemId) {
-          return { ...item, isInCart };
+          return {...item, isInCart};
         }
         return item;
       });
@@ -345,7 +345,7 @@ export default {
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
-  border: solid 0.1px black;
+  border: solid .1px black;
 }
 
 .row {
@@ -393,13 +393,12 @@ export default {
 .badge {
   color: #000;
   background-color: #f3f3f3;
-  border: none;
-  border-width: 1px;
+  border: 1px none;
   text-decoration: none;
 }
 
 .ml-left {
-align-self: flex-start; 
+  align-self: flex-start;
 }
 
 @media screen and (max-width: 575px) {

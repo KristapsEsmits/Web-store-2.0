@@ -339,8 +339,7 @@ export default {
 .badge {
   color: #000;
   background-color: #f3f3f3;
-  border: none;
-  border-width: 1px;
+  border: 1px none;
   text-decoration: none;
 }
 

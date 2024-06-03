@@ -24,7 +24,7 @@ const loginUser = async () => {
 
     document.dispatchEvent(new Event('login'));
 
-    router.push('/');
+    await router.push('/');
   } catch (error) {
     if (error.response && error.response.status === 401) {
       errorMessage.value = 'Incorrect email or password. Please try again';
@@ -63,7 +63,7 @@ const loginUser = async () => {
           <label for="floatingInput">Password</label>
         </div>
         <div class="text mb-3">
-          <a href="#!">Forgot password?</a>
+          <a href="#">Forgot password?</a>
         </div>
         <button class="btn btn-primary loginbtn" type="button" @click="loginUser">Login</button>
       </form>
@@ -78,5 +78,43 @@ const loginUser = async () => {
 </template>
 
 <style scoped>
-@import './Login.scss';
+.attribute-container {
+  padding-top: 80px;
+}
+
+.logo, .logoText {
+  display: flex;
+  justify-content: center;
+}
+
+.card {
+  display: flex;
+  justify-content: center;
+  width: 360px;
+  align-self: center;
+}
+
+.form-control:focus {
+  box-shadow: none;
+  border-color: #b3b3b3;
+}
+
+.loginbtn {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 40px;
+}
+
+.noMember {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+@media screen and (max-width: 375px) {
+  .card {
+    width: 300px;
+  }
+}
 </style>

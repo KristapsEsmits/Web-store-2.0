@@ -26,13 +26,13 @@ export default {
       axios.get(`/brands/${brandsId}/edit`).then((res) => {
         this.model.brands = res.data.brands;
       })
-      .catch((error) => {
-        if (error.response) {
-          if (error.response.status == 404) {
-            this.$router.push('/brands');
-          }
-        }
-      });
+          .catch((error) => {
+            if (error.response) {
+              if (error.response.status === 404) {
+                this.$router.push('/brands');
+              }
+            }
+          });
     },
 
     handleImageUpload(event) {
@@ -57,20 +57,20 @@ export default {
           'Accept': 'application/json'
         }
       })
-      .then((res) => {
-        this.$router.push('/admin/brands');
-        alert(res.data.message);
-        this.errorList = '';
-      })
-      .catch(function (error) {
-        if (error.response.status == 422) {
-          list.errorList = error.response.data.errors;
-        } else if (error.request) {
-          console.log(error.request);
-        } else {
-          console.log('Error', error.message);
-        }
-      });
+          .then((res) => {
+            this.$router.push('/admin/brands');
+            alert(res.data.message);
+            this.errorList = '';
+          })
+          .catch(function (error) {
+            if (error.response.status === 422) {
+              list.errorList = error.response.data.errors;
+            } else if (error.request) {
+              console.log(error.request);
+            } else {
+              console.log('Error', error.message);
+            }
+          });
     },
 
     Exit() {

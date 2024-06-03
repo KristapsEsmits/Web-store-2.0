@@ -32,7 +32,7 @@
               </li>
             </ul>
             <ul class="navbar-nav mb-2 mb-lg-0">
-              <li v-if="isLoggedIn" class="nav-item dropdown" id="user-dropdown">
+              <li v-if="isLoggedIn" id="user-dropdown" class="nav-item dropdown">
                 <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
                    role="button">
                   <i class="bi bi-person-fill"></i>
@@ -63,8 +63,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import {computed, onMounted, ref} from 'vue';
+import {useRoute, useRouter} from 'vue-router';
 import axios from 'axios';
 
 const user = ref(null);
@@ -115,7 +115,7 @@ const logout = async () => {
     localStorage.removeItem('access_token');
     isLoggedIn.value = false;
     user.value = null;
-    router.push('/login');
+    await router.push('/login');
   } catch (error) {
     console.error('Error logging out:', error);
   }

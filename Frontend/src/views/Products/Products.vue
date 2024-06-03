@@ -102,10 +102,10 @@ export default {
     filteredItems() {
       return this.items.filter(item => {
         return (
-          (!this.filters.category || item.categories_id === this.filters.category) &&
-          (!this.filters.brand || item.brand_id === this.filters.brand) &&
-          (!this.filters.minPrice || item.price >= this.filters.minPrice) &&
-          (!this.filters.maxPrice || item.price <= this.filters.maxPrice)
+            (!this.filters.category || item.categories_id === this.filters.category) &&
+            (!this.filters.brand || item.brand_id === this.filters.brand) &&
+            (!this.filters.minPrice || item.price >= this.filters.minPrice) &&
+            (!this.filters.maxPrice || item.price <= this.filters.maxPrice)
         );
       });
     }
@@ -344,8 +344,7 @@ export default {
 .badge {
   color: #000;
   background-color: #f3f3f3;
-  border: none;
-  border-width: 1px;
+  border: 1px none;
   text-decoration: none;
 }
 

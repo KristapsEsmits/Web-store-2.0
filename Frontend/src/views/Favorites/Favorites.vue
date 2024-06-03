@@ -76,7 +76,7 @@ export default {
     await this.fetchLoggedInUserId();
     await this.fetchCategories();
     this.fetchFavoriteItems();
-    this.fetchUserData();
+    await this.fetchUserData();
   },
   methods: {
     async fetchLoggedInUserId() {
@@ -192,7 +192,7 @@ export default {
         document.dispatchEvent(new CustomEvent('favorites-updated'));
         if (this.favoriteItems.length === 0) {
           this.loading = true;
-          await this.fetchFavoriteItems();
+          this.fetchFavoriteItems();
           this.loading = false;
         }
       } catch (error) {
@@ -284,8 +284,7 @@ export default {
 .badge {
   color: #000;
   background-color: #f3f3f3;
-  border: none;
-  border-width: 1px;
+  border: 1px none;
   text-decoration: none;
 }
 
@@ -375,8 +374,7 @@ export default {
 .badge {
   color: #000;
   background-color: #f3f3f3;
-  border: none;
-  border-width: 1px;
+  border: 1px none;
   text-decoration: none;
 }
 

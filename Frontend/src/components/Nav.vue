@@ -89,7 +89,6 @@
   </header>
 </template>
 
-
 <script>
 import axios from 'axios';
 
@@ -109,15 +108,16 @@ export default {
   },
 
   async created() {
-    this.checkLoginState();
-
+    await this.checkLoginState();
+    document.addEventListener('logout', this.onLogout);
     document.addEventListener('login', this.onLogin);
     document.addEventListener('favorites-updated', this.updateFavoritesCount);
     document.addEventListener('cart-updated', this.updateCartCount);
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     document.removeEventListener('login', this.onLogin);
+    document.removeEventListener('logout', this.onLogout);
     document.removeEventListener('favorites-updated', this.updateFavoritesCount);
     document.removeEventListener('cart-updated', this.updateCartCount);
   },
@@ -168,9 +168,10 @@ export default {
         localStorage.removeItem('access_token');
         this.isLoggedIn = false;
         this.user = null;
-        this.updateNavbar();
-        this.$router.push('/login');
+        this.favoritesCount = 0;
+        this.cartCount = 0;
         document.dispatchEvent(new Event('logout'));
+        this.$router.push('/login');
       } catch (error) {
         console.log(error);
       }
@@ -240,9 +241,14 @@ export default {
       this.isLoggedIn = true;
       await this.fetchUserData();
       await this.fetchUserCounts();
-      this.updateNavbar();
     },
 
+    async onLogout() {
+      this.isLoggedIn = false;
+      this.user = null;
+      this.favoritesCount = 0;
+      this.cartCount = 0;
+    },
 
     async updateFavoritesCount() {
       if (this.user && this.user.id) {
@@ -264,15 +270,10 @@ export default {
           console.error('Error updating cart count:', error);
         }
       }
-    },
-
-    updateNavbar() {
-      this.$forceUpdate();
     }
   },
 };
 </script>
-
 
 <style scoped>
 .bar {
