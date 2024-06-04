@@ -39,6 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('items/{id}/edit', [ItemsController::class, 'edit']);
     Route::put('items/{id}/edit', [ItemsController::class, 'update']);
     Route::delete('items/{id}/delete', [ItemsController::class, 'destroy']);
+    Route::post('/items/purchase', [ItemsController::class, 'purchase']);
 
     // Categories
     Route::post('categories', [CategoriesContoller::class, 'store']);
@@ -57,6 +58,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('cart', [CartController::class, 'index']);
     Route::get('cart/{id}', [CartController::class, 'show']);
     Route::get('cart/user', [CartController::class, 'getUserCart']);
+
+    // Purchase
+    Route::post('purchase', [PurchaseController::class, 'store']);
+    Route::get('purchases/user/{userId}', [PurchaseController::class, 'getUserPurchases']);
+    Route::patch('purchases/{id}/status', [PurchaseController::class, 'updateStatus']);
+    Route::get('total-spending-per-day', [PurchaseController::class, 'getTotalSpendingPerDay']);
 });
 
 // Auth API
@@ -76,6 +83,7 @@ Route::get('/front-page-items', [ItemsController::class, 'frontPageItems']);
 Route::get('/items/search', [ItemsController::class, 'searchItems']);
 Route::get('items-category-count', [ItemsController::class, 'getCategoryItemCount']);
 Route::get('/items/similar/{id}', [ItemsController::class, 'getSimilarItems']);
+Route::put('items/{id}/update-inventory', [ItemsController::class, 'updateInventory']);
 
 // Categories API
 Route::get('categories', [CategoriesContoller::class, 'index']);
@@ -99,13 +107,10 @@ Route::get('/user-registrations', [UserController::class, 'getUserRegistrations'
 
 // Cart API
 Route::get('cart/user/{userId}', [CartController::class, 'getUserCart']);
-Route::delete('cart/clear/{userId}', [CartController::class, 'clearCartByUserId']);
 Route::get('cart/user/{userId}/count', [CartController::class, 'getUserCartCount']);
 Route::delete('cart/item/{item_id}-{user_id}', [CartController::class, 'destroyByCartId']);
 Route::get('cart/user/{userId}/item/{itemId}', [CartController::class, 'isItemInCart']);
+Route::delete('cart/clear/{userId}', [CartController::class, 'clearCartByUserId']);
 
-// Purchase API
-Route::post('purchases', [PurchaseController::class, 'store']);
-Route::get('purchases/user/{userId}', [PurchaseController::class, 'getUserPurchases']);
-Route::patch('purchases/{id}/status', [PurchaseController::class, 'updateStatus']);
-Route::get('total-spending-per-day', [PurchaseController::class, 'getTotalSpendingPerDay']);
+// Admin purchases API
+Route::patch('/items/{id}', [ItemsController::class, 'updateItem']);

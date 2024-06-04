@@ -30,6 +30,9 @@
               <li class="nav-item">
                 <RouterLink class="nav-link" to="/admin/purchases" @click="collapseNavbar">Purchases</RouterLink>
               </li>
+              <li class="nav-item">
+                <RouterLink class="nav-link" to="/admin/inventory" @click="collapseNavbar">Inventory</RouterLink>
+              </li>
             </ul>
             <ul class="navbar-nav mb-2 mb-lg-0">
               <li v-if="isLoggedIn" id="user-dropdown" class="nav-item dropdown">

@@ -276,4 +276,55 @@ class ItemsController extends Controller
             ], 404);
         }
     }
+
+    public function updateInventory(Request $request, int $id)
+    {
+        $item = Items::find($id);
+
+        if ($item) {
+            $validator = Validator::make($request->all(), [
+                'price' => 'required|numeric',
+                'amount' => 'required|integer',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 422,
+                    'message' => 'Bad Request data wrong!',
+                    'errors' => $validator->messages(),
+                ], 422);
+            } else {
+                $item->update([
+                    'price' => $request->price,
+                    'amount' => $request->amount,
+                ]);
+
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Data updated successfully!',
+                ], 200);
+            }
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'No listing found',
+            ], 404);
+        }
+    }
+
+    public function updateItem(Request $request, $id)
+    {
+        $item = Items::find($id);
+
+        if ($item) {
+            $item->sold = $request->input('sold', $item->sold);
+            $item->reserved = $request->input('reserved', $item->reserved);
+            $item->amount = $request->input('amount', $item->amount);
+            $item->save();
+
+            return response()->json(['status' => 'success', 'message' => 'Item updated successfully']);
+        } else {
+            return response()->json(['status' => 'error', 'message' => 'Item not found'], 404);
+        }
+    }
 }

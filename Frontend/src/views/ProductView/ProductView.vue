@@ -12,14 +12,16 @@
         <h5 class="product-name">{{ items.name }}</h5>
         <h2 class="price">Price: {{ items.price }}€</h2>
         <p class="without-vat">Price without VAT: {{ calculatePriceWithoutVAT(items.price) }}€</p>
+        <p :class="{'out-of-stock': items.amount === 0}">
+          {{ items.amount === 0 ? 'Out of stock' : `Items remaining: ${items.amount}` }}
+        </p>
         <div class="action-btn-container">
           <button v-if="user && items.isInCart" class="btn btn-new" @click="removeFromCart(items.id)">
             <i class="bi bi-cart"></i>
             Remove
           </button>
-          <button v-else class="btn btn-new" @click="handleCartClick(items.id)">
-            <i class="bi bi-cart"></i>
-            Add to cart
+          <button v-else class="btn btn-new" @click="handleCartClick(items.id)" :disabled="items.amount === 0">
+            {{ items.amount === 0 ? 'Out of stock' : 'Add to cart' }}
           </button>
           <button v-if="user && items.isFavorite" class="btn btn-new" @click="removeFromFavoritesByItemId(items.id)">
             <i class="bi bi-star-fill"></i>
@@ -38,13 +40,13 @@
     </div>
 
     <div class="container">
-      <div class="row">
         <template v-if="isLoading">
           <div v-for="n in 4" :key="n" class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
             <SkeletonItemCard/>
           </div>
         </template>
         <template v-else>
+          <div class="row">
           <div v-for="item in similarItems" :key="item.id" class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
             <div class="card">
               <router-link :to="{ path: '/product/' + item.id }" class="card-link">
@@ -62,9 +64,9 @@
                   <i class="bi bi-cart"></i>
                   Remove
                 </button>
-                <button v-else class="btn" @click="handleCartClick(item.id)">
-                  <i class="bi bi-cart"></i>
-                  Cart
+                <button v-else class="btn" @click="handleCartClick(item.id)" :disabled="item.amount === 0">
+                  <i v-if="item.amount !== 0" class="bi bi-cart"></i>
+                  {{ item.amount === 0 ? 'Out of stock' : 'Cart' }}
                 </button>
                 <button v-if="user && item.isFavorite" class="btn" @click="removeFromFavoritesByItemId(item.id)">
                   <i class="bi bi-star-fill"></i>
@@ -77,10 +79,10 @@
               </div>
             </div>
           </div>
+        </div>
         </template>
       </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -154,7 +156,7 @@ export default {
       if (this.user) {
         await this.addToCart(itemId);
       } else {
-        this.$router.push({path: '/login'});
+        this.$router.push({ path: '/login' });
       }
     },
 
@@ -166,14 +168,14 @@ export default {
       if (this.user) {
         await this.addToFavorites(itemId);
       } else {
-        this.$router.push({path: '/login'});
+        this.$router.push({ path: '/login' });
       }
     },
 
     async addToCart(itemId) {
       try {
         const userId = this.user.id;
-        const response = await axios.post('http://127.0.0.1:8000/api/cart', {user_id: userId, item_id: itemId});
+        const response = await axios.post('http://127.0.0.1:8000/api/cart', { user_id: userId, item_id: itemId });
         console.log(response.data.message);
         this.updateItemCartStatus(itemId, true);
         document.dispatchEvent(new CustomEvent('cart-updated'));
@@ -214,7 +216,7 @@ export default {
     async addToFavorites(itemId) {
       try {
         const userId = this.user.id;
-        const response = await axios.post('http://127.0.0.1:8000/api/favorites', {user_id: userId, item_id: itemId});
+        const response = await axios.post('http://127.0.0.1:8000/api/favorites', { user_id: userId, item_id: itemId });
         console.log(response.data.message);
         this.updateItemFavoriteStatus(itemId, true);
         document.dispatchEvent(new CustomEvent('favorites-updated'));
@@ -250,7 +252,7 @@ export default {
       }
       this.similarItems = this.similarItems.map(item => {
         if (item.id === itemId) {
-          return {...item, isFavorite};
+          return { ...item, isFavorite };
         }
         return item;
       });
@@ -262,7 +264,7 @@ export default {
       }
       this.similarItems = this.similarItems.map(item => {
         if (item.id === itemId) {
-          return {...item, isInCart};
+          return { ...item, isInCart };
         }
         return item;
       });
@@ -333,6 +335,10 @@ export default {
 
 .without-vat {
   margin-bottom: 5px;
+}
+
+.out-of-stock {
+  color: red;
 }
 
 .action-btn-container {

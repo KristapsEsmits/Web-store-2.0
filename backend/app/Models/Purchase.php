@@ -14,6 +14,7 @@ class Purchase extends Model
         'item_id',
         'total_price',
         'status',
+        'quantity',
     ];
 
     public function item()
@@ -26,4 +27,5 @@ class Purchase extends Model
         return $this->belongsTo(User::class);
     }
 }
+
 

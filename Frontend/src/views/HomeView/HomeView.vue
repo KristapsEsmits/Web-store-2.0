@@ -49,9 +49,9 @@
                 <i class="bi bi-cart"></i>
                 Remove
               </button>
-              <button v-else class="btn" @click="handleCartClick(item.id)">
-                <i class="bi bi-cart"></i>
-                Cart
+              <button v-else :disabled="item.amount === 0" class="btn" @click="handleCartClick(item.id)">
+                <i v-if="item.amount !== 0" class="bi bi-cart"></i>
+                {{ item.amount === 0 ? 'Out of stock' : 'Cart' }}
               </button>
               <button v-if="user && item.isFavorite" class="btn" @click="removeFromFavoritesByItemId(item.id)">
                 <i class="bi bi-star-fill"></i>
@@ -210,7 +210,6 @@ export default {
       try {
         const userId = this.user.id;
         const response = await axios.delete(`http://localhost:8000/api/cart/item/${itemId}-${userId}`);
-        console.log(response.data.message);
         this.updateItemCartStatus(itemId, false);
         document.dispatchEvent(new CustomEvent('cart-updated'));
       } catch (error) {
@@ -227,7 +226,6 @@ export default {
       try {
         const userId = this.user.id;
         const response = await axios.post('http://127.0.0.1:8000/api/cart', {user_id: userId, item_id: itemId});
-        console.log(response.data.message);
         this.updateItemCartStatus(itemId, true);
         document.dispatchEvent(new CustomEvent('cart-updated'));
       } catch (error) {

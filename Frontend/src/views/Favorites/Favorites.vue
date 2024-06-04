@@ -39,9 +39,9 @@
                 <i class="bi bi-cart"></i>
                 Remove
               </button>
-              <button v-else class="btn" @click="addToCart(item.item.id)">
-                <i class="bi bi-cart"></i>
-                Cart
+              <button v-else class="btn" @click="handleCartClick(item.item.id)" :disabled="item.item.amount === 0">
+                <i v-if="item.item.amount !== 0" class="bi bi-cart"></i>
+                {{ item.item.amount === 0 ? 'Out of stock' : 'Cart' }}
               </button>
               <button v-if="item.isFavorite" class="btn" @click="removeFromFavoritesByItemId(item.item.id)">
                 <i class="bi bi-star-fill"></i>
@@ -108,26 +108,26 @@ export default {
 
     fetchFavoriteItems() {
       axios
-          .get(`http://127.0.0.1:8000/api/favorites/user/${this.loggedInUserId}`)
-          .then((response) => {
-            const categoryMap = {};
-            this.categories.forEach(category => {
-              categoryMap[category.id] = category.category_name;
-            });
-
-            this.favoriteItems = response.data.favorites || [];
-            this.favoriteItems.forEach(item => {
-              item.isFavorite = true;
-              item.isInCart = item.isInCart || false;
-              item.item.category_name = categoryMap[item.item.categories_id] || 'Unknown';
-            });
-          })
-          .catch((error) => {
-            console.error('Error fetching favorite items:', error);
-          })
-          .finally(() => {
-            this.loading = false;
+        .get(`http://127.0.0.1:8000/api/favorites/user/${this.loggedInUserId}`)
+        .then((response) => {
+          const categoryMap = {};
+          this.categories.forEach(category => {
+            categoryMap[category.id] = category.category_name;
           });
+
+          this.favoriteItems = response.data.favorites || [];
+          this.favoriteItems.forEach(item => {
+            item.isFavorite = true;
+            item.isInCart = item.isInCart || false;
+            item.item.category_name = categoryMap[item.item.categories_id] || 'Unknown';
+          });
+        })
+        .catch((error) => {
+          console.error('Error fetching favorite items:', error);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
 
     getImageUrl(image) {
@@ -138,7 +138,6 @@ export default {
       try {
         const userId = this.user.id;
         const response = await axios.post('http://127.0.0.1:8000/api/cart', {user_id: userId, item_id: itemId});
-        console.log(response.data.message);
         this.updateItemCartStatus(itemId, true);
         document.dispatchEvent(new CustomEvent('cart-updated'));
       } catch (error) {
@@ -150,11 +149,18 @@ export default {
       }
     },
 
+    handleCartClick(itemId) {
+      if (this.user) {
+        this.addToCart(itemId);
+      } else {
+        this.$router.push({path: '/login'});
+      }
+    },
+
     async removeFromCart(itemId) {
       try {
         const userId = this.user.id;
         const response = await axios.delete(`http://localhost:8000/api/cart/item/${itemId}-${userId}`);
-        console.log(response.data.message);
         this.updateItemCartStatus(itemId, false);
         document.dispatchEvent(new CustomEvent('cart-updated'));
       } catch (error) {
@@ -207,14 +213,14 @@ export default {
 
     clearAllFavorites() {
       axios.delete(`http://127.0.0.1:8000/api/favorites/user/${this.loggedInUserId}/clear`)
-          .then(response => {
-            console.log(response.data.message);
-            this.favoriteItems = [];
-            document.dispatchEvent(new CustomEvent('favorites-updated'));
-          })
-          .catch(error => {
-            console.error('Error clearing all favorites:', error);
-          });
+        .then(response => {
+          console.log(response.data.message);
+          this.favoriteItems = [];
+          document.dispatchEvent(new CustomEvent('favorites-updated'));
+        })
+        .catch(error => {
+          console.error('Error clearing all favorites:', error);
+        });
     },
 
     updateItemCartStatus(itemId, isInCart) {
@@ -241,7 +247,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 .header {
@@ -286,10 +291,6 @@ export default {
   background-color: #f3f3f3;
   border: 1px none;
   text-decoration: none;
-}
-
-.btn {
-  margin: 0 5px;
 }
 
 .no_favorites_img {

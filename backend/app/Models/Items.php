@@ -18,6 +18,15 @@ class Items extends Model
         'img',
         'brand_id',
         'categories_id',
+        'amount',
+        'reserved',
+        'sold',
+    ];
+
+    protected $attributes = [
+        'amount' => 0,
+        'reserved' => 0,
+        'sold' => 0,
     ];
 
     public function brands()

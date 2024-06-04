@@ -31,36 +31,14 @@
         </template>
         <template v-else>
           <div v-for="item in filteredItems" :key="item.id" class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-            <div class="card">
-              <router-link :to="{ path: '/product/' + item.id }" class="card-link">
-                <div class="img-container">
-                  <img v-if="item.img" :src="getImageUrl(item.img)" alt="Item Image" class="img">
-                </div>
-                <div class="card-body">
-                  <button class="badge badge-pill badge-secondary">{{ item.category_name }}</button>
-                  <h5 class="card-title">{{ truncateName(item.name) }}</h5>
-                  <h5 class="card-title">{{ item.price }}€</h5>
-                </div>
-              </router-link>
-              <div class="button-container">
-                <button v-if="user && item.isInCart" class="btn" @click="removeFromCart(item.id)">
-                  <i class="bi bi-cart"></i>
-                  Remove
-                </button>
-                <button v-else class="btn" @click="handleCartClick(item.id)">
-                  <i class="bi bi-cart"></i>
-                  Cart
-                </button>
-                <button v-if="user && item.isFavorite" class="btn" @click="removeFromFavoritesByItemId(item.id)">
-                  <i class="bi bi-star-fill"></i>
-                  Remove
-                </button>
-                <button v-else class="btn" @click="handleFavoriteClick(item.id)">
-                  <i class="bi bi-star"></i>
-                  Favorite
-                </button>
-              </div>
-            </div>
+            <ProductCard
+                :item="item"
+                :user="user"
+                @cart-click="handleCartClick"
+                @favorite-click="handleFavoriteClick"
+                @remove-cart="removeFromCart"
+                @remove-favorite="removeFromFavoritesByItemId"
+            />
           </div>
         </template>
       </div>
@@ -71,11 +49,13 @@
 <script>
 import axios from 'axios';
 import SkeletonItemCard from '@/components/SkeletonItemCard.vue';
+import ProductCard from '@/components/ProductCard.vue';
 
 export default {
   name: 'AllProducts',
   components: {
     SkeletonItemCard,
+    ProductCard,
   },
   data() {
     return {
@@ -176,18 +156,6 @@ export default {
           console.error('Error fetching user data:', error);
         }
       }
-    },
-
-    getImageUrl(image) {
-      return `http://localhost:8000/storage/uploads/${image}`;
-    },
-
-    truncateName(name) {
-      const maxLength = 33;
-      if (name.length > maxLength) {
-        return name.substring(0, maxLength) + '...';
-      }
-      return name;
     },
 
     async addToFavorites(itemId) {
@@ -303,51 +271,6 @@ export default {
   margin-top: 40px;
 }
 
-.card {
-  overflow: hidden;
-  width: 100%;
-  height: 340px;
-  border: 1px solid #ccc;
-}
-
-.img-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 160px;
-  margin: 5px;
-}
-
-.card-body {
-  padding-top: 0;
-}
-
-.img {
-  max-width: 215px;
-  max-height: 160px;
-}
-
-.card-link {
-  text-decoration: none;
-  color: inherit;
-}
-
-.button-container {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  opacity: 1;
-}
-
-.badge {
-  color: #000;
-  background-color: #f3f3f3;
-  border: 1px none;
-  text-decoration: none;
-}
-
 @media screen and (max-width: 575px) {
   .row {
     margin: 0;
@@ -379,18 +302,6 @@ export default {
   .col-lg-3 {
     flex: 0 0 25%;
     max-width: 25%;
-  }
-
-  .card:hover .button-container {
-    opacity: 1;
-  }
-
-  .card {
-    transition: transform 0.3s;
-
-    &:hover {
-      transform: scale(1.1);
-    }
   }
 }
 

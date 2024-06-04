@@ -141,6 +141,18 @@ const routes = [
         component: () => import('../views/ThankYouPage/ThankYouPage.vue'),
         meta: { requiresAuth: true }
     },
+    {
+        path: '/admin/inventory',
+        name: '/admin/inventory',
+        component: () => import('../views/admin/Inventory/Inventory.vue'),
+        meta: { requiresAdmin: true }
+    },
+    {
+        path: '/admin/inventory-edit/:id/edit',
+        name: '/admin/inventory-edit',
+        component: () => import('../views/admin/Inventory/InventoryEdit.vue'),
+        meta: { requiresAdmin: true }
+    },
 ];
 
 const router = createRouter({

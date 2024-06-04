@@ -5,7 +5,7 @@ use App\Models\Cart;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Log;
+use App\Models\Items;
 
 class CartController extends Controller
 {
@@ -110,17 +110,19 @@ class CartController extends Controller
         }
     }
 
+    // CartController.php
 
     public function clearCartByUserId($userId)
     {
         $cartItems = Cart::where('user_id', $userId)->delete();
 
         if ($cartItems) {
-            return response()->json(['message' => 'Cart cleared successfully'], 200);
+            return response()->json(['status' => 200, 'message' => 'Cart cleared successfully'], 200);
         } else {
-            return response()->json(['message' => 'No items found in cart'], 404);
+            return response()->json(['status' => 404, 'message' => 'No items found in cart'], 404);
         }
     }
+
 
     public function getUserCartCount($userId)
     {
@@ -158,5 +160,4 @@ class CartController extends Controller
 
         return response()->json($cartStatus);
     }
-
 }

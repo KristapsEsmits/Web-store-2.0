@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Purchase;
+use App\Models\Cart;
+use App\Models\Items;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -12,26 +14,67 @@ class PurchaseController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required|exists:users,id',
-            'item_id' => 'required|exists:items,id',
-            'total_price' => 'required|numeric',
+            'items' => 'required|array',
+            'items.*.id' => 'required|exists:items,id',
+            'items.*.quantity' => 'required|integer|min:1',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'status' => 422,
+                'message' => 'Bad Request!',
                 'errors' => $validator->messages(),
             ], 422);
         }
 
-        $purchase = new Purchase();
-        $purchase->user_id = $request->user_id;
-        $purchase->item_id = $request->item_id;
-        $purchase->total_price = $request->total_price;
-        $purchase->status = 'active';
-        $purchase->save();
+        $itemsData = $request->input('items');
+        $user = auth()->user();
 
-        return response()->json(['message' => 'Purchase saved successfully'], 200);
+        if (!$user) {
+            return response()->json([
+                'status' => 401,
+                'message' => 'Unauthorized',
+            ], 401);
+        }
+
+        $userId = $user->id;
+
+        try {
+            foreach ($itemsData as $itemData) {
+                $item = Items::find($itemData['id']);
+                if ($item->amount < $itemData['quantity']) {
+                    return response()->json([
+                        'status' => 400,
+                        'message' => "Insufficient amount for item {$item->name}",
+                    ], 400);
+                }
+
+                $item->amount -= $itemData['quantity'];
+                $item->reserved += $itemData['quantity'];
+                $item->save();
+
+                 Purchase::create([
+                    'user_id' => $userId,
+                    'item_id' => $item->id,
+                    'quantity' => $itemData['quantity'],
+                    'total_price' => $item->price * $itemData['quantity'],
+                    'status' => 'active',
+                ]);
+            }
+
+            Cart::where('user_id', $userId)->delete();
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Purchase successful!',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'An error occurred during the purchase process',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function getUserPurchases($userId)
@@ -55,30 +98,39 @@ class PurchaseController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'status' => 'required|in:active,closed',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 422,
-                'errors' => $validator->messages(),
-            ], 422);
-        }
-
+        $status = $request->input('status');
         $purchase = Purchase::find($id);
 
-        if (!$purchase) {
-            return response()->json([
-                'status' => 404,
-                'message' => 'Purchase not found',
-            ], 404);
+        if ($purchase) {
+            $purchase->status = $status;
+            $purchase->save();
+
+            $item = Items::find($purchase->item_id);
+            if ($item) {
+                $item->sold = $item->sold ?? 0;
+                $item->reserved = $item->reserved ?? 0;
+                $item->amount = $item->amount ?? 0;
+
+                if ($status === 'closed') {
+                    $item->amount += $purchase->quantity;
+                    $item->reserved -= $purchase->quantity;
+                } elseif ($status === 'canceled') {
+                    $item->amount += $purchase->quantity;
+                    $item->reserved -= $purchase->quantity;
+                }
+
+                $item->reserved = max(0, $item->reserved);
+                $item->amount = max(0, $item->amount);
+
+                $item->save();
+
+                return response()->json(['status' => 'success', 'message' => 'Purchase status updated successfully']);
+            } else {
+                return response()->json(['status' => 'error', 'message' => 'Item not found'], 404);
+            }
+        } else {
+            return response()->json(['status' => 'error', 'message' => 'Purchase not found'], 404);
         }
-
-        $purchase->status = $request->status;
-        $purchase->save();
-
-        return response()->json(['message' => 'Purchase status updated successfully'], 200);
     }
 
     public function getTotalSpendingPerDay()

@@ -23,10 +23,14 @@
               <router-link :to="`/product/${cartItem.item.id}`" class="name">
                 <h2>{{ truncatedName(cartItem.item.name) }}</h2>
               </router-link>
-              <div class="actions">
-                  <h3 class="price">Price: {{ cartItem.item.price }}€</h3>
-                </div>
-              <div class="actions">
+              <div class="actions" v-if="cartItem.item.amount > 0">
+                <h3 class="price">Price: {{ cartItem.item.price }}€</h3>
+              </div>
+              <div class="actions" v-else>
+                <h3 class="out-of-stock">Out of stock</h3>
+                <button class="btn btn-danger remove" @click="removeFromCart(cartItem.item.id)">Remove</button>
+              </div>
+              <div class="actions" v-if="cartItem.item.amount > 0">
                 <div class="input-group quantity-control">
                   <div class="input-group-prepend">
                     <button class="btn btn-outline-secondary" type="button" @click="decreaseQuantity(cartItem)">-</button>
@@ -44,7 +48,8 @@
             <p>Price without VAT: {{ priceWithoutVat.toFixed(2) }}€</p>
             <p>Total VAT amount: {{ totalVatAmount.toFixed(2) }}€</p>
             <h3>Total price: {{ totalValue.toFixed(2) }}€</h3>
-            <button class="btn btn-success purchase" @click="purchaseItems">Purchase</button>
+            <button class="btn btn-success purchase" @click="validateAndPurchaseItems" :disabled="isAnyItemOutOfStock">Purchase</button>
+            <div v-if="outOfStockMessage" class="alert alert-danger mt-2">{{ outOfStockMessage }}</div>
           </div>
         </div>
       </div>
@@ -62,6 +67,7 @@ export default {
       cartItems: [],
       user: null,
       loading: true,
+      outOfStockMessage: ''
     };
   },
   async mounted() {
@@ -132,42 +138,71 @@ export default {
       }
     },
 
+    async validateAndPurchaseItems() {
+        try {
+            const itemValidationPromises = this.cartItems.map(cartItem =>
+                axios.get(`http://127.0.0.1:8000/api/items/${cartItem.item.id}`)
+            );
+
+            const validationResponses = await Promise.all(itemValidationPromises);
+
+            for (const response of validationResponses) {
+                const itemData = response.data.items;
+                const cartItem = this.cartItems.find(ci => ci.item.id === itemData.id);
+
+                if (itemData.amount < cartItem.quantity) {
+                    this.outOfStockMessage = `Sorry, ${cartItem.item.name} does not have enough stock. Please reduce the quantity or remove it from the cart to proceed.`;
+                    this.fetchCartItems();
+                    return;
+                }
+            }
+            await this.purchaseItems();
+        } catch (error) {
+            console.error('Error validating items:', error);
+        }
+    },
+
     async purchaseItems() {
-      try {
-        const purchaseGroup = {
-          time: new Date().toLocaleString(),
-          items: [],
-          totalPrice: 0,
+    try {
+        const purchasePayload = {
+            items: this.cartItems.map(cartItem => ({
+                id: cartItem.item.id,
+                quantity: cartItem.quantity
+            }))
         };
 
-        for (const cartItem of this.cartItems) {
-          const response = await axios.post('http://127.0.0.1:8000/api/purchases', {
-            user_id: this.user.id,
-            item_id: cartItem.item.id,
-            total_price: cartItem.item.price * cartItem.quantity
-          });
+        const response = await axios.post('http://127.0.0.1:8000/api/purchase', purchasePayload);
 
-          purchaseGroup.items.push({
-            ...cartItem,
-            total_price: cartItem.item.price * cartItem.quantity,
-          });
-          purchaseGroup.totalPrice += cartItem.item.price * cartItem.quantity;
+        if (response.data.status === 200) {
+            try {
+                const purchaseGroup = {
+                    time: new Date().toLocaleString(),
+                    items: this.cartItems.map(cartItem => ({
+                        item: cartItem.item,
+                        total_price: cartItem.item.price * cartItem.quantity
+                    })),
+                    totalPrice: this.totalValue
+                };
+
+                localStorage.setItem('recent_purchase', JSON.stringify(purchaseGroup));
+                localStorage.setItem('purchase_completed', 'true');
+
+                this.cartItems = [];
+
+                document.dispatchEvent(new CustomEvent('cart-updated'));
+
+                this.$router.push('/thank-you');
+            } catch (clearCartError) {
+                console.error('Error clearing cart:', clearCartError);
+                this.$router.push('/thank-you');
+            }
+        } else {
+            console.error('Purchase failed:', response.data.message);
         }
-
-        await axios.delete(`http://127.0.0.1:8000/api/cart/clear/${this.user.id}`);
-        
-        this.cartItems = [];
-        
-        document.dispatchEvent(new CustomEvent('cart-updated'));
-
-        localStorage.setItem('recent_purchase', JSON.stringify(purchaseGroup));
-        localStorage.setItem('purchase_completed', 'true');
-
-        this.$router.push('/thank-you');
-      } catch (error) {
+    } catch (error) {
         console.error('Error purchasing items:', error);
-      }
-    },
+    }
+},
 
     truncatedName(name) {
       if (name.length > 40) {
@@ -187,6 +222,9 @@ export default {
     },
     totalVatAmount() {
       return this.totalValue - this.priceWithoutVat;
+    },
+    isAnyItemOutOfStock() {
+      return this.cartItems.some(cartItem => cartItem.item.amount === 0);
     }
   }
 };
@@ -256,6 +294,13 @@ export default {
 }
 
 .price {
+  margin-left: auto;
+  margin-right: 20px;
+  align-self: center;
+}
+
+.out-of-stock {
+  color: red;
   margin-left: auto;
   margin-right: 20px;
   align-self: center;
