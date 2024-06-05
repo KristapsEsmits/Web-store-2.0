@@ -12,7 +12,7 @@ class BrandsController extends Controller
 {
     public function index()
     {
-        $brands = Brands::all();
+        $brands = Brands::withCount('items')->get();
         if ($brands->count() > 0) {
             return response()->json([
                 'status' => 200,

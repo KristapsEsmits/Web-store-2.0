@@ -10,6 +10,7 @@
       </div>
       <div class="details-container">
         <h5 class="product-name">{{ items.name }}</h5>
+        <p class="product-id">ID: {{items.id }}</p>
         <h2 class="price">Price: {{ items.price }}€</h2>
         <p class="without-vat">Price without VAT: {{ calculatePriceWithoutVAT(items.price) }}€</p>
         <p :class="{'out-of-stock': items.amount === 0}">
@@ -108,6 +109,10 @@ export default {
     this.fetchUserData();
   },
 
+  watch: {
+    '$route.params.id': 'getItems',
+  },
+
   methods: {
     async getItems() {
       const itemId = this.$route.params.id;
@@ -139,8 +144,8 @@ export default {
       try {
         const response = await axios.get('http://127.0.0.1:8000/api/user', {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-          }
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+          },
         });
         this.user = response.data;
       } catch (error) {
@@ -268,10 +273,11 @@ export default {
         }
         return item;
       });
-    }
-  }
+    },
+  },
 };
 </script>
+
 
 <style scoped>
 .mt40 {
@@ -314,6 +320,13 @@ export default {
   color: #666;
 }
 
+.product-id {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 0;
+  margin-top: 20px;
+}
+
 .details-container {
   flex: 1 1 60%;
   margin-left: 40px;
@@ -330,7 +343,7 @@ export default {
 .price {
   font-size: 18px;
   margin-bottom: 5px;
-  margin-top: 20px;
+  margin-top: 0;
 }
 
 .without-vat {

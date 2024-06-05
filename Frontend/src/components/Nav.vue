@@ -26,14 +26,17 @@
               </li>
             </ul>
 
-            <form id="search-form" class="d-flex position-relative" @submit.prevent>
+            <form id="search-form" ref="searchForm" class="d-flex position-relative" @submit.prevent>
               <input v-model="searchText" aria-label="Search" class="form-control me-2" placeholder="Search"
-                     type="search" @input="searchItems">
-              <div v-if="isSearchActive" class="dropdown">
+                     type="search" @focus="onFocus" @input="searchItems">
+              <div v-if="isSearchActive" class="dropdown show">
                 <ul class="dropdown-menu show">
-                  <li v-for="item in searchResults" :key="item.id">
+                  <li v-if="isLoading" class="dropdown-item">Loading...</li>
+                  <li v-else-if="searchResults.length === 0" class="dropdown-item">Nothing found!</li>
+                  <li v-else v-for="item in searchResults" :key="item.id" class="d-flex align-items-center">
+                    <img :src="getImageUrl(item.img)" alt="" class="item-image me-2">
                     <RouterLink :to="'/product/' + item.id" class="dropdown-item" @click="clearSearch">
-                      {{ item.name }}
+                      {{ truncatedName(item.name) }}
                     </RouterLink>
                   </li>
                 </ul>
@@ -104,6 +107,8 @@ export default {
       searchText: '',
       searchResults: [],
       isSearchActive: false,
+      isLoading: false,
+      allItems: []
     };
   },
 
@@ -113,6 +118,7 @@ export default {
     document.addEventListener('login', this.onLogin);
     document.addEventListener('favorites-updated', this.updateFavoritesCount);
     document.addEventListener('cart-updated', this.updateCartCount);
+    document.addEventListener('click', this.handleClickOutside);
   },
 
   beforeUnmount() {
@@ -120,6 +126,7 @@ export default {
     document.removeEventListener('logout', this.onLogout);
     document.removeEventListener('favorites-updated', this.updateFavoritesCount);
     document.removeEventListener('cart-updated', this.updateCartCount);
+    document.removeEventListener('click', this.handleClickOutside);
   },
 
   computed: {
@@ -148,6 +155,29 @@ export default {
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
+    },
+
+    getImageUrl(image) {
+      return `http://localhost:8000/storage/uploads/${image}`;
+    },
+
+    truncatedName(name) {
+      const screenWidth = window.innerWidth;
+      let maxLength;
+
+      if (screenWidth < 576) {
+        maxLength = 15;
+      } else if (screenWidth < 768) {
+        maxLength = 20;
+      }else if (screenWidth < 375) {
+        maxLength = 40;
+      }
+
+
+      if (name.length > maxLength) {
+        return name.substring(0, maxLength) + '...';
+      }
+      return name;
     },
 
     async fetchUserCounts() {
@@ -195,34 +225,49 @@ export default {
       this.collapseNavbar();
     },
 
-    async searchItems() {
+    async fetchAllItems() {
+      try {
+        this.isLoading = true;
+        const response = await axios.get('http://127.0.0.1:8000/api/items');
+        this.allItems = response.data.items;
+        this.searchResults = this.allItems.slice(0, 4);
+        this.isSearchActive = true;
+      } catch (error) {
+        console.error('Error fetching all items:', error);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    searchItems() {
       if (this.searchText.trim().length > 0) {
-        try {
-          console.log('Searching for:', this.searchText);
-          const response = await axios.get('http://127.0.0.1:8000/api/items/search', {
-            params: {
-              name: this.searchText,
-            },
-          });
-          console.log('Search response:', response.data);
-          this.searchResults = response.data.items.slice(0, 4);
-          this.isSearchActive = true;
-        } catch (error) {
-          console.error('Error searching items:', error);
-          if (error.response) {
-            console.error('Error response:', error.response.data);
-          }
-        }
+        this.searchResults = this.allItems.filter(item => item.name.toLowerCase().includes(this.searchText.toLowerCase())).slice(0, 4);
+        this.isSearchActive = true;
       } else {
-        this.isSearchActive = false;
-        this.searchResults = [];
+        this.searchResults = this.allItems.slice(0, 4);
+        this.isSearchActive = true;
       }
     },
 
     clearSearch() {
       this.searchText = '';
+      this.searchResults = this.allItems.slice(0, 4);
       this.isSearchActive = false;
-      this.searchResults = [];
+    },
+
+    onFocus() {
+      this.isSearchActive = true;
+      if (!this.allItems.length) {
+        this.fetchAllItems();
+      } else {
+        this.searchResults = this.allItems.slice(0, 4);
+      }
+    },
+
+    handleClickOutside(event) {
+      if (this.isSearchActive && !this.$refs.searchForm.contains(event.target)) {
+        this.isSearchActive = false;
+      }
     },
 
     collapseNavbar() {
@@ -270,10 +315,11 @@ export default {
           console.error('Error updating cart count:', error);
         }
       }
-    }
+    },
   },
 };
 </script>
+
 
 <style scoped>
 .bar {
@@ -291,20 +337,35 @@ export default {
 
 .dropdown-menu.show {
   display: block;
-  max-height: 200px;
-  overflow-y: auto;
   position: absolute;
   top: 100%;
-  left: 0;
-  width: 100%;
+  right: 0;
+  left: auto;
+  width: auto;
   z-index: 1000;
+  min-width: 300px;
 }
 
 .dropdown-item {
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
 .dropdown-item:hover {
   background-color: #f1f1f1;
 }
+
+.item-image {
+  width: 80px;
+  height: 50px;
+  object-fit: scale-down;
+  margin-right: 10px;
+}
+
+input.form-control:hover, input.form-control:focus {
+  box-shadow: none;
+  border-color: #ced4da;
+}
 </style>
+

@@ -192,7 +192,7 @@ const filteredPurchaseHistory = computed(() => {
 
 <style scoped>
 .bg-lightgreen {
-  background-color: lightgreen;
+  background-color: rgb(186, 255, 186);
 }
 
 .bg-lightyellow {

@@ -285,6 +285,7 @@ class ItemsController extends Controller
             $validator = Validator::make($request->all(), [
                 'price' => 'required|numeric',
                 'amount' => 'required|integer',
+                'vat' => 'required|numeric|in:0,5,12,21'
             ]);
 
             if ($validator->fails()) {
@@ -297,6 +298,7 @@ class ItemsController extends Controller
                 $item->update([
                     'price' => $request->price,
                     'amount' => $request->amount,
+                    'vat' => $request->vat
                 ]);
 
                 return response()->json([
@@ -311,6 +313,7 @@ class ItemsController extends Controller
             ], 404);
         }
     }
+
 
     public function updateItem(Request $request, $id)
     {

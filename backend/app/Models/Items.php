@@ -15,6 +15,7 @@ class Items extends Model
         'name',
         'description',
         'price',
+        'vat',
         'img',
         'brand_id',
         'categories_id',

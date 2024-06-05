@@ -59,7 +59,6 @@ const fetchCategoryItemCounts = () => {
       .then((res) => {
         categoryItemCounts.value = res.data.category_counts;
         renderCategoryItemCountChart();
-        console.log(res.value);
       })
       .catch((error) => {
         console.error('Error fetching category item counts:', error);
@@ -117,7 +116,6 @@ const renderUserRegistrationChart = () => {
 
 const renderCategoryItemCountChart = () => {
   const ctx = document.getElementById('categoryItemCountChart').getContext('2d');
-  console.log(categoryItemCounts.value);
   const labels = categoryItemCounts.value.map(entry => entry.category_name);
   const data = categoryItemCounts.value.map(entry => entry.item_count);
 

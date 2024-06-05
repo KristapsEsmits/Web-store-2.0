@@ -24,20 +24,20 @@ export default {
   methods: {
     getCategoryData(categoryId) {
       axios.get(`/categories/${categoryId}/edit`)
-        .then((res) => {
-          console.log('Category data response:', res.data); // Log the response data
-          if (res.data.categories) {
-            this.model.category = res.data.categories;
-          } else {
-            console.error('Category data not found in response');
-          }
-        })
-        .catch((error) => {
-          console.error('Error fetching category data:', error);
-          if (error.response && error.response.status === 404) {
-            this.$router.push('/categories');
-          }
-        });
+          .then((res) => {
+            console.log('Category data response:', res.data);
+            if (res.data.categories) {
+              this.model.category = res.data.categories;
+            } else {
+              console.error('Category data not found in response');
+            }
+          })
+          .catch((error) => {
+            console.error('Error fetching category data:', error);
+            if (error.response && error.response.status === 404) {
+              this.$router.push('/categories');
+            }
+          });
     },
 
     async updateCategory() {
@@ -88,7 +88,7 @@ export default {
         </ul>
         <div class="mb-3">
           <label for="CategoryName">Category Name</label>
-          <input v-model="model.category.category_name" class="form-control" type="text" />
+          <input v-model="model.category.category_name" class="form-control" type="text"/>
         </div>
         <div class="mb-3">
           <button class="btn btn-primary" type="button" @click="updateCategory">Update</button>

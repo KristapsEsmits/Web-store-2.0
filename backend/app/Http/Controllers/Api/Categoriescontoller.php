@@ -11,7 +11,7 @@ class CategoriesContoller extends Controller
 {
     public function index()
     {
-        $categories = Categories::all();
+        $categories = Categories::withCount('items')->get();
         if ($categories->count() > 0) {
             return response()->json([
                 'status' => 200,

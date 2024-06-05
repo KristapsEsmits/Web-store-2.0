@@ -6,15 +6,18 @@
         <button class="btn-close" type="button" @click="dismissSuccessMessage"></button>
       </div>
       <div class="card">
-        <div class="card-header">
-          <h4 class="card-title">Categories
-            <router-link class="btn btn-primary btn-round btn-fill float-end excel-btn" to="/admin/categories/create">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h4 class="card-title mb-0">Categories</h4>
+          <div class="d-flex align-items-center">
+            <input v-model="searchQuery" class="form-control me-2" placeholder="Search by ID or Name" style="width: 200px;"
+                   type="text" @input="searchCategories"/>
+            <router-link class="btn btn-primary btn-round btn-fill me-2" to="/admin/categories/create">
               Add Category
             </router-link>
-            <button :disabled="!isAnyRowSelected" class="btn btn-warning btn-round btn-fill float-end excel-btn"
+            <button :disabled="!isAnyRowSelected" class="btn btn-warning btn-round btn-fill"
                     @click="exportSelectedRows">Export Selected Rows
             </button>
-          </h4>
+          </div>
         </div>
         <div class="card-body">
           <div class="table-responsive d-none d-md-block">
@@ -24,19 +27,23 @@
                 <th><input v-model="selectAll" type="checkbox" @change="toggleSelectAll"></th>
                 <th>Category ID</th>
                 <th>Category Name</th>
+                <th>Item Count</th>
                 <th>Actions</th>
               </tr>
               </thead>
               <tbody>
-              <tr v-for="(category, index) in categories" :key="index">
+              <tr v-for="(category, index) in filteredCategories" :key="index">
                 <td><input v-model="selectedRows" :value="category" type="checkbox"></td>
                 <td>{{ category.id }}</td>
                 <td>{{ category.category_name }}</td>
-                <td class="d-flex justify-content-center">
+                <td>{{ category.items_count }}</td>
+                <td class="justify-content-center">
                   <router-link :to="{ path: '/admin/categories/' + category.id + '/edit' }"
                                class="btn btn-success me-2">Edit
                   </router-link>
-                  <button class="btn btn-danger" type="button" @click="deleteTest(category.id)">Delete</button>
+                  <button :disabled="category.items_count > 0" class="btn btn-danger" type="button"
+                          @click="openDeleteModal(category.id)">Delete
+                  </button>
                 </td>
               </tr>
               </tbody>
@@ -46,22 +53,28 @@
             <div class="select-all-mobile">
               <input v-model="selectAll" type="checkbox" @change="toggleSelectAll"> Select All
             </div>
-            <div v-for="(category, index) in categories" :key="index" class="card mb-3">
+            <div v-for="(category, index) in filteredCategories" :key="index" class="card mb-3">
               <div class="card-body">
                 <h5 class="card-title"><input v-model="selectedRows" :value="category" class="checkbox-btn"
                                               type="checkbox">{{ category.category_name }}</h5>
                 <p class="card-text"><strong>ID:</strong> {{ category.id }}</p>
+                <p class="card-text"><strong>Item Count:</strong> {{ category.items_count }}</p>
                 <div class="action-btns">
                   <router-link :to="{ path: '/admin/categories/' + category.id + '/edit' }"
                                class="btn btn-success me-2">Edit
                   </router-link>
-                  <button class="btn btn-danger" type="button" @click="deleteTest(category.id)">Delete</button>
+                  <button :disabled="category.items_count > 0" class="btn btn-danger" type="button"
+                          @click="openDeleteModal(category.id)">Delete
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <Modal :isOpen="isDeleteModalOpen" title="Confirm Delete" @close="closeDeleteModal" @confirm="confirmDelete">
+        Are you sure you want to delete this Category?
+      </Modal>
     </div>
   </div>
 </template>
@@ -71,12 +84,16 @@ import {computed, onMounted, ref} from 'vue';
 import axios from 'axios';
 import {useRoute} from 'vue-router';
 import * as XLSX from 'xlsx';
+import Modal from '@/components/Modal.vue';
 
 const categories = ref([]);
 const successMessage = ref('');
 const route = useRoute();
 const selectedRows = ref([]);
 const selectAll = ref(false);
+const categoryIdToDelete = ref(null);
+const isDeleteModalOpen = ref(false);
+const searchQuery = ref('');
 
 const getCategories = async () => {
   try {
@@ -87,18 +104,26 @@ const getCategories = async () => {
   }
 };
 
-const deleteTest = async (categoryId) => {
-  if (confirm('Are you sure?')) {
-    try {
-      const res = await axios.delete(`/categories/${categoryId}/delete`);
-      successMessage.value = res.data.message;
-      await getCategories();
-    } catch (error) {
-      if (error.response && error.response.status === 422) {
-        console.error('Validation errors:', error.response.data.errors);
-      } else {
-        console.error('Error deleting category:', error.message);
-      }
+const openDeleteModal = (categoryId) => {
+  categoryIdToDelete.value = categoryId;
+  isDeleteModalOpen.value = true;
+};
+
+const closeDeleteModal = () => {
+  isDeleteModalOpen.value = false;
+};
+
+const confirmDelete = async () => {
+  try {
+    const res = await axios.delete(`/categories/${categoryIdToDelete.value}/delete`);
+    successMessage.value = res.data.message;
+    await getCategories();
+    closeDeleteModal();
+  } catch (error) {
+    if (error.response && error.response.status === 422) {
+      console.error('Validation errors:', error.response.data.errors);
+    } else {
+      console.error('Error deleting category:', error.message);
     }
   }
 };
@@ -126,6 +151,21 @@ const toggleSelectAll = () => {
     selectedRows.value = [...categories.value];
   } else {
     selectedRows.value = [];
+  }
+};
+
+const filteredCategories = computed(() => {
+  return categories.value.filter(category => {
+    return category.id.toString().includes(searchQuery.value) || category.category_name.toLowerCase().includes(searchQuery.value.toLowerCase());
+  });
+});
+
+const searchCategories = async () => {
+  try {
+    const res = await axios.get('/categories', {params: {search: searchQuery.value}});
+    categories.value = res.data.categories;
+  } catch (error) {
+    console.error('Error searching categories:', error);
   }
 };
 
@@ -161,12 +201,6 @@ onMounted(() => {
 .table-auto th,
 .table-auto td {
   white-space: nowrap;
-}
-
-.excel-btn {
-  margin-right: 10px;
-  margin-top: 10px;
-  max-width: 98%;
 }
 
 @media (max-width: 768px) {
@@ -215,14 +249,5 @@ onMounted(() => {
 
 .card .card-body .card-text {
   margin-bottom: 0.75rem;
-}
-
-.card .card-body .d-flex {
-  margin-top: auto;
-}
-
-.action-btns {
-  display: flex;
-  justify-content: flex-end;
 }
 </style>

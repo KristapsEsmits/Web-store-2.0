@@ -27,14 +27,18 @@
               <li class="nav-item">
                 <RouterLink class="nav-link" to="/admin/categories" @click="collapseNavbar">Categories</RouterLink>
               </li>
+            </ul>
+            <ul class="navbar-nav mb-2 mb-lg-0">
               <li class="nav-item">
                 <RouterLink class="nav-link" to="/admin/purchases" @click="collapseNavbar">Purchases</RouterLink>
               </li>
               <li class="nav-item">
                 <RouterLink class="nav-link" to="/admin/inventory" @click="collapseNavbar">Inventory</RouterLink>
               </li>
-            </ul>
-            <ul class="navbar-nav mb-2 mb-lg-0">
+              <li class="nav-item">
+                <RouterLink class="nav-link" to="/admin/inventory/finances" @click="collapseNavbar">finances
+                </RouterLink>
+              </li>
               <li v-if="isLoggedIn" id="user-dropdown" class="nav-item dropdown">
                 <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
                    role="button">
@@ -141,14 +145,5 @@ onMounted(() => {
 
 .wrapper {
   width: 100%;
-}
-
-.navbar-nav .nav-item .nav-link {
-  color: #000;
-  transition: color 0.3s ease;
-}
-
-.navbar-nav .nav-item .nav-link:hover {
-  color: #007bff;
 }
 </style>

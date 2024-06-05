@@ -1,8 +1,8 @@
 <script setup>
-import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import {onMounted, ref} from 'vue';
+import {useRouter} from 'vue-router';
 import axios from 'axios';
-import { generatePDF } from '@/utils/pdfUtils';
+import {generatePDF} from '@/utils/pdfUtils';
 
 const user = ref(null);
 const isLoading = ref(true);
@@ -15,6 +15,8 @@ const dismissSuccessMessage = () => {
 };
 
 const groupPurchasesByTime = (purchases) => {
+  purchases.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
   const grouped = {};
   purchases.forEach(purchase => {
     const date = new Date(purchase.created_at);
@@ -34,22 +36,30 @@ const groupPurchasesByTime = (purchases) => {
   return grouped;
 };
 
+const getImageUrl = (image) => {
+  return `http://localhost:8000/storage/uploads/${image}`;
+};
+
 onMounted(async () => {
   try {
     const userData = await axios.get('http://127.0.0.1:8000/api/user');
     user.value = userData.data;
 
     const purchaseData = await axios.get(`http://127.0.0.1:8000/api/purchases/user/${user.value.id}`);
+    console.log('Fetched purchase data:', purchaseData.data.purchases);
     purchaseHistory.value = groupPurchasesByTime(purchaseData.data.purchases);
+    console.log('Grouped purchase data:', purchaseHistory.value);
   } catch (error) {
+    console.error('Error fetching purchase data:', error);
     if (error.response && error.response.status === 401) {
-      await router.push({ name: 'login' });
+      await router.push({name: 'login'});
     }
   } finally {
     isLoading.value = false;
   }
 });
 </script>
+
 
 <template>
   <main>
@@ -77,21 +87,27 @@ onMounted(async () => {
             <div v-if="Object.keys(purchaseHistory).length === 0">No purchases found.</div>
             <div v-else>
               <ul class="list-group">
-                <li v-for="(purchaseGroup, time) in purchaseHistory" :key="time"
-                    :class="{'bg-lightgreen': purchaseGroup.items.status === 'closed'}" class="list-group-item">
+                <li v-for="(purchaseGroup, time) in purchaseHistory" :key="time" class="list-group-item">
                   <div class="d-flex justify-content-between align-items-center">
                     <div>
                       <strong>Purchased At:</strong> {{ time }}
                     </div>
-                    <button class="btn btn-primary" @click="() => generatePDF(time, purchaseGroup, user)">Print PDF</button>
+                    <button class="btn btn-primary" @click="() => generatePDF(time, purchaseGroup, user)">Print PDF
+                    </button>
                   </div>
-                  <ul>
-                    <li v-for="purchase in purchaseGroup.items" :key="purchase.id">
-                      <div>
-                        <strong>Item:</strong> {{ purchase.item.name }}
-                      </div>
-                      <div>
-                        <strong>Price:</strong> {{ purchase.total_price }}€
+                  <ul class="order-details">
+                    <li v-for="purchase in purchaseGroup.items" :key="purchase.id" class="order-item">
+                      <img :src="getImageUrl(purchase.item.img)" alt="product image" class="item-image">
+                      <div class="item-details">
+                        <div>
+                          <strong>Item:</strong> {{ purchase.item.name }}
+                        </div>
+                        <div>
+                          <strong>Quantity:</strong> {{ purchase.quantity }}
+                        </div>
+                        <div>
+                          <strong>Price:</strong> {{ purchase.total_price }}€
+                        </div>
                       </div>
                     </li>
                   </ul>
@@ -107,10 +123,6 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.bg-lightgreen {
-  background-color: rgb(191, 253, 191);
-}
-
 .card {
   max-width: 100%;
   margin-left: auto;
@@ -155,5 +167,26 @@ onMounted(async () => {
   .actionBtn {
     margin-right: 0 !important;
   }
+}
+
+.order-details {
+  margin-top: 20px;
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.item-image {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+  object-fit: scale-down;
+}
+
+.item-details {
+  flex-grow: 1;
 }
 </style>

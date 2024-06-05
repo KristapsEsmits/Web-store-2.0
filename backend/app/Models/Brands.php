@@ -15,4 +15,10 @@ class Brands extends Model
         'name',
         'img',
     ];
+
+    public function items()
+    {
+        return $this->hasMany(Items::class, 'brand_id');
+    }
 }
+

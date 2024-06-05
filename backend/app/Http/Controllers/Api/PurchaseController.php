@@ -53,7 +53,7 @@ class PurchaseController extends Controller
                 $item->reserved += $itemData['quantity'];
                 $item->save();
 
-                 Purchase::create([
+                Purchase::create([
                     'user_id' => $userId,
                     'item_id' => $item->id,
                     'quantity' => $itemData['quantity'],
@@ -95,6 +95,7 @@ class PurchaseController extends Controller
             'purchases' => $purchases,
         ], 200);
     }
+
 
     public function updateStatus(Request $request, $id)
     {

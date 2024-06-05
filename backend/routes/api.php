@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\FavoriteItemsController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\PurchaseController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\FinancesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -114,3 +115,6 @@ Route::delete('cart/clear/{userId}', [CartController::class, 'clearCartByUserId'
 
 // Admin purchases API
 Route::patch('/items/{id}', [ItemsController::class, 'updateItem']);
+
+// Finance API
+Route::get('/finances', [FinancesController::class, 'getFinances']);

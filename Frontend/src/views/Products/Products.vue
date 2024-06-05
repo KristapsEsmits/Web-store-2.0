@@ -30,7 +30,7 @@
           </div>
         </template>
         <template v-else>
-          <div v-for="item in filteredItems" :key="item.id" class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+          <div v-for="item in paginatedItems" :key="item.id" class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
             <ProductCard
                 :item="item"
                 :user="user"
@@ -42,6 +42,12 @@
           </div>
         </template>
       </div>
+
+      <!-- Pagination Component -->
+      <Pagination
+          v-model:currentPage="currentPage"
+          :totalPages="totalPages"
+      />
     </div>
   </div>
 </template>
@@ -50,12 +56,14 @@
 import axios from 'axios';
 import SkeletonItemCard from '@/components/SkeletonItemCard.vue';
 import ProductCard from '@/components/ProductCard.vue';
+import Pagination from '@/components/Pagination.vue';
 
 export default {
   name: 'AllProducts',
   components: {
     SkeletonItemCard,
     ProductCard,
+    Pagination
   },
   data() {
     return {
@@ -70,12 +78,23 @@ export default {
       },
       user: null,
       isLoading: true,
+      currentPage: 1,
+      itemsPerPage: 12
     };
   },
 
   mounted() {
     this.fetchUserData();
     this.getItemsAndCategories();
+  },
+
+  watch: {
+    filters: {
+      handler() {
+        this.currentPage = 1;
+      },
+      deep: true
+    }
   },
 
   computed: {
@@ -88,6 +107,14 @@ export default {
             (!this.filters.maxPrice || item.price <= this.filters.maxPrice)
         );
       });
+    },
+    paginatedItems() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.filteredItems.slice(start, end);
+    },
+    totalPages() {
+      return Math.ceil(this.filteredItems.length / this.itemsPerPage);
     }
   },
 
@@ -261,6 +288,7 @@ export default {
 .header {
   text-align: center;
   margin: 20px 0 20px 0;
+  color: #000;
 }
 
 .container {
@@ -308,6 +336,7 @@ export default {
 .header {
   text-align: center;
   margin: 20px 0;
+  color: #000;
 }
 
 .filter {
@@ -330,5 +359,25 @@ export default {
   .form-select, .form-control {
     flex: 1;
   }
+}
+
+.pagination button {
+  margin: 0 10px;
+  padding: 5px 10px;
+  cursor: pointer;
+  background-color: #000;
+  color: #fff;
+  border: 1px solid #000;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.pagination button:hover {
+  background-color: #333;
+}
+
+.pagination span {
+  margin: 0 10px;
+  color: #000;
 }
 </style>
