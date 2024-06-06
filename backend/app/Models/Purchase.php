@@ -15,6 +15,7 @@ class Purchase extends Model
         'total_price',
         'status',
         'quantity',
+        'vat',
     ];
 
     public function item()
@@ -27,6 +28,3 @@ class Purchase extends Model
         return $this->belongsTo(User::class);
     }
 }
-
-
-

@@ -48,6 +48,7 @@
       getImageUrl(image) {
         return `http://localhost:8000/storage/uploads/${image}`;
       },
+
       truncateName(name) {
         const maxLength = 33;
         if (name.length > maxLength) {
@@ -55,15 +56,19 @@
         }
         return name;
       },
+
       handleCartClick(itemId) {
         this.$emit('cart-click', itemId);
       },
+
       handleFavoriteClick(itemId) {
         this.$emit('favorite-click', itemId);
       },
+
       removeFromCart(itemId) {
         this.$emit('remove-cart', itemId);
       },
+      
       removeFromFavoritesByItemId(itemId) {
         this.$emit('remove-favorite', itemId);
       }

@@ -36,6 +36,32 @@ const groupPurchasesByTime = (purchases) => {
   return grouped;
 };
 
+const getStatusText = (status) => {
+  switch (status) {
+    case 'closed':
+      return 'Received';
+    case 'canceled':
+      return 'Canceled';
+    case 'active':
+      return 'Ready for Pick Up';
+    default:
+      return '';
+  }
+};
+
+const getStatusClass = (status) => {
+  switch (status) {
+    case 'closed':
+      return 'badge-success';
+    case 'canceled':
+      return 'badge-warning';
+    case 'active':
+      return 'badge-info';
+    default:
+      return 'badge-secondary';
+  }
+};
+
 const getImageUrl = (image) => {
   return `http://localhost:8000/storage/uploads/${image}`;
 };
@@ -59,7 +85,6 @@ onMounted(async () => {
   }
 });
 </script>
-
 
 <template>
   <main>
@@ -90,7 +115,10 @@ onMounted(async () => {
                 <li v-for="(purchaseGroup, time) in purchaseHistory" :key="time" class="list-group-item">
                   <div class="d-flex justify-content-between align-items-center">
                     <div>
-                      <strong>Purchased At:</strong> {{ time }}
+                      <strong>Purchased At:</strong> {{ time }} -
+                      <button :class="['badge', 'badge-pill', getStatusClass(purchaseGroup.status)]">
+                        {{ getStatusText(purchaseGroup.status) }}
+                      </button>
                     </div>
                     <button class="btn btn-primary" @click="() => generatePDF(time, purchaseGroup, user)">Print PDF
                     </button>
@@ -188,5 +216,13 @@ onMounted(async () => {
 
 .item-details {
   flex-grow: 1;
+}
+
+.badge {
+  color: #000;
+  background-color: #f3f3f3;
+  border: 1px none;
+  text-decoration: none;
+  cursor: auto;
 }
 </style>

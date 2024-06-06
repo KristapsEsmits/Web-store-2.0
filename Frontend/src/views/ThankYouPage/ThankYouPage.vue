@@ -6,7 +6,7 @@
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center">
             <h1>Your order:</h1>
-            <button class="btn btn-primary" @click="generatePDF(time, purchaseGroup, user)">Print PDF</button>
+            <button class="btn btn-primary" @click="generatePDF(purchaseGroup.time, purchaseGroup, user)">Print PDF</button>
           </div>
           <div class="order-details">
             <div class="order-summary">
@@ -18,7 +18,7 @@
               </div>
             </div>
             <ul class="list-group">
-              <li v-for="purchase in purchaseGroup.items" :key="purchase.id" class="order-item">
+              <li v-for="purchase in purchaseGroup.items" :key="purchase.item.id" class="order-item">
                 <img :src="getImageUrl(purchase.item.img)" alt="product image" class="item-image">
                 <div class="item-details">
                   <div>
@@ -28,7 +28,7 @@
                     <strong>Quantity:</strong> {{ purchase.quantity }}
                   </div>
                   <div>
-                    <strong>Price:</strong> {{ purchase.total_price }}€
+                    <strong>Price:</strong> {{ purchase.total_price.toFixed(2) }}€
                   </div>
                 </div>
               </li>
@@ -67,11 +67,7 @@ onMounted(async () => {
     user.value = userData.data;
 
     purchaseGroup.value = JSON.parse(localStorage.getItem('recent_purchase'));
-    if (purchaseGroup.value) {
-      purchaseGroup.value.time = new Date(purchaseGroup.value.time).toLocaleString();
-    }
-
-    console.log('Fetched purchase data:', purchaseGroup.value.items);
+    console.log('Fetched purchase data:', purchaseGroup.value);
     purchaseGroup.value.items.forEach(item => {
       console.log('Item:', item);
     });
@@ -83,6 +79,7 @@ onMounted(async () => {
   }
 });
 </script>
+
 
 <style scoped>
 .card-container {

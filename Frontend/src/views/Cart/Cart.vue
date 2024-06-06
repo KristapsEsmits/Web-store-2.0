@@ -93,7 +93,6 @@
   </div>
 </template>
 
-
 <script>
 import axios from 'axios';
 
@@ -201,47 +200,48 @@ export default {
     },
 
     async purchaseItems() {
+  try {
+    const purchasePayload = {
+      items: this.cartItems.map(cartItem => ({
+        id: cartItem.item.id,
+        quantity: cartItem.quantity
+      }))
+    };
+
+    const response = await axios.post('http://127.0.0.1:8000/api/purchase', purchasePayload);
+
+    if (response.data.status === 200) {
       try {
-        const purchasePayload = {
+        const purchaseGroup = {
+          time: new Date().toISOString().replace('T', ' ').substring(0, 19), // Store time in 'YYYY-MM-DD HH:MM:SS' format
           items: this.cartItems.map(cartItem => ({
-            id: cartItem.item.id,
-            quantity: cartItem.quantity
-          }))
+            item: cartItem.item,
+            quantity: cartItem.quantity,
+            total_price: cartItem.item.price * cartItem.quantity,
+            vat: cartItem.item.vat
+          })),
+          totalPrice: this.totalValue
         };
 
-        const response = await axios.post('http://127.0.0.1:8000/api/purchase', purchasePayload);
+        localStorage.setItem('recent_purchase', JSON.stringify(purchaseGroup));
+        localStorage.setItem('purchase_completed', 'true');
 
-        if (response.data.status === 200) {
-          try {
-            const purchaseGroup = {
-              time: new Date().toLocaleString(),
-              items: this.cartItems.map(cartItem => ({
-                item: cartItem.item,
-                total_price: cartItem.item.price * cartItem.quantity
-              })),
-              totalPrice: this.totalValue
-            };
+        this.$router.push('/thank-you');
 
-            localStorage.setItem('recent_purchase', JSON.stringify(purchaseGroup));
-            localStorage.setItem('purchase_completed', 'true');
+        this.cartItems = [];
 
-            this.$router.push('/thank-you');
-
-            this.cartItems = [];
-
-            document.dispatchEvent(new CustomEvent('cart-updated'));
-          } catch (clearCartError) {
-            console.error('Error clearing cart:', clearCartError);
-            this.$router.push('/thank-you');
-          }
-        } else {
-          console.error('Purchase failed:', response.data.message);
-        }
-      } catch (error) {
-        console.error('Error purchasing items:', error);
+        document.dispatchEvent(new CustomEvent('cart-updated'));
+      } catch (clearCartError) {
+        console.error('Error clearing cart:', clearCartError);
+        this.$router.push('/thank-you');
       }
-    },
-
+    } else {
+      console.error('Purchase failed:', response.data.message);
+    }
+  } catch (error) {
+    console.error('Error purchasing items:', error);
+  }
+},
     truncatedName(name) {
       if (name.length > 40) {
         return name.substring(0, 37) + '...';
@@ -256,7 +256,10 @@ export default {
       }, 0);
     },
     priceWithoutVat() {
-      return this.totalValue / 1.21;
+      return this.cartItems.reduce((total, cartItem) => {
+        const vatRate = 1 + cartItem.item.vat / 100;
+        return total + (cartItem.item.price * cartItem.quantity) / vatRate;
+      }, 0);
     },
     totalVatAmount() {
       return this.totalValue - this.priceWithoutVat;

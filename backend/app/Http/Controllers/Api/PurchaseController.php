@@ -53,11 +53,15 @@ class PurchaseController extends Controller
                 $item->reserved += $itemData['quantity'];
                 $item->save();
 
+                // Ensure that the total price including VAT is calculated correctly
+                $totalPriceWithVat = $item->price * $itemData['quantity'];
+
                 Purchase::create([
                     'user_id' => $userId,
                     'item_id' => $item->id,
                     'quantity' => $itemData['quantity'],
-                    'total_price' => $item->price * $itemData['quantity'],
+                    'total_price' => $totalPriceWithVat,
+                    'vat' => $item->vat,
                     'status' => 'active',
                 ]);
             }
@@ -95,7 +99,6 @@ class PurchaseController extends Controller
             'purchases' => $purchases,
         ], 200);
     }
-
 
     public function updateStatus(Request $request, $id)
     {

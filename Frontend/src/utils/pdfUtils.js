@@ -1,6 +1,23 @@
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
+const formatDateTime = (datetime) => {
+  const date = new Date(datetime);
+  const formattedDate = date.toLocaleDateString('en-GB').replace(/\//g, '.'); // DD.MM.YYYY
+  const formattedTime = date.toLocaleTimeString(); // HH:MM:SS
+  return `${formattedDate} ${formattedTime}`;
+};
+
+const calculateVAT = (price, vatRate) => {
+  const priceWithoutVAT = price / (1 + vatRate / 100);
+  const vatAmount = price - priceWithoutVAT;
+  return {
+    priceWithoutVAT: priceWithoutVAT.toFixed(2),
+    vatAmount: vatAmount.toFixed(2),
+    vatPercentage: vatRate.toFixed(2)
+  };
+};
+
 export const generatePDF = async (time, purchaseGroup, user) => {
   const doc = new jsPDF();
   let yPosition = 20;
@@ -44,13 +61,14 @@ export const generatePDF = async (time, purchaseGroup, user) => {
   doc.line(10, yPosition, 200, yPosition);
   yPosition += 10;
 
-  const tableColumn = ["Item Name", "Price without VAT (€)", "VAT Amount (€)", "VAT %", "Total Price (€)"];
+  const tableColumn = ["Item Name", "Quantity", "Price without VAT (€)", "VAT Amount (€)", "VAT %", "Total Price (€)"];
   const tableRows = [];
 
   purchaseGroup.items.forEach(purchase => {
-    const { priceWithoutVAT, vatAmount, vatPercentage } = calculateVAT(parseFloat(purchase.total_price));
+    const { priceWithoutVAT, vatAmount, vatPercentage } = calculateVAT(parseFloat(purchase.total_price), purchase.item.vat);
     const purchaseData = [
       purchase.item.name,
+      purchase.quantity,
       priceWithoutVAT,
       vatAmount,
       vatPercentage,
@@ -74,7 +92,7 @@ export const generatePDF = async (time, purchaseGroup, user) => {
   yPosition = doc.lastAutoTable.finalY + 10;
 
   const totalPrice = purchaseGroup.totalPrice;
-  const { priceWithoutVAT: totalWithoutVAT, vatAmount: totalVAT } = calculateVAT(totalPrice);
+  const { priceWithoutVAT: totalWithoutVAT, vatAmount: totalVAT } = calculateVAT(totalPrice, purchaseGroup.items[0].item.vat); // Assuming same VAT rate for simplicity
 
   const totalTableColumn = ["Description", "Amount (€)"];
   const totalTableRows = [
@@ -101,7 +119,7 @@ export const generatePDF = async (time, purchaseGroup, user) => {
   doc.text('Payment Terms and Conditions', 10, yPosition);
   yPosition += 5;
   doc.setFontSize(10);
-  doc.text('Payment is due within 30 days from the invoice date. Late payments may be subject to a late fee.', 10, yPosition);
+  doc.text('Payment is due within 30 days from the purchase date. After 30 days purchases will be canceled!', 10, yPosition);
   yPosition += 10;
 
   doc.setFontSize(12);
@@ -115,26 +133,7 @@ export const generatePDF = async (time, purchaseGroup, user) => {
   doc.text('Date:                  ____________________', 120, yPosition);
   yPosition += 5;
   doc.text('Signature:           ____________________', 10, yPosition);
-
   doc.text('Signature:           ____________________', 120, yPosition);
 
   doc.save(`purchase_history_${time}.pdf`);
-};
-
-const formatDateTime = (datetime) => {
-  const date = new Date(datetime);
-  const formattedDate = date.toLocaleDateString('en-GB').replace(/\//g, '.'); // DD.MM.YYYY
-  const formattedTime = date.toLocaleTimeString(); // HH:MM:SS
-  return `${formattedDate} ${formattedTime}`;
-};
-
-const calculateVAT = (price) => {
-  const priceWithoutVAT = price / 1.21;
-  const vatAmount = price - priceWithoutVAT;
-  const vatPercentage = 21;
-  return {
-    priceWithoutVAT: priceWithoutVAT.toFixed(2),
-    vatAmount: vatAmount.toFixed(2),
-    vatPercentage: vatPercentage.toFixed(2)
-  };
 };

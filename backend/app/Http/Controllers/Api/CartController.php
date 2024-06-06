@@ -110,8 +110,6 @@ class CartController extends Controller
         }
     }
 
-    // CartController.php
-
     public function clearCartByUserId($userId)
     {
         $cartItems = Cart::where('user_id', $userId)->delete();
