@@ -1,8 +1,8 @@
 <script setup>
-import { onMounted, ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import {computed, onMounted, ref} from 'vue';
+import {useRouter} from 'vue-router';
 import axios from 'axios';
-import { generatePDF } from '@/utils/pdfUtils';
+import {generatePDF} from '@/utils/pdfUtils';
 
 const isLoading = ref(true);
 const router = useRouter();
@@ -27,7 +27,7 @@ const groupPurchasesByTime = (purchases) => {
         createdAt: purchase.created_at,
         user: purchase.user
       };
-      groupStatus.value[`${fullDate} ${roundedTime}`] = purchase.status; // Initialize group status
+      groupStatus.value[`${fullDate} ${roundedTime}`] = purchase.status;
     }
     grouped[`${fullDate} ${roundedTime}`].items.push(purchase);
     grouped[`${fullDate} ${roundedTime}`].totalPrice += parseFloat(purchase.total_price);
@@ -35,10 +35,14 @@ const groupPurchasesByTime = (purchases) => {
   return grouped;
 };
 
+const getImageUrl = (image) => {
+  return `http://localhost:8000/storage/uploads/${image}`;
+};
+
 const changeStatus = async (purchaseGroup, time, newStatus) => {
   try {
     const updatePromises = purchaseGroup.items.map(purchase => {
-      return axios.patch(`http://127.0.0.1:8000/api/purchases/${purchase.id}/status`, { status: newStatus });
+      return axios.patch(`http://127.0.0.1:8000/api/purchases/${purchase.id}/status`, {status: newStatus});
     });
     await Promise.all(updatePromises);
 
@@ -90,7 +94,7 @@ onMounted(async () => {
 
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      await router.push({ name: 'login' });
+      await router.push({name: 'login'});
     }
   } finally {
     isLoading.value = false;
@@ -130,11 +134,13 @@ const filteredPurchaseHistory = computed(() => {
               </div>
               <div class="form-group">
                 <label for="searchEmail">Search by Email:</label>
-                <input id="searchEmail" type="text" v-model="searchEmail" class="form-control" placeholder="Enter email">
+                <input id="searchEmail" v-model="searchEmail" class="form-control" placeholder="Enter email"
+                       type="text">
               </div>
               <div class="form-group">
                 <label for="searchPhone">Search by Phone:</label>
-                <input id="searchPhone" type="text" v-model="searchPhone" class="form-control" placeholder="Enter phone">
+                <input id="searchPhone" v-model="searchPhone" class="form-control" placeholder="Enter phone"
+                       type="text">
               </div>
             </div>
             <div v-if="isLoading" class="d-flex justify-content-center my-5">
@@ -147,13 +153,17 @@ const filteredPurchaseHistory = computed(() => {
             </div>
             <div v-else>
               <ul class="list-group">
-                <li v-for="(purchaseGroup, time) in filteredPurchaseHistory" :key="time" :class="{'bg-lightgreen': groupStatus[time] === 'closed', 'bg-lightyellow': groupStatus[time] === 'canceled'}" class="list-group-item">
+                <li v-for="(purchaseGroup, time) in filteredPurchaseHistory" :key="time"
+                    :class="{'bg-lightgreen': groupStatus[time] === 'closed', 'bg-lightyellow': groupStatus[time] === 'canceled'}"
+                    class="list-group-item">
                   <div class="d-flex justify-content-between align-items-center flex-wrap">
                     <div>
                       <strong>Purchased At:</strong> {{ time }}
                     </div>
                     <div class="btn-group">
-                      <button class="btn btn-primary mb-2 mb-sm-0 me-0" @click="() => generatePDF(time, purchaseGroup, user)">Print PDF</button>
+                      <button class="btn btn-primary mb-2 mb-sm-0 me-0"
+                              @click="() => generatePDF(time, purchaseGroup, user)">Print PDF
+                      </button>
                       <template v-if="groupStatus[time] === 'closed'">
                         <button class="btn btn-danger mb-2 mb-sm-0 me-0" disabled>Closed</button>
                       </template>
@@ -161,21 +171,32 @@ const filteredPurchaseHistory = computed(() => {
                         <button class="btn btn-warning mb-2 mb-sm-0 me-0" disabled>Canceled</button>
                       </template>
                       <template v-else>
-                        <button class="btn btn-secondary mb-2 mb-sm-0 me-0" @click="() => changeStatus(purchaseGroup, time, 'closed')">Mark as closed</button>
-                        <button class="btn btn-warning mb-2 mb-sm-0 me-0" @click="() => changeStatus(purchaseGroup, time, 'canceled')">Cancel</button>
+                        <button class="btn btn-secondary mb-2 mb-sm-0 me-0"
+                                @click="() => changeStatus(purchaseGroup, time, 'closed')">Mark as closed
+                        </button>
+                        <button class="btn btn-warning mb-2 mb-sm-0 me-0"
+                                @click="() => changeStatus(purchaseGroup, time, 'canceled')">Cancel
+                        </button>
                       </template>
                     </div>
                   </div>
                   <div>
-                    <strong>User:</strong> {{ purchaseGroup.user.name }} {{ purchaseGroup.user.surname }} - {{ purchaseGroup.user.email }} - {{ purchaseGroup.user.phone }}
+                    <strong>User:</strong> {{ purchaseGroup.user.name }} {{ purchaseGroup.user.surname }} -
+                    {{ purchaseGroup.user.email }} - {{ purchaseGroup.user.phone }}
                   </div>
-                  <ul>
-                    <li v-for="purchase in purchaseGroup.items" :key="purchase.id">
-                      <div>
-                        <strong>Item:</strong> {{ purchase.item.name }}
-                      </div>
-                      <div>
-                        <strong>Price:</strong> {{ purchase.total_price }}€
+                  <ul class="order-details">
+                    <li v-for="purchase in purchaseGroup.items" :key="purchase.id" class="order-item">
+                      <img :src="getImageUrl(purchase.item.img)" alt="product image" class="item-image">
+                      <div class="item-details">
+                        <div>
+                          <strong>Item:</strong> {{ purchase.item.name }}
+                        </div>
+                        <div>
+                          <strong>Quantity:</strong> {{ purchase.quantity }}
+                        </div>
+                        <div>
+                          <strong>Price:</strong> {{ purchase.total_price }}€
+                        </div>
                       </div>
                     </li>
                   </ul>
@@ -234,6 +255,27 @@ const filteredPurchaseHistory = computed(() => {
 
 .btn {
   padding: 6px 7px 6px 7px;
+}
+
+.order-details {
+  margin-top: 20px;
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.item-image {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+  object-fit: scale-down;
+}
+
+.item-details {
+  flex-grow: 1;
 }
 
 @media (max-width: 767px) {

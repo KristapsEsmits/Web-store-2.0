@@ -125,7 +125,6 @@ export default {
           categoryMap[category.id] = category.category_name;
         });
 
-        // Filter categories based on items
         const uniqueCategoryIds = [...new Set(items.map(item => item.categories_id))];
         this.filteredCategories = categories.filter(category => uniqueCategoryIds.includes(category.id));
 

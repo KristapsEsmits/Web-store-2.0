@@ -59,7 +59,7 @@ export default {
 <template>
   <div class="attribute-container">
     <div class="logo">
-      <img alt="Logo" src="\favicon.ico" style="height: 60px; width: 60px;">
+      <img alt="Logo" src="/favicon.ico" style="height: 60px; width: 60px;">
     </div>
     <div class="logoText">
       <h1>Create an Account</h1>

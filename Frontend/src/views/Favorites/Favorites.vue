@@ -1,7 +1,4 @@
 <template>
-  <div class="header">
-    <h1>Favorites</h1>
-  </div>
   <div class="container">
     <div v-if="loading" class="row">
       <div class="col-12 text-center">
@@ -11,17 +8,20 @@
       </div>
     </div>
     <div v-else>
-      <div v-if="favoriteItems.length > 0" class="col-12 mb-4 text-end">
+      <div v-if="favoriteItems.length > 0" class="col-12 text-end">
+        <div class="header">
+          <h1>Favorites</h1>
+        </div>
         <button class="btn btn-danger" @click="clearAllFavorites">Clear All Favorites</button>
       </div>
-      <div v-else class="col-12 text-center">
+      <div v-else class="col-12 text-center no-favorites-center">
         <img alt="no favorites" class="no_favorites_img" src="/no_favorite.png">
         <h2>There's no favorites here, try
           <router-link class="toProducts" to="/products">browsing</router-link>
           for something.
         </h2>
       </div>
-      <div class="row">
+      <div v-if="favoriteItems.length > 0" class="row">
         <ul class="nav nav-tabs">
           <li v-for="(category, index) in favoriteCategories" :key="index" class="nav-item">
             <a class="nav-link" :class="{ active: index === 0 }" data-bs-toggle="tab" :href="'#category-' + index">{{ category.name }}</a>
@@ -156,7 +156,6 @@ export default {
       }
     },
 
-
     async fetchSpecifications(itemId) {
       try {
         const response = await axios.get(`http://127.0.0.1:8000/api/items/${itemId}/specifications`);
@@ -261,41 +260,36 @@ export default {
     },
 
     async removeFromFavoritesByItemId(itemId) {
-  try {
-    const userId = this.user.id;
-    await axios.delete(`http://localhost:8000/api/favorites/item/${itemId}-${userId}`);
-    
-    this.favoriteItems = this.favoriteItems.filter(item => item.item.id !== itemId);
-    
-    this.organizeFavoritesByCategory();
+      try {
+        const userId = this.user.id;
+        await axios.delete(`http://localhost:8000/api/favorites/item/${itemId}-${userId}`);
+        this.favoriteItems = this.favoriteItems.filter(item => item.item.id !== itemId);
+        this.organizeFavoritesByCategory();
+        document.dispatchEvent(new CustomEvent('favorites-updated'));
+        if (this.favoriteItems.length === 0) {
+          this.loading = true;
+          await this.fetchFavoriteItems();
+          this.loading = false;
+        }
+      } catch (error) {
+        if (error.response) {
+          console.error('Error removing from favorites:', error.response.data.message);
+          console.error('Detailed error:', error.response.data.error);
+        } else {
+          console.error('Error removing from favorites:', error.message);
+        }
+      }
+    },
 
-    document.dispatchEvent(new CustomEvent('favorites-updated'));
-    
-    if (this.favoriteItems.length === 0) {
-      this.loading = true;
-      await this.fetchFavoriteItems();
-      this.loading = false;
-    }
-  } catch (error) {
-    if (error.response) {
-      console.error('Error removing from favorites:', error.response.data.message);
-      console.error('Detailed error:', error.response.data.error);
-    } else {
-      console.error('Error removing from favorites:', error.message);
-    }
-  }
-},
-
-
-    clearAllFavorites() {
-      axios.delete(`http://127.0.0.1:8000/api/favorites/user/${this.loggedInUserId}/clear`)
-        .then(response => {
-          this.favoriteItems = [];
-          document.dispatchEvent(new CustomEvent('favorites-updated'));
-        })
-        .catch(error => {
-          console.error('Error clearing all favorites:', error);
-        });
+    async clearAllFavorites() {
+      try {
+        await axios.delete(`http://127.0.0.1:8000/api/favorites/user/${this.loggedInUserId}/clear`);
+        this.favoriteItems = [];
+        this.favoriteCategories = [];
+        document.dispatchEvent(new CustomEvent('favorites-updated'));
+      } catch (error) {
+        console.error('Error clearing all favorites:', error);
+      }
     },
 
     updateItemCartStatus(itemId, isInCart) {
@@ -318,8 +312,8 @@ export default {
         return name.substring(0, maxLength) + '...';
       }
       return name;
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -337,10 +331,6 @@ export default {
   color: #000;
 }
 
-.row {
-  margin-top: 40px;
-}
-
 .img {
   max-width: 215px;
   max-height: 160px;
@@ -349,6 +339,10 @@ export default {
 .card-link {
   text-decoration: none;
   color: inherit;
+}
+
+.no-favorites-center {
+  padding-top: 150px;
 }
 
 .button-container {
@@ -407,10 +401,6 @@ export default {
 
 .container {
   padding: 0;
-
-  .row {
-    margin-top: 40px;
-  }
 }
 
 .card {
@@ -480,3 +470,4 @@ export default {
   }
 }
 </style>
+

@@ -53,7 +53,6 @@ class PurchaseController extends Controller
                 $item->reserved += $itemData['quantity'];
                 $item->save();
 
-                // Ensure that the total price including VAT is calculated correctly
                 $totalPriceWithVat = $item->price * $itemData['quantity'];
 
                 Purchase::create([
@@ -140,6 +139,7 @@ class PurchaseController extends Controller
     public function getTotalSpendingPerDay()
     {
         $spendingData = Purchase::selectRaw('DATE(created_at) as date, SUM(total_price) as total_spent')
+            ->where('status', 'closed')
             ->groupBy('date')
             ->orderBy('date', 'ASC')
             ->get();
@@ -149,4 +149,5 @@ class PurchaseController extends Controller
             'data' => $spendingData,
         ], 200);
     }
+
 }

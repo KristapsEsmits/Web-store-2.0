@@ -9,7 +9,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
           <h4 class="card-title mb-0">Categories</h4>
           <div class="d-flex align-items-center">
-            <input v-model="searchQuery" class="form-control me-2" placeholder="Search by ID or Name" style="width: 200px;" type="text" @input="searchCategories"/>
+            <input v-model="searchQuery" class="form-control me-2" placeholder="Search by ID or Name" style="width: 200px;" type="text" @input="searchItems"/>
             <router-link class="btn btn-primary btn-round btn-fill me-2" :to="buttonLink">
               {{ buttonText }}
             </router-link>
@@ -19,10 +19,10 @@
         <div class="card-body">
           <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
-              <a class="nav-link" :class="{ active: activeTab === 'categories' }" id="categories-tab" data-bs-toggle="tab" href="#categories" role="tab" aria-controls="categories" aria-selected="activeTab === 'categories'" @click="activeTab = 'categories'">Categories</a>
+              <a class="nav-link" :class="{ active: activeTab === 'categories' }" id="categories-tab" data-bs-toggle="tab" href="#categories" role="tab" aria-controls="categories" aria-selected="activeTab === 'categories'" @click="switchTab('categories')">Categories</a>
             </li>
             <li class="nav-item" role="presentation">
-              <a class="nav-link" :class="{ active: activeTab === 'specification-titles' }" id="specification-titles-tab" data-bs-toggle="tab" href="#specification-titles" role="tab" aria-controls="specification-titles" aria-selected="activeTab === 'specification-titles'" @click="activeTab = 'specification-titles'">Specification Titles</a>
+              <a class="nav-link" :class="{ active: activeTab === 'specification-titles' }" id="specification-titles-tab" data-bs-toggle="tab" href="#specification-titles" role="tab" aria-controls="specification-titles" aria-selected="activeTab === 'specification-titles'" @click="switchTab('specification-titles')">Specification Titles</a>
             </li>
           </ul>
           <div class="tab-content" id="myTabContent">
@@ -74,14 +74,24 @@
             </div>
             <div class="tab-pane fade" :class="{ show: activeTab === 'specification-titles', active: activeTab === 'specification-titles' }" id="specification-titles" role="tabpanel" aria-labelledby="specification-titles-tab">
               <ul class="nav nav-tabs" id="categoryTabs" role="tablist">
-                <li class="nav-item" role="presentation" v-for="category in categories" :key="category.id">
-                  <a class="nav-link" :class="{ active: selectedCategoryId === category.id }" @click="selectCategory(category.id)" role="tab">{{ category.category_name }}</a>
+                <li class="nav-item" role="presentation">
+                  <a class="nav-link" :class="{ active: selectedCategoryId === 29 }" @click="selectCategory(29)" role="tab">Keyboards</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <a class="nav-link" :class="{ active: selectedCategoryId === 30 }" @click="selectCategory(30)" role="tab">Headphones</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <a class="nav-link" :class="{ active: selectedCategoryId === 31 }" @click="selectCategory(31)" role="tab">Mouses</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <a class="nav-link" :class="{ active: selectedCategoryId === 32 }" @click="selectCategory(32)" role="tab">Microphones</a>
                 </li>
               </ul>
               <div class="table-responsive d-none d-md-block">
                 <table class="table table-bordered table-auto">
                   <thead>
                     <tr>
+                      <th><input v-model="selectAll" type="checkbox" @change="toggleSelectAll"></th>
                       <th>Specification Title ID</th>
                       <th>Specification Title</th>
                       <th>Actions</th>
@@ -89,6 +99,7 @@
                   </thead>
                   <tbody>
                     <tr v-for="(title, index) in filteredSpecificationTitles" :key="index">
+                      <td><input v-model="selectedRows" :value="title" type="checkbox"></td>
                       <td>{{ title.id }}</td>
                       <td>{{ title.specification_title }}</td>
                       <td class="justify-content-center">
@@ -100,9 +111,15 @@
                 </table>
               </div>
               <div class="d-block d-md-none">
+                <div class="select-all-mobile">
+                  <input v-model="selectAll" type="checkbox" @change="toggleSelectAll"> Select All
+                </div>
                 <div v-for="(title, index) in filteredSpecificationTitles" :key="index" class="card mb-3">
                   <div class="card-body">
-                    <h5 class="card-title">{{ title.specification_title }}</h5>
+                    <h5 class="card-title">
+                      <input v-model="selectedRows" :value="title" class="checkbox-btn" type="checkbox">
+                      {{ title.specification_title }}
+                    </h5>
                     <p class="card-text"><strong>ID:</strong> {{ title.id }}</p>
                     <div class="action-btns">
                       <router-link :to="{ path: '/admin/specification-titles/' + title.id + '/edit' }" class="btn btn-success me-2">Edit</router-link>
@@ -217,22 +234,25 @@ const dismissSuccessMessage = () => {
 };
 
 const exportSelectedRows = () => {
-  const data = selectedRows.value.map(category => ({
-    id: category.id,
-    name: category.category_name
-  }));
+  const data = selectedRows.value.map(row => {
+    return activeTab.value === 'categories'
+      ? { id: row.id, name: row.category_name }
+      : { id: row.id, name: row.specification_title };
+  });
 
   const worksheet = XLSX.utils.json_to_sheet(data);
   const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Selected Categories');
-  XLSX.writeFile(workbook, 'selected_categories.xlsx');
+  XLSX.utils.book_append_sheet(workbook, worksheet, activeTab.value === 'categories' ? 'Selected Categories' : 'Selected Specification Titles');
+  XLSX.writeFile(workbook, activeTab.value === 'categories' ? 'selected_categories.xlsx' : 'selected_specification_titles.xlsx');
 };
 
 const isAnyRowSelected = computed(() => selectedRows.value.length > 0);
 
 const toggleSelectAll = () => {
   if (selectAll.value) {
-    selectedRows.value = [...categories.value];
+    selectedRows.value = activeTab.value === 'categories'
+      ? [...categories.value]
+      : [...filteredSpecificationTitles.value];
   } else {
     selectedRows.value = [];
   }
@@ -245,24 +265,45 @@ const filteredCategories = computed(() => {
 });
 
 const filteredSpecificationTitles = computed(() => {
-  return specificationTitles.value.filter(title => title.category_id === selectedCategoryId.value);
+  return specificationTitles.value.filter(title => title.category_id === selectedCategoryId.value).filter(title => {
+    return title.id.toString().includes(searchQuery.value) || title.specification_title.toLowerCase().includes(searchQuery.value.toLowerCase());
+  });
 });
 
-const searchCategories = async () => {
-  try {
-    const res = await axios.get('/categories', { params: { search: searchQuery.value } });
-    categories.value = res.data.categories;
-  } catch (error) {
-    console.error('Error searching categories:', error);
+const searchItems = async () => {
+  if (activeTab.value === 'categories') {
+    try {
+      const res = await axios.get('/categories', { params: { search: searchQuery.value } });
+      categories.value = res.data.categories;
+    } catch (error) {
+      console.error('Error searching categories:', error);
+    }
+  } else {
+    try {
+      const res = await axios.get('/specification-titles', { params: { search: searchQuery.value } });
+      specificationTitles.value = res.data.specification_titles;
+    } catch (error) {
+      console.error('Error searching specification titles:', error);
+    }
   }
+};
+
+const switchTab = (tab) => {
+  activeTab.value = tab;
+  searchQuery.value = '';
+  selectedRows.value = [];
+  selectAll.value = false;
 };
 
 const selectCategory = (categoryId) => {
   selectedCategoryId.value = categoryId;
+  searchQuery.value = '';
+  selectedRows.value = [];
+  selectAll.value = false;
 };
 
 const buttonText = computed(() => activeTab.value === 'categories' ? 'Add Category' : 'Add Specification Title');
-const buttonLink = computed(() => activeTab.value === 'categories' ? '/admin/categories/create' : '/admin/specification-titles/add');
+const buttonLink = computed(() => activeTab.value === 'categories' ? '/admin/categories/add' : '/admin/specification-titles/add');
 
 onMounted(() => {
   successMessage.value = route.query.successMessage || '';
