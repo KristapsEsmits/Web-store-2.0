@@ -384,4 +384,29 @@ class ItemsController extends Controller
             ], 500);
         }
     }
+
+    public function getSpecificationsDescription()
+    {
+        try {
+            $specifications = SpecificationDescription::with('item', 'specificationTitle')->get();
+
+            if ($specifications->count() > 0) {
+                return response()->json([
+                    'status' => 200,
+                    'specifications' => $specifications,
+                ], 200);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'No specifications found!',
+                ], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'Server error',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }

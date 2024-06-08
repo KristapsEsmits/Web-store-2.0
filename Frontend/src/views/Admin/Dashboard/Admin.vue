@@ -108,7 +108,10 @@ const renderUserRegistrationChart = () => {
         },
         y: {
           beginAtZero: true,
-        },
+          ticks: {
+            stepSize: 1,
+          },
+        },  
       },
     },
   });

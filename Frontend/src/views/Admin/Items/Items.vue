@@ -9,72 +9,117 @@
         <div class="card-header d-flex justify-content-between align-items-center">
           <h4 class="card-title mb-0">Items</h4>
           <div class="d-flex align-items-center">
-            <input v-model="searchQuery" class="form-control me-2" placeholder="Search by ID or Name" style="width: 200px;"
-                   type="text" @input="searchItems"/>
+            <input v-model="searchQuery" class="form-control me-2" placeholder="Search by ID or Name" style="width: 200px;" type="text" @input="searchItems"/>
             <router-link class="btn btn-primary btn-round btn-fill me-2" to="/admin/items/create">
               Add Item
             </router-link>
-            <button :disabled="!isAnyRowSelected" class="btn btn-warning btn-round btn-fill"
-                    @click="exportSelectedRows">Export Selected Rows
-            </button>
+            <button :disabled="!isAnyRowSelected" class="btn btn-warning btn-round btn-fill" @click="exportSelectedRows">Export Selected Rows</button>
           </div>
         </div>
         <div class="card-body">
-          <div class="table-responsive d-none d-md-block">
-            <table class="table table-bordered table-auto">
-              <thead>
-              <tr>
-                <th><input v-model="selectAll" type="checkbox" @change="toggleSelectAll"></th>
-                <th>Item ID</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Price</th>
-                <th>Img path</th>
-                <th>Img</th>
-                <th>Actions</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr v-for="(item, index) in filteredItems" :key="index">
-                <td><input v-model="selectedRows" :value="item" type="checkbox"></td>
-                <td>{{ item.id }}</td>
-                <td>{{ item.name }}</td>
-                <td>{{ item.description }}</td>
-                <td>{{ item.price }}€</td>
-                <td>{{ item.img }}</td>
-                <td class="image-cell">
-                  <img :src="'http://localhost:8000/storage/uploads/' + item.img" alt="Item Image"
-                       style="max-width: 90px; max-height: 70px;">
-                </td>
-                <td class="justify-content-center">
-                  <router-link :to="{ path: '/admin/items/' + item.id + '/edit' }" class="btn btn-success me-2">Edit
-                  </router-link>
-                  <button class="btn btn-danger" type="button" @click="openDeleteModal(item.id)">Delete</button>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="d-block d-md-none">
-            <div class="select-all-mobile">
-              <input v-model="selectAll" type="checkbox" @change="toggleSelectAll"> Select All
-            </div>
-            <div v-for="(item, index) in filteredItems" :key="index" class="card mb-3">
-              <div class="card-body">
-                <h5 class="card-title"><input v-model="selectedRows" :value="item" class="checkbox-btn" type="checkbox">{{
-                    item.name
-                  }}</h5>
-                <p class="card-text"><strong>ID:</strong> {{ item.id }}</p>
-                <p class="card-text"><strong>Description:</strong> {{ item.description }}</p>
-                <p class="card-text"><strong>Price:</strong> {{ item.price }}€</p>
-                <p class="card-text"><strong>Img path:</strong> {{ item.img }}</p>
-                <img :src="'http://localhost:8000/storage/uploads/' + item.img" alt="Item Image"
-                     style="max-width: 90px; max-height: 70px;">
-                <div class="action-btns">
-                  <router-link :to="{ path: '/admin/items/' + item.id + '/edit' }" class="btn btn-success me-2">Edit
-                  </router-link>
-                  <button class="btn btn-danger" type="button" @click="openDeleteModal(item.id)">Delete</button>
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" :class="{ active: activeTab === 'items' }" id="items-tab" data-bs-toggle="tab" href="#items" role="tab" aria-controls="items" aria-selected="activeTab === 'items'" @click="switchTab('items')">Items</a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" :class="{ active: activeTab === 'specifications' }" id="specifications-tab" data-bs-toggle="tab" href="#specifications" role="tab" aria-controls="specifications" aria-selected="activeTab === 'specifications'" @click="switchTab('specifications')">Specification Descriptions</a>
+            </li>
+          </ul>
+          <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade" :class="{ show: activeTab === 'items', active: activeTab === 'items' }" id="items" role="tabpanel" aria-labelledby="items-tab">
+              <!-- Items Table -->
+              <div class="table-responsive d-none d-md-block">
+                <table class="table table-bordered table-auto">
+                  <thead>
+                    <tr>
+                      <th><input v-model="selectAll" type="checkbox" @change="toggleSelectAll"></th>
+                      <th>Item ID</th>
+                      <th>Name</th>
+                      <th>Description</th>
+                      <th>Price</th>
+                      <th>Img path</th>
+                      <th>Img</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(item, index) in filteredItems" :key="index">
+                      <td><input v-model="selectedRows" :value="item" type="checkbox"></td>
+                      <td>{{ item.id }}</td>
+                      <td>{{ item.name }}</td>
+                      <td>{{ item.description }}</td>
+                      <td>{{ item.price }}€</td>
+                      <td>{{ item.img }}</td>
+                      <td class="image-cell">
+                        <img :src="'http://localhost:8000/storage/uploads/' + item.img" alt="Item Image" style="max-width: 90px; max-height: 70px;">
+                      </td>
+                      <td class="justify-content-center">
+                        <router-link :to="{ path: '/admin/items/' + item.id + '/edit' }" class="btn btn-success me-2">Edit</router-link>
+                        <button class="btn btn-danger" type="button" @click="openDeleteModal(item.id)">Delete</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- Mobile View for Items -->
+              <div class="d-block d-md-none">
+                <div class="select-all-mobile">
+                  <input v-model="selectAll" type="checkbox" @change="toggleSelectAll"> Select All
                 </div>
+                <div v-for="(item, index) in filteredItems" :key="index" class="card mb-3">
+                  <div class="card-body">
+                    <h5 class="card-title"><input v-model="selectedRows" :value="item" class="checkbox-btn" type="checkbox">{{ item.name }}</h5>
+                    <p class="card-text"><strong>ID:</strong> {{ item.id }}</p>
+                    <p class="card-text"><strong>Description:</strong> {{ item.description }}</p>
+                    <p class="card-text"><strong>Price:</strong> {{ item.price }}€</p>
+                    <p class="card-text"><strong>Img path:</strong> {{ item.img }}</p>
+                    <img :src="'http://localhost:8000/storage/uploads/' + item.img" alt="Item Image" style="max-width: 90px; max-height: 70px;">
+                    <div class="action-btns">
+                      <router-link :to="{ path: '/admin/items/' + item.id + '/edit' }" class="btn btn-success me-2">Edit</router-link>
+                      <button class="btn btn-danger" type="button" @click="openDeleteModal(item.id)">Delete</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane fade" :class="{ show: activeTab === 'specifications', active: activeTab === 'specifications' }" id="specifications" role="tabpanel" aria-labelledby="specifications-tab">
+              <!-- Sub Tabs for Categories -->
+              <ul class="nav nav-tabs" id="categoryTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <a class="nav-link" :class="{ active: selectedCategory === 'Keyboards' }" @click="selectCategory('Keyboards')" role="tab">Keyboards</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <a class="nav-link" :class="{ active: selectedCategory === 'Mouses' }" @click="selectCategory('Mouses')" role="tab">Mouses</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <a class="nav-link" :class="{ active: selectedCategory === 'Headphones' }" @click="selectCategory('Headphones')" role="tab">Headphones</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <a class="nav-link" :class="{ active: selectedCategory === 'Microphones' }" @click="selectCategory('Microphones')" role="tab">Microphones</a>
+                </li>
+              </ul>
+              <!-- Specifications Table -->
+              <div class="table-responsive">
+                <table class="table table-bordered table-auto">
+                  <thead>
+                    <tr>
+                      <th><input v-model="selectAll" type="checkbox" @change="toggleSelectAll"></th>
+                      <th>Item ID</th>
+                      <th>Item Name</th>
+                      <th v-for="title in uniqueSpecificationTitles" :key="title.id">{{ title.specification_title }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="group in groupedSpecifications" :key="group.item.id">
+                      <td><input v-model="selectedRows" :value="group.item" type="checkbox"></td>
+                      <td>{{ group.item.id }}</td>
+                      <td>{{ group.item.name }}</td>
+                      <td v-for="title in uniqueSpecificationTitles" :key="title.id">
+                        {{ getDescription(group.specifications, title.id) }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
@@ -88,13 +133,14 @@
 </template>
 
 <script setup>
-import {computed, onMounted, ref} from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import axios from 'axios';
-import {useRoute} from 'vue-router';
+import { useRoute } from 'vue-router';
 import * as XLSX from 'xlsx';
 import Modal from '@/components/Modal.vue';
 
 const items = ref([]);
+const specifications = ref([]);
 const successMessage = ref('');
 const route = useRoute();
 const selectedRows = ref([]);
@@ -102,18 +148,31 @@ const selectAll = ref(false);
 const itemIdToDelete = ref(null);
 const isDeleteModalOpen = ref(false);
 const searchQuery = ref('');
+const activeTab = ref('items');
+const selectedCategory = ref('Keyboards');
 
 const getItems = async () => {
   try {
     const res = await axios.get('/items');
+    console.log('Items response:', res.data.items); // Log the response data
     items.value = res.data.items;
   } catch (error) {
     console.error('Error fetching items:', error);
   }
 };
 
-const openDeleteModal = (itemId) => {
-  itemIdToDelete.value = itemId;
+const getSpecifications = async () => {
+  try {
+    const res = await axios.get('/specification-descriptions');
+    console.log('Fetched Specifications:', res.data.specifications); // Log the response data
+    specifications.value = res.data.specifications;
+  } catch (error) {
+    console.error('Error fetching specifications:', error);
+  }
+};
+
+const openDeleteModal = (id) => {
+  itemIdToDelete.value = id;
   isDeleteModalOpen.value = true;
 };
 
@@ -123,9 +182,15 @@ const closeDeleteModal = () => {
 
 const confirmDelete = async () => {
   try {
-    const res = await axios.delete(`/items/${itemIdToDelete.value}/delete`);
-    successMessage.value = res.data.message;
-    await getItems();
+    if (activeTab.value === 'items') {
+      const res = await axios.delete(`/items/${itemIdToDelete.value}/delete`);
+      successMessage.value = res.data.message;
+      await getItems();
+    } else {
+      const res = await axios.delete(`/specification-descriptions/${itemIdToDelete.value}/delete`);
+      successMessage.value = res.data.message;
+      await getSpecifications();
+    }
     closeDeleteModal();
   } catch (error) {
     if (error.response && error.response.status === 422) {
@@ -141,25 +206,49 @@ const dismissSuccessMessage = () => {
 };
 
 const exportSelectedRows = () => {
-  const data = selectedRows.value.map(item => ({
-    id: item.id,
-    name: item.name,
-    description: item.description,
-    price: item.price,
-    img: item.img
-  }));
+  let data = [];
+
+  if (activeTab.value === 'items') {
+    data = selectedRows.value.map(row => ({
+      id: row.id,
+      name: row.name,
+      description: row.description,
+      price: row.price,
+      img: row.img
+    }));
+  } else {
+    data = groupedSpecifications.value.map(group => {
+      let rowData = {
+        'Item ID': group.item.id,
+        'Item Name': group.item.name
+      };
+
+      uniqueSpecificationTitles.value.forEach(title => {
+        rowData[title.specification_title] = getDescription(group.specifications, title.id);
+      });
+
+      return rowData;
+    });
+  }
 
   const worksheet = XLSX.utils.json_to_sheet(data);
   const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Selected Items');
-  XLSX.writeFile(workbook, 'selected_items.xlsx');
+  XLSX.utils.book_append_sheet(workbook, worksheet, activeTab.value === 'items' ? 'Selected Items' : 'Selected Specifications');
+  XLSX.writeFile(workbook, activeTab.value === 'items' ? 'selected_items.xlsx' : 'selected_specifications.xlsx');
 };
 
 const isAnyRowSelected = computed(() => selectedRows.value.length > 0);
 
 const toggleSelectAll = () => {
   if (selectAll.value) {
-    selectedRows.value = [...items.value];
+    if (activeTab.value === 'items') {
+      selectedRows.value = [...items.value];
+    } else {
+      selectedRows.value = groupedSpecifications.value.reduce((acc, group) => {
+        acc.push(group.item);
+        return acc;
+      }, []);
+    }
   } else {
     selectedRows.value = [];
   }
@@ -171,20 +260,101 @@ const filteredItems = computed(() => {
   });
 });
 
+const filteredDescriptions = computed(() => {
+  return specifications.value.filter(description => {
+    const categoryId = description.specification_title?.category_id;
+    return categoryId === getCategoryID(selectedCategory.value) &&
+      (description.id.toString().includes(searchQuery.value) || description.description.toLowerCase().includes(searchQuery.value.toLowerCase()));
+  });
+});
+
+// Group specifications by item for the selected category
+const groupedSpecifications = computed(() => {
+  const filteredSpecs = specifications.value.filter(spec => {
+    return spec.specification_title.category_id === getCategoryID(selectedCategory.value) &&
+      (spec.item.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      spec.item.id.toString().includes(searchQuery.value));
+  });
+
+  const grouped = filteredSpecs.reduce((acc, spec) => {
+    const itemId = spec.item_id;
+    if (!acc[itemId]) {
+      acc[itemId] = {
+        item: spec.item,
+        specifications: []
+      };
+    }
+    acc[itemId].specifications.push(spec);
+    return acc;
+  }, {});
+  return Object.values(grouped);
+});
+
+// Get unique specification titles for the selected category
+const uniqueSpecificationTitles = computed(() => {
+  const titles = {};
+  specifications.value.forEach(spec => {
+    if (spec.specification_title.category_id === getCategoryID(selectedCategory.value)) {
+      if (!titles[spec.specification_title.id]) {
+        titles[spec.specification_title.id] = spec.specification_title;
+      }
+    }
+  });
+  return Object.values(titles);
+});
+
+// Helper function to get description
+const getDescription = (specifications, titleId) => {
+  const spec = specifications.find(spec => spec.specification_title_id === titleId);
+  return spec ? spec.description : '';
+};
+
+const getCategoryID = (categoryName) => {
+  const categories = {
+    'Keyboards': 29,
+    'Mouses': 30,
+    'Headphones': 31,
+    'Microphones': 32
+  };
+  return categories[categoryName];
+};
+
 const searchItems = async () => {
   try {
-    const res = await axios.get('/items', {params: {search: searchQuery.value}});
-    items.value = res.data.items;
+    if (activeTab.value === 'items') {
+      const res = await axios.get('/items', { params: { search: searchQuery.value } });
+      items.value = res.data.items;
+    } else {
+      const res = await axios.get('/specification-descriptions', { params: { search: searchQuery.value } });
+      specifications.value = res.data.specifications;
+    }
   } catch (error) {
     console.error('Error searching items:', error);
   }
 };
 
+const switchTab = (tab) => {
+  activeTab.value = tab;
+  searchQuery.value = '';
+  selectedRows.value = [];
+  selectAll.value = false;
+};
+
+const selectCategory = (category) => {
+  selectedCategory.value = category;
+  searchQuery.value = '';
+  selectedRows.value = [];
+  selectAll.value = false;
+};
+
 onMounted(() => {
   successMessage.value = route.query.successMessage || '';
   getItems();
+  getSpecifications();
 });
 </script>
+
+
 
 <style scoped>
 .wrapper {
@@ -262,6 +432,7 @@ onMounted(() => {
 }
 
 .card .card-body .card-title {
+  font-size: 1.25rem;
   margin-bottom: 0.75rem;
 }
 

@@ -44,10 +44,10 @@ class SpecificationTitleController extends Controller
 
             return response()->json(['message' => 'Specification Titles added successfully'], 201);
         } catch (\Exception $e) {
-            \Log::error('Error adding specification titles: ', [
+            [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
-            ]);
+            ];
 
             return response()->json(['message' => 'Failed to add specification titles'], 500);
         }
@@ -70,7 +70,6 @@ class SpecificationTitleController extends Controller
                 'message' => 'Specification title updated successfully',
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error updating specification title: ' . $e->getMessage());
             return response()->json([
                 'status' => 500,
                 'message' => 'Internal Server Error',

@@ -118,3 +118,6 @@ Route::get('/specification-titles/{id}', [SpecificationTitleController::class, '
 Route::put('/specification-titles/{id}', [SpecificationTitleController::class, 'update']);
 Route::post('/specification-titles', [SpecificationTitleController::class, 'store']);
 Route::delete('/specification-titles/{id}/delete', [SpecificationTitleController::class, 'destroy']);
+Route::get('/specification-descriptions', [ItemsController::class, 'getSpecificationsDescription']);
+
+
