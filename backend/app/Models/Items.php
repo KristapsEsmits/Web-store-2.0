@@ -39,4 +39,9 @@ class Items extends Model
     {
         return $this->belongsTo(Categories::class, 'categories_id');
     }
+
+    public function specificationDescriptions()
+    {
+        return $this->hasMany(SpecificationDescription::class, 'item_id');
+    }
 }

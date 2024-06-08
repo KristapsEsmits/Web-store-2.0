@@ -6,6 +6,7 @@ use App\Models\Categories;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use App\Models\SpecificationTitle;
 
 class CategoriesContoller extends Controller
 {
@@ -29,6 +30,8 @@ class CategoriesContoller extends Controller
     {
         $validator = Validator::make($request->all(), [
             'category_name' => 'required|string|max:40|unique:categories,category_name',
+            'specification_titles' => 'sometimes|array',
+            'specification_titles.*.title' => 'required_with:specification_titles|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -37,23 +40,36 @@ class CategoriesContoller extends Controller
                 'message' => 'Bad Request!',
                 'errors' => $validator->messages(),
             ], 422);
-        } else {
-            $categories = Categories::create([
-                'category_name' => $request->category_name,
-            ]);
+        }
 
-            if ($categories) {
+        if ($request->has('specification_titles')) {
+            $titles = array_column($request->specification_titles, 'title');
+            if (count($titles) !== count(array_unique($titles))) {
                 return response()->json([
-                    'status' => 200,
-                    'message' => 'Data created successfully!',
-                ], 200);
-            } else {
-                return response()->json([
-                    'status' => 500,
-                    'message' => 'Internal server error!',
-                ], 500);
+                    'status' => 422,
+                    'message' => 'Each specification title must be unique within a category.',
+                    'errors' => ['specification_titles' => ['Each specification title must be unique within a category.']],
+                ], 422);
             }
         }
+
+        $category = Categories::create([
+            'category_name' => $request->category_name,
+        ]);
+
+        if ($request->has('specification_titles')) {
+            foreach ($request->specification_titles as $specTitle) {
+                SpecificationTitle::create([
+                    'category_id' => $category->id,
+                    'specification_title' => $specTitle['title'],
+                ]);
+            }
+        }
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Data created successfully!',
+        ], 200);
     }
 
     public function show($id)

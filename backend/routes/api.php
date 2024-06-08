@@ -10,17 +10,8 @@ use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\PurchaseController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\FinancesController;
+use App\Http\Controllers\Api\SpecificationTitleController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
 
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -118,3 +109,12 @@ Route::patch('/items/{id}', [ItemsController::class, 'updateItem']);
 
 // Finance API
 Route::get('/finances', [FinancesController::class, 'getFinances']);
+
+// Specifications API
+Route::get('/specification_titles/{categoryId}', [ItemsController::class, 'getSpecificationTitles']);
+Route::get('/items/{itemId}/specifications', [ItemsController::class, 'getSpecifications']);
+Route::get('/specification-titles', [SpecificationTitleController::class, 'index']);
+Route::get('/specification-titles/{id}', [SpecificationTitleController::class, 'show']);
+Route::put('/specification-titles/{id}', [SpecificationTitleController::class, 'update']);
+Route::post('/specification-titles', [SpecificationTitleController::class, 'store']);
+Route::delete('/specification-titles/{id}/delete', [SpecificationTitleController::class, 'destroy']);

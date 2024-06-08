@@ -12,7 +12,15 @@
         </ul>
         <div class="mb-3">
           <label for="Name">Name</label>
-          <input v-model="model.categories.category_name" class="form-control" type="text"/>
+          <input v-model="category_name" class="form-control" type="text"/>
+        </div>
+        <div v-for="(spec, index) in specification_titles" :key="index" class="mb-3">
+          <label :for="'spec_title_' + index">Specification Title {{ index + 1 }}</label>
+          <input v-model="spec.title" :id="'spec_title_' + index" class="form-control" type="text"/>
+        </div>
+        <div class="mb-3">
+          <button class="btn btn-secondary" type="button" @click="addSpecificationTitle">+ Add more</button>
+          <button class="btn btn-secondary" type="button" @click="removeLastSpecificationTitle" :disabled="specification_titles.length <= 1">- Remove last</button>
         </div>
         <div class="mb-3">
           <button class="btn btn-primary" type="button" @click="saveCategories">Save</button>
@@ -31,41 +39,41 @@ export default {
   data() {
     return {
       errorList: {},
-      model: {
-        categories: {
-          category_name: '',
-        },
-      },
+      category_name: '',
+      specification_titles: [{ title: '' }],
     };
   },
-
   methods: {
-    saveCategories() {
-      var list = this;
-      axios.post('/categories', this.model.categories).then((res) => {
-        const successMessage = res.data.message;
-        this.$router.push('/admin/categories?successMessage=' + successMessage);
-        console.log(res.data);
-        this.model.categories.category_name = '';
-
-        this.errorList = {};
-      })
-
-          .catch(function (error) {
-            if (error.response.status === 422) {
-              list.errorList = error.response.data.errors;
-            } else if (error.request) {
-              console.log(error.request);
-            } else {
-              console.log('Error', error.message);
-            }
-          });
+    addSpecificationTitle() {
+      this.specification_titles.push({ title: '' });
     },
-
+    removeLastSpecificationTitle() {
+      if (this.specification_titles.length > 1) {
+        this.specification_titles.pop();
+      }
+    },
+    async saveCategories() {
+      try {
+        const response = await axios.post('/categories', {
+          category_name: this.category_name,
+          specification_titles: this.specification_titles,
+        });
+        const successMessage = response.data.message;
+        this.$router.push('/admin/categories?successMessage=' + successMessage);
+        this.category_name = '';
+        this.specification_titles = [{ title: '' }];
+        this.errorList = {};
+      } catch (error) {
+        if (error.response.status === 422) {
+          this.errorList = error.response.data.errors;
+        } else {
+          console.error('Error:', error.message);
+        }
+      }
+    },
     Exit() {
       this.$router.push('/admin/categories');
     },
   },
 };
 </script>
-  

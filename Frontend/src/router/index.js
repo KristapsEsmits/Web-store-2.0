@@ -165,6 +165,18 @@ const routes = [
         component: () => import('../views/Tos/Tos.vue'),
         meta: { requiresAuth: true }
     },
+    {
+        path: '/admin/specification-titles/:id/edit',
+        name: '/admin/specification-titles/:id/edit',
+        component: () => import('../views/Admin/categories/EditSpecifiationType.vue'),
+        meta: { requiresAdmin: true }
+      },
+      {
+        path: '/admin/specification-titles/add',
+        name: '/admin/specification-titles/add',
+        component: () => import('../views/Admin/categories/AddSpecificationType.vue'),
+        meta: { requiresAdmin: true }
+      },
 ];
 
 const router = createRouter({

@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Models\SpecificationTitle;
+use App\Models\SpecificationDescription;
 
 class ItemsController extends Controller
 {
@@ -34,7 +36,9 @@ class ItemsController extends Controller
             'price' => 'required|numeric',
             'brand_id' => 'required|exists:brands,id',
             'categories_id' => 'required|exists:categories,id',
-            'img' => 'required|image|mimes:jpeg,png,jpg,gif,svg,',
+            'img' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
+            'specifications.*.specification_title_id' => 'required_with:specifications|exists:specification_titles,id',
+            'specifications.*.description' => 'required_with:specifications|string',
         ]);
 
         if ($validator->fails()) {
@@ -43,32 +47,40 @@ class ItemsController extends Controller
                 'message' => 'Bad Request!',
                 'errors' => $validator->messages(),
             ], 422);
-        } else {
-            $randomString = Str::random(10);
-            $imgPath = $request->file('img')->storeAs('uploads', $randomString . '.' . $request->file('img')->getClientOriginalExtension(), 'public');
+        }
 
-            $item = Items::create([
-                'name' => $request->name,
-                'description' => $request->description,
-                'price' => $request->price,
-                'brand_id' => $request->brand_id,
-                'categories_id' => $request->categories_id,
-                'img' => $randomString . '.' . $request->file('img')->getClientOriginalExtension(),
-            ]);
+        $randomString = Str::random(10);
+        $file = $request->file('img');
+        $fileName = $randomString . '.' . $file->getClientOriginalExtension();
+        $file->storeAs('uploads', $fileName, 'public');
 
-            if ($item) {
-                return response()->json([
-                    'status' => 200,
-                    'message' => 'Data created successfully!',
-                ], 200);
-            } else {
-                return response()->json([
-                    'status' => 500,
-                    'message' => 'Internal server error!',
-                ], 500);
+        $item = Items::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+            'brand_id' => $request->brand_id,
+            'categories_id' => $request->categories_id,
+            'img' => $fileName,
+        ]);
+
+        if ($request->has('specifications')) {
+            $specifications = json_decode($request->specifications, true);
+            foreach ($specifications as $specification) {
+                SpecificationDescription::create([
+                    'item_id' => $item->id,
+                    'specification_title_id' => $specification['specification_title_id'],
+                    'description' => $specification['description'],
+                ]);
             }
         }
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Data created successfully!',
+        ], 200);
     }
+
+
 
     public function show($id)
     {
@@ -328,6 +340,50 @@ class ItemsController extends Controller
             return response()->json(['status' => 'success', 'message' => 'Item updated successfully']);
         } else {
             return response()->json(['status' => 'error', 'message' => 'Item not found'], 404);
+        }
+    }
+
+    public function getSpecificationTitles($categoryId)
+    {
+        $specificationTitles = SpecificationTitle::where('category_id', $categoryId)->get();
+
+        if ($specificationTitles->count() > 0) {
+            return response()->json([
+                'status' => 200,
+                'specification_titles' => $specificationTitles,
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'No specification titles found!',
+            ], 404);
+        }
+    }
+
+    public function getSpecifications($itemId)
+    {
+        try {
+            $specifications = SpecificationDescription::where('item_id', $itemId)
+                ->with('specificationTitle')
+                ->get();
+
+            if ($specifications->count() > 0) {
+                return response()->json([
+                    'status' => 200,
+                    'specifications' => $specifications,
+                ], 200);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'No specifications found!',
+                ], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'Server error',
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
 }

@@ -7,10 +7,22 @@
           that are not included in the delivery package.</p>
         <h2 class="ml-left">Description:</h2>
         <p class="description">{{ items.description }}</p>
+        <div class="container mt40">
+          <h1>Specifications</h1>
+          <table v-if="specifications.length" class="spec-table">
+            <tbody>
+              <tr v-for="spec in specifications" :key="spec.id">
+                <td class="spec-title">{{ spec.specification_title.specification_title }}:</td>
+                <td class="spec-description">{{ spec.description || 'Nav' }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <p v-else>No specifications found for this item.</p>
+        </div>
       </div>
       <div class="details-container">
         <h5 class="product-name">{{ items.name }}</h5>
-        <p class="product-id">ID: {{items.id }}</p>
+        <p class="product-id">ID: {{ items.id }}</p>
         <h2 class="price">Price: {{ items.price }}€</h2>
         <p class="without-vat">Price without VAT: {{ calculatePriceWithoutVAT(items.price) }}€</p>
         <p :class="{'out-of-stock': items.amount === 0}">
@@ -99,6 +111,7 @@ export default {
     return {
       items: {},
       similarItems: [],
+      specifications: [],
       user: null,
       isLoading: true,
     };
@@ -120,6 +133,7 @@ export default {
         const response = await axios.get(`/items/${itemId}`);
         this.items = response.data.items;
         await this.fetchSimilarItems(itemId);
+        await this.fetchSpecifications(itemId);
       } catch (error) {
         console.error('Error fetching item:', error);
       }
@@ -133,6 +147,15 @@ export default {
         console.error('Error fetching similar items:', error);
       } finally {
         this.isLoading = false;
+      }
+    },
+
+    async fetchSpecifications(itemId) {
+      try {
+        const response = await axios.get(`/items/${itemId}/specifications`);
+        this.specifications = response.data.specifications;
+      } catch (error) {
+        console.error('Error fetching specifications:', error);
       }
     },
 
@@ -278,7 +301,6 @@ export default {
 };
 </script>
 
-
 <style scoped>
 .mt40 {
   margin-top: 40px;
@@ -418,6 +440,26 @@ export default {
 
 .ml-left {
   align-self: flex-start;
+}
+
+.spec-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.spec-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.spec-title {
+  font-weight: bold;
+  color: #333;
+}
+
+.spec-description {
+  color: #007bff;
 }
 
 @media screen and (max-width: 575px) {

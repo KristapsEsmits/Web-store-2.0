@@ -22,36 +22,62 @@
         </h2>
       </div>
       <div class="row">
-        <div v-for="item in favoriteItems" :key="item.item.id" class="col-auto mb-4">
-          <div class="card">
-            <router-link :to="{ path: '/product/' + item.item.id }" class="card-link">
-              <div class="img-container">
-                <img v-if="item.item.img" :src="getImageUrl(item.item.img)" alt="Item Image" class="img">
+        <ul class="nav nav-tabs">
+          <li v-for="(category, index) in favoriteCategories" :key="index" class="nav-item">
+            <a class="nav-link" :class="{ active: index === 0 }" data-bs-toggle="tab" :href="'#category-' + index">{{ category.name }}</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div v-for="(category, index) in favoriteCategories" :key="index" class="tab-pane fade" :class="{ show: index === 0, active: index === 0 }" :id="'category-' + index">
+            <div class="row">
+              <div v-for="item in category.items" :key="item.item.id" class="col-md-4 mb-4">
+                <div class="card">
+                  <router-link :to="{ path: '/product/' + item.item.id }" class="card-link">
+                    <div class="img-container">
+                      <img v-if="item.item.img" :src="getImageUrl(item.item.img)" alt="Item Image" class="img">
+                    </div>
+                    <div class="card-body">
+                      <button class="badge badge-pill badge-secondary">{{ item.item.category_name }}</button>
+                      <h5 class="card-title">{{ truncateName(item.item.name) }}</h5>
+                      <h5 class="card-title">{{ item.item.price }}€</h5>
+                    </div>
+                  </router-link>
+                  <div class="button-container">
+                    <button v-if="item.isInCart" class="btn" @click="removeFromCart(item.item.id)">
+                      <i class="bi bi-cart"></i>
+                      Remove
+                    </button>
+                    <button v-else class="btn" @click="handleCartClick(item.item.id)" :disabled="item.item.amount === 0">
+                      <i v-if="item.item.amount !== 0" class="bi bi-cart"></i>
+                      {{ item.item.amount === 0 ? 'Out of stock' : 'Cart' }}
+                    </button>
+                    <button v-if="item.isFavorite" class="btn" @click="removeFromFavoritesByItemId(item.item.id)">
+                      <i class="bi bi-star-fill"></i>
+                      Remove
+                    </button>
+                    <button v-else class="btn" @click="addToFavorites(item.item.id)">
+                      <i class="bi bi-star"></i>
+                      Favorite
+                    </button>
+                  </div>
+                </div>
               </div>
-              <div class="card-body">
-                <button class="badge badge-pill badge-secondary">{{ item.item.category_name }}</button>
-                <h5 class="card-title">{{ truncateName(item.item.name) }}</h5>
-                <h5 class="card-title">{{ item.item.price }}€</h5>
-              </div>
-            </router-link>
-            <div class="button-container">
-              <button v-if="item.isInCart" class="btn" @click="removeFromCart(item.item.id)">
-                <i class="bi bi-cart"></i>
-                Remove
-              </button>
-              <button v-else class="btn" @click="handleCartClick(item.item.id)" :disabled="item.item.amount === 0">
-                <i v-if="item.item.amount !== 0" class="bi bi-cart"></i>
-                {{ item.item.amount === 0 ? 'Out of stock' : 'Cart' }}
-              </button>
-              <button v-if="item.isFavorite" class="btn" @click="removeFromFavoritesByItemId(item.item.id)">
-                <i class="bi bi-star-fill"></i>
-                Remove
-              </button>
-              <button v-else class="btn" @click="addToFavorites(item.item.id)">
-                <i class="bi bi-star"></i>
-                Favorite
-              </button>
             </div>
+            <h3 class="mt-4">Compare Specifications</h3>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Specification</th>
+                  <th v-for="item in category.items" :key="item.item.id">{{ truncateName(item.item.name) }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="specId in Object.keys(category.specifications)" :key="specId">
+                  <td>{{ category.specifications[specId] }}</td>
+                  <td v-for="item in category.items" :key="item.item.id">{{ item.specifications[specId] || 'N/A' }}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -69,13 +95,14 @@ export default {
       loggedInUserId: null,
       loading: true,
       user: null,
-      categories: []
+      categories: [],
+      favoriteCategories: []
     };
   },
   async mounted() {
     await this.fetchLoggedInUserId();
     await this.fetchCategories();
-    this.fetchFavoriteItems();
+    await this.fetchFavoriteItems();
     await this.fetchUserData();
   },
   methods: {
@@ -106,28 +133,73 @@ export default {
       }
     },
 
-    fetchFavoriteItems() {
-      axios
-        .get(`http://127.0.0.1:8000/api/favorites/user/${this.loggedInUserId}`)
-        .then((response) => {
-          const categoryMap = {};
-          this.categories.forEach(category => {
-            categoryMap[category.id] = category.category_name;
-          });
-
-          this.favoriteItems = response.data.favorites || [];
-          this.favoriteItems.forEach(item => {
-            item.isFavorite = true;
-            item.isInCart = item.isInCart || false;
-            item.item.category_name = categoryMap[item.item.categories_id] || 'Unknown';
-          });
-        })
-        .catch((error) => {
-          console.error('Error fetching favorite items:', error);
-        })
-        .finally(() => {
-          this.loading = false;
+    async fetchFavoriteItems() {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/api/favorites/user/${this.loggedInUserId}`);
+        const categoryMap = {};
+        this.categories.forEach(category => {
+          categoryMap[category.id] = category.category_name;
         });
+
+        this.favoriteItems = response.data.favorites || [];
+        this.favoriteItems.forEach(item => {
+          item.isFavorite = true;
+          item.isInCart = item.isInCart || false;
+          item.item.category_name = categoryMap[item.item.categories_id] || 'Unknown';
+        });
+
+        this.organizeFavoritesByCategory();
+      } catch (error) {
+        console.error('Error fetching favorite items:', error);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+
+    async fetchSpecifications(itemId) {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/api/items/${itemId}/specifications`);
+        return response.data.specifications;
+      } catch (error) {
+        console.error('Error fetching specifications:', error);
+        return [];
+      }
+    },
+
+    organizeFavoritesByCategory() {
+      const categories = {};
+
+      this.favoriteItems.forEach(item => {
+        const categoryId = item.item.categories_id;
+        if (!categories[categoryId]) {
+          categories[categoryId] = {
+            name: item.item.category_name,
+            items: [],
+            specifications: {}
+          };
+        }
+        categories[categoryId].items.push(item);
+      });
+
+      const promises = Object.values(categories).map(async category => {
+        for (const item of category.items) {
+          const specifications = await this.fetchSpecifications(item.item.id);
+          specifications.forEach(spec => {
+            if (!category.specifications[spec.specification_title_id]) {
+              category.specifications[spec.specification_title_id] = spec.specification_title.specification_title;
+            }
+            if (!item.specifications) {
+              item.specifications = {};
+            }
+            item.specifications[spec.specification_title_id] = spec.description;
+          });
+        }
+      });
+
+      Promise.all(promises).then(() => {
+        this.favoriteCategories = Object.values(categories);
+      });
     },
 
     getImageUrl(image) {
@@ -137,7 +209,7 @@ export default {
     async addToCart(itemId) {
       try {
         const userId = this.user.id;
-        const response = await axios.post('http://127.0.0.1:8000/api/cart', {user_id: userId, item_id: itemId});
+        await axios.post('http://127.0.0.1:8000/api/cart', { user_id: userId, item_id: itemId });
         this.updateItemCartStatus(itemId, true);
         document.dispatchEvent(new CustomEvent('cart-updated'));
       } catch (error) {
@@ -153,14 +225,14 @@ export default {
       if (this.user) {
         this.addToCart(itemId);
       } else {
-        this.$router.push({path: '/login'});
+        this.$router.push({ path: '/login' });
       }
     },
 
     async removeFromCart(itemId) {
       try {
         const userId = this.user.id;
-        const response = await axios.delete(`http://localhost:8000/api/cart/item/${itemId}-${userId}`);
+        await axios.delete(`http://localhost:8000/api/cart/item/${itemId}-${userId}`);
         this.updateItemCartStatus(itemId, false);
         document.dispatchEvent(new CustomEvent('cart-updated'));
       } catch (error) {
@@ -176,8 +248,7 @@ export default {
     async addToFavorites(itemId) {
       try {
         const userId = this.user.id;
-        const response = await axios.post('http://127.0.0.1:8000/api/favorites', {user_id: userId, item_id: itemId});
-        console.log(response.data.message);
+        await axios.post('http://127.0.0.1:8000/api/favorites', { user_id: userId, item_id: itemId });
         this.updateItemFavoriteStatus(itemId, true);
         document.dispatchEvent(new CustomEvent('favorites-updated'));
       } catch (error) {
@@ -190,31 +261,35 @@ export default {
     },
 
     async removeFromFavoritesByItemId(itemId) {
-      try {
-        const userId = this.user.id;
-        const response = await axios.delete(`http://localhost:8000/api/favorites/item/${itemId}-${userId}`);
-        console.log(response.data.message);
-        this.favoriteItems = this.favoriteItems.filter(item => item.item.id !== itemId);
-        document.dispatchEvent(new CustomEvent('favorites-updated'));
-        if (this.favoriteItems.length === 0) {
-          this.loading = true;
-          this.fetchFavoriteItems();
-          this.loading = false;
-        }
-      } catch (error) {
-        if (error.response) {
-          console.error('Error removing from favorites:', error.response.data.message);
-          console.error('Detailed error:', error.response.data.error);
-        } else {
-          console.error('Error removing from favorites:', error.message);
-        }
-      }
-    },
+  try {
+    const userId = this.user.id;
+    await axios.delete(`http://localhost:8000/api/favorites/item/${itemId}-${userId}`);
+    
+    this.favoriteItems = this.favoriteItems.filter(item => item.item.id !== itemId);
+    
+    this.organizeFavoritesByCategory();
+
+    document.dispatchEvent(new CustomEvent('favorites-updated'));
+    
+    if (this.favoriteItems.length === 0) {
+      this.loading = true;
+      await this.fetchFavoriteItems();
+      this.loading = false;
+    }
+  } catch (error) {
+    if (error.response) {
+      console.error('Error removing from favorites:', error.response.data.message);
+      console.error('Detailed error:', error.response.data.error);
+    } else {
+      console.error('Error removing from favorites:', error.message);
+    }
+  }
+},
+
 
     clearAllFavorites() {
       axios.delete(`http://127.0.0.1:8000/api/favorites/user/${this.loggedInUserId}/clear`)
         .then(response => {
-          console.log(response.data.message);
           this.favoriteItems = [];
           document.dispatchEvent(new CustomEvent('favorites-updated'));
         })

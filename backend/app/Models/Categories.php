@@ -19,4 +19,9 @@ class Categories extends Model
     {
         return $this->hasMany(Items::class, 'categories_id');
     }
+
+    public function specificationTitles()
+    {
+        return $this->hasMany(SpecificationTitle::class, 'category_id');
+    }
 }

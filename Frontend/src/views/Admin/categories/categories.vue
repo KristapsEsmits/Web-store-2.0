@@ -9,63 +9,106 @@
         <div class="card-header d-flex justify-content-between align-items-center">
           <h4 class="card-title mb-0">Categories</h4>
           <div class="d-flex align-items-center">
-            <input v-model="searchQuery" class="form-control me-2" placeholder="Search by ID or Name" style="width: 200px;"
-                   type="text" @input="searchCategories"/>
-            <router-link class="btn btn-primary btn-round btn-fill me-2" to="/admin/categories/create">
-              Add Category
+            <input v-model="searchQuery" class="form-control me-2" placeholder="Search by ID or Name" style="width: 200px;" type="text" @input="searchCategories"/>
+            <router-link class="btn btn-primary btn-round btn-fill me-2" :to="buttonLink">
+              {{ buttonText }}
             </router-link>
-            <button :disabled="!isAnyRowSelected" class="btn btn-warning btn-round btn-fill"
-                    @click="exportSelectedRows">Export Selected Rows
-            </button>
+            <button :disabled="!isAnyRowSelected" class="btn btn-warning btn-round btn-fill" @click="exportSelectedRows">Export Selected Rows</button>
           </div>
         </div>
         <div class="card-body">
-          <div class="table-responsive d-none d-md-block">
-            <table class="table table-bordered table-auto">
-              <thead>
-              <tr>
-                <th><input v-model="selectAll" type="checkbox" @change="toggleSelectAll"></th>
-                <th>Category ID</th>
-                <th>Category Name</th>
-                <th>Item Count</th>
-                <th>Actions</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr v-for="(category, index) in filteredCategories" :key="index">
-                <td><input v-model="selectedRows" :value="category" type="checkbox"></td>
-                <td>{{ category.id }}</td>
-                <td>{{ category.category_name }}</td>
-                <td>{{ category.items_count }}</td>
-                <td class="justify-content-center">
-                  <router-link :to="{ path: '/admin/categories/' + category.id + '/edit' }"
-                               class="btn btn-success me-2">Edit
-                  </router-link>
-                  <button :disabled="category.items_count > 0" class="btn btn-danger" type="button"
-                          @click="openDeleteModal(category.id)">Delete
-                  </button>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="d-block d-md-none">
-            <div class="select-all-mobile">
-              <input v-model="selectAll" type="checkbox" @change="toggleSelectAll"> Select All
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" :class="{ active: activeTab === 'categories' }" id="categories-tab" data-bs-toggle="tab" href="#categories" role="tab" aria-controls="categories" aria-selected="activeTab === 'categories'" @click="activeTab = 'categories'">Categories</a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" :class="{ active: activeTab === 'specification-titles' }" id="specification-titles-tab" data-bs-toggle="tab" href="#specification-titles" role="tab" aria-controls="specification-titles" aria-selected="activeTab === 'specification-titles'" @click="activeTab = 'specification-titles'">Specification Titles</a>
+            </li>
+          </ul>
+          <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade" :class="{ show: activeTab === 'categories', active: activeTab === 'categories' }" id="categories" role="tabpanel" aria-labelledby="categories-tab">
+              <div class="table-responsive d-none d-md-block">
+                <table class="table table-bordered table-auto">
+                  <thead>
+                    <tr>
+                      <th><input v-model="selectAll" type="checkbox" @change="toggleSelectAll"></th>
+                      <th>Category ID</th>
+                      <th>Category Name</th>
+                      <th>Item Count</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(category, index) in filteredCategories" :key="index">
+                      <td><input v-model="selectedRows" :value="category" type="checkbox"></td>
+                      <td>{{ category.id }}</td>
+                      <td>{{ category.category_name }}</td>
+                      <td>{{ category.items_count }}</td>
+                      <td class="justify-content-center">
+                        <router-link :to="{ path: '/admin/categories/' + category.id + '/edit' }" class="btn btn-success me-2">Edit</router-link>
+                        <button :disabled="category.items_count > 0" class="btn btn-danger" type="button" @click="openDeleteModal(category.id)">Delete</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="d-block d-md-none">
+                <div class="select-all-mobile">
+                  <input v-model="selectAll" type="checkbox" @change="toggleSelectAll"> Select All
+                </div>
+                <div v-for="(category, index) in filteredCategories" :key="index" class="card mb-3">
+                  <div class="card-body">
+                    <h5 class="card-title">
+                      <input v-model="selectedRows" :value="category" class="checkbox-btn" type="checkbox">
+                      {{ category.category_name }}
+                    </h5>
+                    <p class="card-text"><strong>ID:</strong> {{ category.id }}</p>
+                    <p class="card-text"><strong>Item Count:</strong> {{ category.items_count }}</p>
+                    <div class="action-btns">
+                      <router-link :to="{ path: '/admin/categories/' + category.id + '/edit' }" class="btn btn-success me-2">Edit</router-link>
+                      <button :disabled="category.items_count > 0" class="btn btn-danger" type="button" @click="openDeleteModal(category.id)">Delete</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div v-for="(category, index) in filteredCategories" :key="index" class="card mb-3">
-              <div class="card-body">
-                <h5 class="card-title"><input v-model="selectedRows" :value="category" class="checkbox-btn"
-                                              type="checkbox">{{ category.category_name }}</h5>
-                <p class="card-text"><strong>ID:</strong> {{ category.id }}</p>
-                <p class="card-text"><strong>Item Count:</strong> {{ category.items_count }}</p>
-                <div class="action-btns">
-                  <router-link :to="{ path: '/admin/categories/' + category.id + '/edit' }"
-                               class="btn btn-success me-2">Edit
-                  </router-link>
-                  <button :disabled="category.items_count > 0" class="btn btn-danger" type="button"
-                          @click="openDeleteModal(category.id)">Delete
-                  </button>
+            <div class="tab-pane fade" :class="{ show: activeTab === 'specification-titles', active: activeTab === 'specification-titles' }" id="specification-titles" role="tabpanel" aria-labelledby="specification-titles-tab">
+              <ul class="nav nav-tabs" id="categoryTabs" role="tablist">
+                <li class="nav-item" role="presentation" v-for="category in categories" :key="category.id">
+                  <a class="nav-link" :class="{ active: selectedCategoryId === category.id }" @click="selectCategory(category.id)" role="tab">{{ category.category_name }}</a>
+                </li>
+              </ul>
+              <div class="table-responsive d-none d-md-block">
+                <table class="table table-bordered table-auto">
+                  <thead>
+                    <tr>
+                      <th>Specification Title ID</th>
+                      <th>Specification Title</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(title, index) in filteredSpecificationTitles" :key="index">
+                      <td>{{ title.id }}</td>
+                      <td>{{ title.specification_title }}</td>
+                      <td class="justify-content-center">
+                        <router-link :to="{ path: '/admin/specification-titles/' + title.id + '/edit' }" class="btn btn-success me-2">Edit</router-link>
+                        <button class="btn btn-danger" type="button" @click="openDeleteSpecificationModal(title.id)">Delete</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="d-block d-md-none">
+                <div v-for="(title, index) in filteredSpecificationTitles" :key="index" class="card mb-3">
+                  <div class="card-body">
+                    <h5 class="card-title">{{ title.specification_title }}</h5>
+                    <p class="card-text"><strong>ID:</strong> {{ title.id }}</p>
+                    <div class="action-btns">
+                      <router-link :to="{ path: '/admin/specification-titles/' + title.id + '/edit' }" class="btn btn-success me-2">Edit</router-link>
+                      <button class="btn btn-danger" type="button" @click="openDeleteSpecificationModal(title.id)">Delete</button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -75,25 +118,33 @@
       <Modal :isOpen="isDeleteModalOpen" title="Confirm Delete" @close="closeDeleteModal" @confirm="confirmDelete">
         Are you sure you want to delete this Category?
       </Modal>
+      <Modal :isOpen="isDeleteSpecificationModalOpen" title="Confirm Delete" @close="closeDeleteSpecificationModal" @confirm="confirmDeleteSpecification">
+        Are you sure you want to delete this Specification Title?
+      </Modal>
     </div>
   </div>
 </template>
 
 <script setup>
-import {computed, onMounted, ref} from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import axios from 'axios';
-import {useRoute} from 'vue-router';
+import { useRoute } from 'vue-router';
 import * as XLSX from 'xlsx';
 import Modal from '@/components/Modal.vue';
 
 const categories = ref([]);
+const specificationTitles = ref([]);
 const successMessage = ref('');
 const route = useRoute();
 const selectedRows = ref([]);
 const selectAll = ref(false);
 const categoryIdToDelete = ref(null);
+const specificationTitleIdToDelete = ref(null);
 const isDeleteModalOpen = ref(false);
+const isDeleteSpecificationModalOpen = ref(false);
 const searchQuery = ref('');
+const selectedCategoryId = ref(null);
+const activeTab = ref('categories');
 
 const getCategories = async () => {
   try {
@@ -101,6 +152,15 @@ const getCategories = async () => {
     categories.value = res.data.categories;
   } catch (error) {
     console.error('Error fetching categories:', error);
+  }
+};
+
+const getSpecificationTitles = async () => {
+  try {
+    const res = await axios.get('/specification-titles');
+    specificationTitles.value = res.data.specification_titles;
+  } catch (error) {
+    console.error('Error fetching specification titles:', error);
   }
 };
 
@@ -124,6 +184,30 @@ const confirmDelete = async () => {
       console.error('Validation errors:', error.response.data.errors);
     } else {
       console.error('Error deleting category:', error.message);
+    }
+  }
+};
+
+const openDeleteSpecificationModal = (specificationTitleId) => {
+  specificationTitleIdToDelete.value = specificationTitleId;
+  isDeleteSpecificationModalOpen.value = true;
+};
+
+const closeDeleteSpecificationModal = () => {
+  isDeleteSpecificationModalOpen.value = false;
+};
+
+const confirmDeleteSpecification = async () => {
+  try {
+    const res = await axios.delete(`/specification-titles/${specificationTitleIdToDelete.value}/delete`);
+    successMessage.value = res.data.message;
+    await getSpecificationTitles();
+    closeDeleteSpecificationModal();
+  } catch (error) {
+    if (error.response && error.response.status === 422) {
+      console.error('Validation errors:', error.response.data.errors);
+    } else {
+      console.error('Error deleting specification title:', error.message);
     }
   }
 };
@@ -160,18 +244,30 @@ const filteredCategories = computed(() => {
   });
 });
 
+const filteredSpecificationTitles = computed(() => {
+  return specificationTitles.value.filter(title => title.category_id === selectedCategoryId.value);
+});
+
 const searchCategories = async () => {
   try {
-    const res = await axios.get('/categories', {params: {search: searchQuery.value}});
+    const res = await axios.get('/categories', { params: { search: searchQuery.value } });
     categories.value = res.data.categories;
   } catch (error) {
     console.error('Error searching categories:', error);
   }
 };
 
+const selectCategory = (categoryId) => {
+  selectedCategoryId.value = categoryId;
+};
+
+const buttonText = computed(() => activeTab.value === 'categories' ? 'Add Category' : 'Add Specification Title');
+const buttonLink = computed(() => activeTab.value === 'categories' ? '/admin/categories/create' : '/admin/specification-titles/add');
+
 onMounted(() => {
   successMessage.value = route.query.successMessage || '';
   getCategories();
+  getSpecificationTitles();
 });
 </script>
 
