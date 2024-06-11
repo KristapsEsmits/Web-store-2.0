@@ -1,7 +1,7 @@
 <script setup>
 import axios from 'axios';
-import {onMounted, ref} from 'vue';
-import {Chart, registerables} from 'chart.js';
+import { onMounted, ref } from 'vue';
+import { Chart, registerables } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 
 Chart.register(...registerables);
@@ -12,68 +12,91 @@ const numberOfUsers = ref(0);
 const userRegistrationData = ref([]);
 const categoryItemCounts = ref([]);
 const dailySpendingData = ref([]);
+const mostSoldItem = ref({});
+const activeOrders = ref(0);
+const canceledOrders = ref(0);
+const closedOrders = ref(0);
+const totalEarnedWithVat = ref(0);
+const totalVat = ref(0);
+const totalEarnedWithoutVat = ref(0);
 
 const fetchNumberOfItems = () => {
   axios.get('/items')
-      .then((res) => {
-        numberOfItems.value = res.data.items.length;
-      })
-      .catch((error) => {
-        console.error('Error fetching items:', error);
-      });
+    .then((res) => {
+      numberOfItems.value = res.data.items.length;
+    })
+    .catch((error) => {
+      console.error('Error fetching items:', error);
+    });
 };
 
 const fetchNumberOfBrands = () => {
   axios.get('/brands')
-      .then((res) => {
-        numberOfBrands.value = res.data.brands.length;
-      })
-      .catch((error) => {
-        console.error('Error fetching brands:', error);
-      });
+    .then((res) => {
+      numberOfBrands.value = res.data.brands.length;
+    })
+    .catch((error) => {
+      console.error('Error fetching brands:', error);
+    });
 };
 
 const fetchNumberOfUsers = () => {
   axios.get('/user-amount')
-      .then((res) => {
-        numberOfUsers.value = res.data.user_count;
-      })
-      .catch((error) => {
-        console.error('Error fetching registered users:', error);
-      });
+    .then((res) => {
+      numberOfUsers.value = res.data.user_count;
+    })
+    .catch((error) => {
+      console.error('Error fetching registered users:', error);
+    });
 };
 
 const fetchUserRegistrationData = () => {
   axios.get('/user-registrations')
-      .then((res) => {
-        userRegistrationData.value = res.data.registrations;
-        renderUserRegistrationChart();
-      })
-      .catch((error) => {
-        console.error('Error fetching user registration data:', error);
-      });
+    .then((res) => {
+      userRegistrationData.value = res.data.registrations;
+      renderUserRegistrationChart();
+    })
+    .catch((error) => {
+      console.error('Error fetching user registration data:', error);
+    });
 };
 
 const fetchCategoryItemCounts = () => {
   axios.get('/items-category-count')
-      .then((res) => {
-        categoryItemCounts.value = res.data.category_counts;
-        renderCategoryItemCountChart();
-      })
-      .catch((error) => {
-        console.error('Error fetching category item counts:', error);
-      });
+    .then((res) => {
+      categoryItemCounts.value = res.data.category_counts;
+      renderCategoryItemCountChart();
+    })
+    .catch((error) => {
+      console.error('Error fetching category item counts:', error);
+    });
 };
 
 const fetchDailySpendingData = () => {
   axios.get('/total-spending-per-day')
-      .then((res) => {
-        dailySpendingData.value = res.data.data;
-        renderDailySpendingChart();
-      })
-      .catch((error) => {
-        console.error('Error fetching daily spending data:', error);
-      });
+    .then((res) => {
+      dailySpendingData.value = res.data.data;
+      renderDailySpendingChart();
+    })
+    .catch((error) => {
+      console.error('Error fetching daily spending data:', error);
+    });
+};
+
+const fetchStatisticsData = () => {
+  axios.get('/finances')
+    .then((res) => {
+      mostSoldItem.value = res.data.mostSoldItem;
+      activeOrders.value = res.data.activeOrders;
+      canceledOrders.value = res.data.canceledOrders;
+      closedOrders.value = res.data.closedOrders;
+      totalEarnedWithVat.value = res.data.totalEarnedWithVat;
+      totalVat.value = res.data.totalVat;
+      totalEarnedWithoutVat.value = res.data.totalEarnedWithoutVat;
+    })
+    .catch((error) => {
+      console.error('Error fetching statistics data:', error);
+    });
 };
 
 const renderUserRegistrationChart = () => {
@@ -111,7 +134,7 @@ const renderUserRegistrationChart = () => {
           ticks: {
             stepSize: 1,
           },
-        },  
+        },
       },
     },
   });
@@ -197,6 +220,10 @@ const renderDailySpendingChart = () => {
   });
 };
 
+const getImageUrl = (image) => {
+  return `http://localhost:8000/storage/uploads/${image}`;
+};
+
 onMounted(() => {
   fetchNumberOfItems();
   fetchNumberOfBrands();
@@ -204,6 +231,7 @@ onMounted(() => {
   fetchUserRegistrationData();
   fetchCategoryItemCounts();
   fetchDailySpendingData();
+  fetchStatisticsData();
 });
 </script>
 
@@ -225,6 +253,33 @@ onMounted(() => {
           <p class="card-desc">{{ numberOfUsers }}</p>
         </div>
       </div>
+
+      <div class="statistics-wrapper">
+        <div class="card">
+          <h2 class="card-title">Most Sold Item</h2>
+          <div class="item-card">
+            <img :src="getImageUrl(mostSoldItem.image)" alt="Item Image">
+            <div>
+              <h3>{{ mostSoldItem.name }}</h3>
+              <p>{{ mostSoldItem.description }}</p>
+              <p>Price: {{ mostSoldItem.price }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h1 class="">Order Status</h1>
+          <p>Active Orders: {{ activeOrders }}</p>
+          <p>Canceled Orders: {{ canceledOrders }}</p>
+          <p>Completed Orders: {{ closedOrders }}</p>
+        </div>
+        <div class="card">
+          <h2 class="card-title">Total Amounts</h2>
+          <p>Total Earned (with VAT): {{ totalEarnedWithVat.toFixed(2) }}</p>
+          <p>Total VAT: {{ totalVat.toFixed(2) }}</p>
+          <p>Total Earned (without VAT): {{ totalEarnedWithoutVat.toFixed(2) }}</p>
+        </div>
+      </div>
+
       <div class="chart-wrapper">
         <div class="chart-container">
           <canvas id="userRegistrationChart"></canvas>
@@ -251,7 +306,7 @@ onMounted(() => {
   padding: 20px;
 }
 
-.stats-wrapper {
+.stats-wrapper, .statistics-wrapper {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
@@ -278,6 +333,18 @@ onMounted(() => {
 .card-desc {
   font-size: 2em;
   font-weight: bold;
+}
+
+.item-card {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  text-align: left;
+}
+
+.item-card img {
+  max-width: 100px;
+  border-radius: 5px;
 }
 
 .chart-wrapper {
@@ -312,7 +379,7 @@ onMounted(() => {
 }
 
 @media (max-width: 767px) {
-  .stats-wrapper {
+  .stats-wrapper, .statistics-wrapper {
     flex-direction: column;
   }
 

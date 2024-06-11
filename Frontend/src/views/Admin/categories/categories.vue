@@ -303,7 +303,7 @@ const selectCategory = (categoryId) => {
 };
 
 const buttonText = computed(() => activeTab.value === 'categories' ? 'Add Category' : 'Add Specification Title');
-const buttonLink = computed(() => activeTab.value === 'categories' ? '/admin/categories/add' : '/admin/specification-titles/add');
+const buttonLink = computed(() => activeTab.value === 'categories' ? '/admin/categories/create' : '/admin/specification-titles/create');
 
 onMounted(() => {
   successMessage.value = route.query.successMessage || '';

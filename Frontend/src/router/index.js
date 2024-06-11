@@ -154,12 +154,6 @@ const routes = [
         meta: { requiresAdmin: true }
     },
     {
-        path: '/admin/inventory/finances',
-        name: '/admin/inventory/finances',
-        component: () => import('../views/admin/Inventory/FInances.vue'),
-        meta: { requiresAdmin: true }
-    },
-    {
         path: '/terms-of-service',
         name: '/terms-of-service',
         component: () => import('../views/Tos/Tos.vue'),

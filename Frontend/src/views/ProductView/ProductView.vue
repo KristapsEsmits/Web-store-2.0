@@ -11,10 +11,10 @@
           <h1>Specifications</h1>
           <table v-if="specifications.length" class="spec-table">
             <tbody>
-              <tr v-for="spec in specifications" :key="spec.id">
-                <td class="spec-title">{{ spec.specification_title.specification_title }}:</td>
-                <td class="spec-description">{{ spec.description || 'Nav' }}</td>
-              </tr>
+            <tr v-for="spec in specifications" :key="spec.id">
+              <td class="spec-title">{{ spec.specification_title.specification_title }}:</td>
+              <td class="spec-description">{{ spec.description || '-' }}</td>
+            </tr>
             </tbody>
           </table>
           <p v-else>No specifications found for this item.</p>
@@ -33,7 +33,7 @@
             <i class="bi bi-cart"></i>
             Remove
           </button>
-          <button v-else class="btn btn-new" @click="handleCartClick(items.id)" :disabled="items.amount === 0">
+          <button v-else :disabled="items.amount === 0" class="btn btn-new" @click="handleCartClick(items.id)">
             {{ items.amount === 0 ? 'Out of stock' : 'Add to cart' }}
           </button>
           <button v-if="user && items.isFavorite" class="btn btn-new" @click="removeFromFavoritesByItemId(items.id)">
@@ -53,13 +53,13 @@
     </div>
 
     <div class="container">
-        <template v-if="isLoading">
-          <div v-for="n in 4" :key="n" class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-            <SkeletonItemCard/>
-          </div>
-        </template>
-        <template v-else>
-          <div class="row">
+      <template v-if="isLoading">
+        <div v-for="n in 4" :key="n" class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+          <SkeletonItemCard/>
+        </div>
+      </template>
+      <template v-else>
+        <div class="row">
           <div v-for="item in similarItems" :key="item.id" class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
             <div class="card">
               <router-link :to="{ path: '/product/' + item.id }" class="card-link">
@@ -77,7 +77,7 @@
                   <i class="bi bi-cart"></i>
                   Remove
                 </button>
-                <button v-else class="btn" @click="handleCartClick(item.id)" :disabled="item.amount === 0">
+                <button v-else :disabled="item.amount === 0" class="btn" @click="handleCartClick(item.id)">
                   <i v-if="item.amount !== 0" class="bi bi-cart"></i>
                   {{ item.amount === 0 ? 'Out of stock' : 'Cart' }}
                 </button>
@@ -93,9 +93,9 @@
             </div>
           </div>
         </div>
-        </template>
-      </div>
+      </template>
     </div>
+  </div>
 </template>
 
 <script>
@@ -184,7 +184,7 @@ export default {
       if (this.user) {
         await this.addToCart(itemId);
       } else {
-        this.$router.push({ path: '/login' });
+        this.$router.push({path: '/login'});
       }
     },
 
@@ -196,14 +196,14 @@ export default {
       if (this.user) {
         await this.addToFavorites(itemId);
       } else {
-        this.$router.push({ path: '/login' });
+        this.$router.push({path: '/login'});
       }
     },
 
     async addToCart(itemId) {
       try {
         const userId = this.user.id;
-        const response = await axios.post('http://127.0.0.1:8000/api/cart', { user_id: userId, item_id: itemId });
+        const response = await axios.post('http://127.0.0.1:8000/api/cart', {user_id: userId, item_id: itemId});
         console.log(response.data.message);
         this.updateItemCartStatus(itemId, true);
         document.dispatchEvent(new CustomEvent('cart-updated'));
@@ -244,7 +244,7 @@ export default {
     async addToFavorites(itemId) {
       try {
         const userId = this.user.id;
-        const response = await axios.post('http://127.0.0.1:8000/api/favorites', { user_id: userId, item_id: itemId });
+        const response = await axios.post('http://127.0.0.1:8000/api/favorites', {user_id: userId, item_id: itemId});
         console.log(response.data.message);
         this.updateItemFavoriteStatus(itemId, true);
         document.dispatchEvent(new CustomEvent('favorites-updated'));
@@ -280,7 +280,7 @@ export default {
       }
       this.similarItems = this.similarItems.map(item => {
         if (item.id === itemId) {
-          return { ...item, isFavorite };
+          return {...item, isFavorite};
         }
         return item;
       });
@@ -292,7 +292,7 @@ export default {
       }
       this.similarItems = this.similarItems.map(item => {
         if (item.id === itemId) {
-          return { ...item, isInCart };
+          return {...item, isInCart};
         }
         return item;
       });
@@ -340,6 +340,7 @@ export default {
 .description {
   font-size: 16px;
   color: #666;
+  align-self: flex-start;
 }
 
 .product-id {

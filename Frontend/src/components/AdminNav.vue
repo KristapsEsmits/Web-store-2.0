@@ -35,10 +35,6 @@
               <li class="nav-item">
                 <RouterLink class="nav-link" to="/admin/inventory" @click="collapseNavbar">Inventory</RouterLink>
               </li>
-              <li class="nav-item">
-                <RouterLink class="nav-link" to="/admin/inventory/finances" @click="collapseNavbar">Overview
-                </RouterLink>
-              </li>
               <li v-if="isLoggedIn" id="user-dropdown" class="nav-item dropdown">
                 <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
                    role="button">

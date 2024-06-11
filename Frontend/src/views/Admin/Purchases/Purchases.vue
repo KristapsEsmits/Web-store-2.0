@@ -121,7 +121,7 @@ const filteredPurchaseHistory = computed(() => {
       <div class="card mt-4">
         <div class="card-body">
           <div>
-            <h1>Purchase History</h1>
+            <h1>Purchases</h1>
             <div class="filter-section mb-4">
               <div class="form-group">
                 <label for="statusFilter">Filter by Status:</label>

@@ -152,23 +152,13 @@ const activeTab = ref('items');
 const selectedCategory = ref('Keyboards');
 
 const getItems = async () => {
-  try {
-    const res = await axios.get('/items');
-    console.log('Items response:', res.data.items); // Log the response data
-    items.value = res.data.items;
-  } catch (error) {
-    console.error('Error fetching items:', error);
-  }
+  const res = await axios.get('/items');
+  items.value = res.data.items;
 };
 
 const getSpecifications = async () => {
-  try {
-    const res = await axios.get('/specification-descriptions');
-    console.log('Fetched Specifications:', res.data.specifications); // Log the response data
-    specifications.value = res.data.specifications;
-  } catch (error) {
-    console.error('Error fetching specifications:', error);
-  }
+  const res = await axios.get('/specification-descriptions');
+  specifications.value = res.data.specifications;
 };
 
 const openDeleteModal = (id) => {
