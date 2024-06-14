@@ -1,6 +1,6 @@
 <script setup>
-import { computed } from 'vue';
-import { useRoute } from 'vue-router';
+import {computed} from 'vue';
+import {useRoute} from 'vue-router';
 import Nav from './components/Nav.vue';
 import AdminNav from './components/AdminNav.vue';
 

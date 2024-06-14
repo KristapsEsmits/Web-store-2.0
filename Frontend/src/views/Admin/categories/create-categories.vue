@@ -16,11 +16,13 @@
         </div>
         <div v-for="(spec, index) in specification_titles" :key="index" class="mb-3">
           <label :for="'spec_title_' + index">Specification Title {{ index + 1 }}</label>
-          <input v-model="spec.title" :id="'spec_title_' + index" class="form-control" type="text"/>
+          <input :id="'spec_title_' + index" v-model="spec.title" class="form-control" type="text"/>
         </div>
         <div class="mb-3">
           <button class="btn btn-secondary" type="button" @click="addSpecificationTitle">+ Add more</button>
-          <button class="btn btn-secondary" type="button" @click="removeLastSpecificationTitle" :disabled="specification_titles.length <= 1">- Remove last</button>
+          <button :disabled="specification_titles.length <= 1" class="btn btn-secondary" type="button"
+                  @click="removeLastSpecificationTitle">- Remove last
+          </button>
         </div>
         <div class="mb-3">
           <button class="btn btn-primary" type="button" @click="saveCategories">Save</button>
@@ -40,12 +42,12 @@ export default {
     return {
       errorList: {},
       category_name: '',
-      specification_titles: [{ title: '' }],
+      specification_titles: [{title: ''}],
     };
   },
   methods: {
     addSpecificationTitle() {
-      this.specification_titles.push({ title: '' });
+      this.specification_titles.push({title: ''});
     },
     removeLastSpecificationTitle() {
       if (this.specification_titles.length > 1) {
@@ -61,7 +63,7 @@ export default {
         const successMessage = response.data.message;
         this.$router.push('/admin/categories?successMessage=' + successMessage);
         this.category_name = '';
-        this.specification_titles = [{ title: '' }];
+        this.specification_titles = [{title: ''}];
         this.errorList = {};
       } catch (error) {
         if (error.response.status === 422) {

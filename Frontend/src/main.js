@@ -1,4 +1,4 @@
-import { createApp } from 'vue';
+import {createApp} from 'vue';
 import axios from 'axios';
 import '../axios';
 import './assets/main.css';
@@ -13,8 +13,8 @@ app.use(router);
 app.mount('#app');
 
 axios.interceptors.request.use((config) => {
-  config.headers.Authorization = `Bearer ${localStorage.getItem('access_token')}`;
-  return config;
+    config.headers.Authorization = `Bearer ${localStorage.getItem('access_token')}`;
+    return config;
 });
 
 axios.defaults.baseURL = 'http://127.0.0.1:8000/api';

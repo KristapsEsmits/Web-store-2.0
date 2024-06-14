@@ -9,40 +9,45 @@
         <div class="card-header d-flex justify-content-between align-items-center">
           <h4 class="card-title mb-0">Inventory</h4>
           <div class="d-flex align-items-center">
-            <input v-model="searchQuery" class="form-control me-2" placeholder="Search by ID or Name" style="width: 200px;" type="text" @input="searchItems"/>
-            <button :disabled="!isAnyRowSelected" class="btn btn-warning btn-round btn-fill" @click="exportSelectedRows">Export Selected Rows</button>
+            <input v-model="searchQuery" class="form-control me-2" placeholder="Search by ID or Name"
+                   style="width: 200px;" type="text" @input="searchItems"/>
+            <button :disabled="!isAnyRowSelected" class="btn btn-warning btn-round btn-fill"
+                    @click="exportSelectedRows">Export Selected Rows
+            </button>
           </div>
         </div>
         <div class="card-body">
           <div class="table-responsive d-none d-md-block">
             <table class="table table-bordered table-auto">
               <thead>
-                <tr>
-                  <th><input v-model="selectAll" type="checkbox" @change="toggleSelectAll"></th>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Price</th>
-                  <th>Vat</th>
-                  <th>Amount</th>
-                  <th>Reserved</th>
-                  <th>Sold</th>
-                  <th>Actions</th>
-                </tr>
+              <tr>
+                <th><input v-model="selectAll" type="checkbox" @change="toggleSelectAll"></th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Vat</th>
+                <th>Amount</th>
+                <th>Reserved</th>
+                <th>Sold</th>
+                <th>Actions</th>
+              </tr>
               </thead>
               <tbody>
-                <tr v-for="(item, index) in filteredItems" :key="index">
-                  <td><input v-model="selectedRows" :value="item" type="checkbox"></td>
-                  <td>{{ item.id }}</td>
-                  <td>{{ item.name }}</td>
-                  <td>{{ item.price }}€</td>
-                  <td>{{ item.vat }}%</td>
-                  <td>{{ item.amount }}</td>
-                  <td>{{ item.reserved }}</td>
-                  <td>{{ item.sold }}</td>
-                  <td class="d-flex justify-content-center">
-                    <router-link :to="{ path: '/admin/inventory-edit/' + item.id + '/edit' }" class="btn btn-success me-2">Edit</router-link>
-                  </td>
-                </tr>
+              <tr v-for="(item, index) in filteredItems" :key="index">
+                <td><input v-model="selectedRows" :value="item" type="checkbox"></td>
+                <td>{{ item.id }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.price }}€</td>
+                <td>{{ item.vat }}%</td>
+                <td>{{ item.amount }}</td>
+                <td>{{ item.reserved }}</td>
+                <td>{{ item.sold }}</td>
+                <td class="d-flex justify-content-center">
+                  <router-link :to="{ path: '/admin/inventory-edit/' + item.id + '/edit' }"
+                               class="btn btn-success me-2">Edit
+                  </router-link>
+                </td>
+              </tr>
               </tbody>
             </table>
           </div>
@@ -52,13 +57,17 @@
             </div>
             <div v-for="(item, index) in filteredItems" :key="index" class="card mb-3">
               <div class="card-body">
-                <h5 class="card-title"><input v-model="selectedRows" :value="item" class="checkbox-btn" type="checkbox">{{ item.name }}</h5>
+                <h5 class="card-title"><input v-model="selectedRows" :value="item" class="checkbox-btn" type="checkbox">{{
+                    item.name
+                  }}</h5>
                 <p class="card-text"><strong>Price:</strong> {{ item.price }}€</p>
                 <p class="card-text"><strong>Amount:</strong> {{ item.amount }}</p>
                 <p class="card-text"><strong>Reserved:</strong> {{ item.reserved }}</p>
                 <p class="card-text"><strong>Sold:</strong> {{ item.sold }}</p>
                 <div class="action-btns">
-                  <router-link :to="{ path: '/admin/inventory-edit/' + item.id + '/edit' }" class="btn btn-success me-2">Edit</router-link>
+                  <router-link :to="{ path: '/admin/inventory-edit/' + item.id + '/edit' }"
+                               class="btn btn-success me-2">Edit
+                  </router-link>
                 </div>
               </div>
             </div>
@@ -72,8 +81,9 @@
         </div>
         <div class="card-body">
           <div class="tabs">
-            <button @click="selectedTab = 'category'" :class="{ active: selectedTab === 'category' }">By Category</button>
-            <button @click="selectedTab = 'item'" :class="{ active: selectedTab === 'item' }">By Item</button>
+            <button :class="{ active: selectedTab === 'category' }" @click="selectedTab = 'category'">By Category
+            </button>
+            <button :class="{ active: selectedTab === 'item' }" @click="selectedTab = 'item'">By Item</button>
           </div>
 
           <div v-if="selectedTab === 'category'">
@@ -81,28 +91,28 @@
             <div class="table-container">
               <table>
                 <thead>
-                  <tr>
-                    <th @click="sortBy('category_id')">Category ID</th>
-                    <th @click="sortBy('category')">Category</th>
-                    <th @click="sortBy('total_earned_with_vat')">Total Earned (with VAT)</th>
-                    <th @click="sortBy('total_vat')">Total VAT</th>
-                    <th @click="sortBy('total_earned_without_vat')">Total Earned (without VAT)</th>
-                  </tr>
+                <tr>
+                  <th @click="sortBy('category_id')">Category ID</th>
+                  <th @click="sortBy('category')">Category</th>
+                  <th @click="sortBy('total_earned_with_vat')">Total Earned (with VAT)</th>
+                  <th @click="sortBy('total_vat')">Total VAT</th>
+                  <th @click="sortBy('total_earned_without_vat')">Total Earned (without VAT)</th>
+                </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(finance, category) in sortedCategoryFinances" :key="category.id">
-                    <td>{{ finance.category_id }}</td>
-                    <td>{{ category }}</td>
-                    <td>{{ finance.total_earned_with_vat.toFixed(2) }}</td>
-                    <td>{{ finance.total_vat.toFixed(2) }}</td>
-                    <td>{{ finance.total_earned_without_vat.toFixed(2) }}</td>
-                  </tr>
-                  <tr>
-                    <td colspan="2"><strong>Total</strong></td>
-                    <td><strong>{{ totalCategoryEarnedWithVat.toFixed(2) }}</strong></td>
-                    <td><strong>{{ totalCategoryVat.toFixed(2) }}</strong></td>
-                    <td><strong>{{ totalCategoryEarnedWithoutVat.toFixed(2) }}</strong></td>
-                  </tr>
+                <tr v-for="(finance, category) in sortedCategoryFinances" :key="category.id">
+                  <td>{{ finance.category_id }}</td>
+                  <td>{{ category }}</td>
+                  <td>{{ finance.total_earned_with_vat.toFixed(2) }}</td>
+                  <td>{{ finance.total_vat.toFixed(2) }}</td>
+                  <td>{{ finance.total_earned_without_vat.toFixed(2) }}</td>
+                </tr>
+                <tr>
+                  <td colspan="2"><strong>Total</strong></td>
+                  <td><strong>{{ totalCategoryEarnedWithVat.toFixed(2) }}</strong></td>
+                  <td><strong>{{ totalCategoryVat.toFixed(2) }}</strong></td>
+                  <td><strong>{{ totalCategoryEarnedWithoutVat.toFixed(2) }}</strong></td>
+                </tr>
                 </tbody>
               </table>
             </div>
@@ -113,28 +123,28 @@
             <div class="table-container">
               <table>
                 <thead>
-                  <tr>
-                    <th @click="sortByItem('item_id')">Item ID</th>
-                    <th @click="sortByItem('item')">Item</th>
-                    <th @click="sortByItem('total_earned_with_vat')">Total Earned (with VAT)</th>
-                    <th @click="sortByItem('total_vat')">Total VAT</th>
-                    <th @click="sortByItem('total_earned_without_vat')">Total Earned (without VAT)</th>
-                  </tr>
+                <tr>
+                  <th @click="sortByItem('item_id')">Item ID</th>
+                  <th @click="sortByItem('item')">Item</th>
+                  <th @click="sortByItem('total_earned_with_vat')">Total Earned (with VAT)</th>
+                  <th @click="sortByItem('total_vat')">Total VAT</th>
+                  <th @click="sortByItem('total_earned_without_vat')">Total Earned (without VAT)</th>
+                </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(finance, item) in sortedItemFinances" :key="item.id">
-                    <td>{{ finance.item_id }}</td>
-                    <td>{{ item }}</td>
-                    <td>{{ finance.total_earned_with_vat.toFixed(2) }}</td>
-                    <td>{{ finance.total_vat.toFixed(2) }}</td>
-                    <td>{{ finance.total_earned_without_vat.toFixed(2) }}</td>
-                  </tr>
-                  <tr>
-                    <td colspan="2"><strong>Total</strong></td>
-                    <td><strong>{{ totalItemEarnedWithVat.toFixed(2) }}</strong></td>
-                    <td><strong>{{ totalItemVat.toFixed(2) }}</strong></td>
-                    <td><strong>{{ totalItemEarnedWithoutVat.toFixed(2) }}</strong></td>
-                  </tr>
+                <tr v-for="(finance, item) in sortedItemFinances" :key="item.id">
+                  <td>{{ finance.item_id }}</td>
+                  <td>{{ item }}</td>
+                  <td>{{ finance.total_earned_with_vat.toFixed(2) }}</td>
+                  <td>{{ finance.total_vat.toFixed(2) }}</td>
+                  <td>{{ finance.total_earned_without_vat.toFixed(2) }}</td>
+                </tr>
+                <tr>
+                  <td colspan="2"><strong>Total</strong></td>
+                  <td><strong>{{ totalItemEarnedWithVat.toFixed(2) }}</strong></td>
+                  <td><strong>{{ totalItemVat.toFixed(2) }}</strong></td>
+                  <td><strong>{{ totalItemEarnedWithoutVat.toFixed(2) }}</strong></td>
+                </tr>
                 </tbody>
               </table>
             </div>
@@ -146,9 +156,9 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import {computed, onMounted, ref} from 'vue';
 import axios from 'axios';
-import { useRoute } from 'vue-router';
+import {useRoute} from 'vue-router';
 import * as XLSX from 'xlsx';
 
 const items = ref([]);
@@ -213,7 +223,7 @@ const filteredItems = computed(() => {
 
 const searchItems = async () => {
   try {
-    const res = await axios.get('/items', { params: { search: searchQuery.value } });
+    const res = await axios.get('/items', {params: {search: searchQuery.value}});
     items.value = res.data.items;
   } catch (error) {
     console.error('Error searching items:', error);

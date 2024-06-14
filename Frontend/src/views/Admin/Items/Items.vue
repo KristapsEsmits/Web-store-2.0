@@ -9,55 +9,70 @@
         <div class="card-header d-flex justify-content-between align-items-center">
           <h4 class="card-title mb-0">Items</h4>
           <div class="d-flex align-items-center">
-            <input v-model="searchQuery" class="form-control me-2" placeholder="Search by ID or Name" style="width: 200px;" type="text" @input="searchItems"/>
+            <input v-model="searchQuery" class="form-control me-2" placeholder="Search by ID or Name"
+                   style="width: 200px;" type="text" @input="searchItems"/>
             <router-link class="btn btn-primary btn-round btn-fill me-2" to="/admin/items/create">
               Add Item
             </router-link>
-            <button :disabled="!isAnyRowSelected" class="btn btn-warning btn-round btn-fill" @click="exportSelectedRows">Export Selected Rows</button>
+            <button :disabled="!isAnyRowSelected" class="btn btn-warning btn-round btn-fill"
+                    @click="exportSelectedRows">Export Selected Rows
+            </button>
           </div>
         </div>
         <div class="card-body">
-          <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <ul id="myTab" class="nav nav-tabs" role="tablist">
             <li class="nav-item" role="presentation">
-              <a class="nav-link" :class="{ active: activeTab === 'items' }" id="items-tab" data-bs-toggle="tab" href="#items" role="tab" aria-controls="items" aria-selected="activeTab === 'items'" @click="switchTab('items')">Items</a>
+              <a id="items-tab" :class="{ active: activeTab === 'items' }" aria-controls="items"
+                 aria-selected="activeTab === 'items'"
+                 class="nav-link" data-bs-toggle="tab" href="#items" role="tab"
+                 @click="switchTab('items')">Items</a>
             </li>
             <li class="nav-item" role="presentation">
-              <a class="nav-link" :class="{ active: activeTab === 'specifications' }" id="specifications-tab" data-bs-toggle="tab" href="#specifications" role="tab" aria-controls="specifications" aria-selected="activeTab === 'specifications'" @click="switchTab('specifications')">Specification Descriptions</a>
+              <a id="specifications-tab" :class="{ active: activeTab === 'specifications' }"
+                 aria-controls="specifications"
+                 aria-selected="activeTab === 'specifications'" class="nav-link" data-bs-toggle="tab"
+                 href="#specifications"
+                 role="tab" @click="switchTab('specifications')">Specification
+                Descriptions</a>
             </li>
           </ul>
-          <div class="tab-content" id="myTabContent">
-            <div class="tab-pane fade" :class="{ show: activeTab === 'items', active: activeTab === 'items' }" id="items" role="tabpanel" aria-labelledby="items-tab">
+          <div id="myTabContent" class="tab-content">
+            <div id="items" :class="{ show: activeTab === 'items', active: activeTab === 'items' }"
+                 aria-labelledby="items-tab" class="tab-pane fade" role="tabpanel">
               <!-- Items Table -->
               <div class="table-responsive d-none d-md-block">
                 <table class="table table-bordered table-auto">
                   <thead>
-                    <tr>
-                      <th><input v-model="selectAll" type="checkbox" @change="toggleSelectAll"></th>
-                      <th>Item ID</th>
-                      <th>Name</th>
-                      <th>Description</th>
-                      <th>Price</th>
-                      <th>Img path</th>
-                      <th>Img</th>
-                      <th>Actions</th>
-                    </tr>
+                  <tr>
+                    <th><input v-model="selectAll" type="checkbox" @change="toggleSelectAll"></th>
+                    <th>Item ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Img path</th>
+                    <th>Img</th>
+                    <th>Actions</th>
+                  </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(item, index) in filteredItems" :key="index">
-                      <td><input v-model="selectedRows" :value="item" type="checkbox"></td>
-                      <td>{{ item.id }}</td>
-                      <td>{{ item.name }}</td>
-                      <td>{{ item.description }}</td>
-                      <td>{{ item.price }}€</td>
-                      <td>{{ item.img }}</td>
-                      <td class="image-cell">
-                        <img :src="'http://localhost:8000/storage/uploads/' + item.img" alt="Item Image" style="max-width: 90px; max-height: 70px;">
-                      </td>
-                      <td class="justify-content-center">
-                        <router-link :to="{ path: '/admin/items/' + item.id + '/edit' }" class="btn btn-success me-2">Edit</router-link>
-                        <button class="btn btn-danger" type="button" @click="openDeleteModal(item.id)">Delete</button>
-                      </td>
-                    </tr>
+                  <tr v-for="(item, index) in filteredItems" :key="index">
+                    <td><input v-model="selectedRows" :value="item" type="checkbox"></td>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.description }}</td>
+                    <td>{{ item.price }}€</td>
+                    <td>{{ item.img }}</td>
+                    <td class="image-cell">
+                      <img :src="'http://localhost:8000/storage/uploads/' + item.img" alt="Item Image"
+                           style="max-width: 90px; max-height: 70px;">
+                    </td>
+                    <td class="justify-content-center">
+                      <router-link :to="{ path: '/admin/items/' + item.id + '/edit' }" class="btn btn-success me-2">
+                        Edit
+                      </router-link>
+                      <button class="btn btn-danger" type="button" @click="openDeleteModal(item.id)">Delete</button>
+                    </td>
+                  </tr>
                   </tbody>
                 </table>
               </div>
@@ -68,56 +83,66 @@
                 </div>
                 <div v-for="(item, index) in filteredItems" :key="index" class="card mb-3">
                   <div class="card-body">
-                    <h5 class="card-title"><input v-model="selectedRows" :value="item" class="checkbox-btn" type="checkbox">{{ item.name }}</h5>
+                    <h5 class="card-title"><input v-model="selectedRows" :value="item" class="checkbox-btn"
+                                                  type="checkbox">{{ item.name }}</h5>
                     <p class="card-text"><strong>ID:</strong> {{ item.id }}</p>
                     <p class="card-text"><strong>Description:</strong> {{ item.description }}</p>
                     <p class="card-text"><strong>Price:</strong> {{ item.price }}€</p>
                     <p class="card-text"><strong>Img path:</strong> {{ item.img }}</p>
-                    <img :src="'http://localhost:8000/storage/uploads/' + item.img" alt="Item Image" style="max-width: 90px; max-height: 70px;">
+                    <img :src="'http://localhost:8000/storage/uploads/' + item.img" alt="Item Image"
+                         style="max-width: 90px; max-height: 70px;">
                     <div class="action-btns">
-                      <router-link :to="{ path: '/admin/items/' + item.id + '/edit' }" class="btn btn-success me-2">Edit</router-link>
+                      <router-link :to="{ path: '/admin/items/' + item.id + '/edit' }" class="btn btn-success me-2">
+                        Edit
+                      </router-link>
                       <button class="btn btn-danger" type="button" @click="openDeleteModal(item.id)">Delete</button>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="tab-pane fade" :class="{ show: activeTab === 'specifications', active: activeTab === 'specifications' }" id="specifications" role="tabpanel" aria-labelledby="specifications-tab">
+            <div id="specifications"
+                 :class="{ show: activeTab === 'specifications', active: activeTab === 'specifications' }"
+                 aria-labelledby="specifications-tab" class="tab-pane fade" role="tabpanel">
               <!-- Sub Tabs for Categories -->
-              <ul class="nav nav-tabs" id="categoryTabs" role="tablist">
+              <ul id="categoryTabs" class="nav nav-tabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                  <a class="nav-link" :class="{ active: selectedCategory === 'Keyboards' }" @click="selectCategory('Keyboards')" role="tab">Keyboards</a>
+                  <a :class="{ active: selectedCategory === 'Keyboards' }" class="nav-link"
+                     role="tab" @click="selectCategory('Keyboards')">Keyboards</a>
                 </li>
                 <li class="nav-item" role="presentation">
-                  <a class="nav-link" :class="{ active: selectedCategory === 'Mouses' }" @click="selectCategory('Mouses')" role="tab">Mouses</a>
+                  <a :class="{ active: selectedCategory === 'Mouses' }" class="nav-link"
+                     role="tab" @click="selectCategory('Mouses')">Mouses</a>
                 </li>
                 <li class="nav-item" role="presentation">
-                  <a class="nav-link" :class="{ active: selectedCategory === 'Headphones' }" @click="selectCategory('Headphones')" role="tab">Headphones</a>
+                  <a :class="{ active: selectedCategory === 'Headphones' }" class="nav-link"
+                     role="tab" @click="selectCategory('Headphones')">Headphones</a>
                 </li>
                 <li class="nav-item" role="presentation">
-                  <a class="nav-link" :class="{ active: selectedCategory === 'Microphones' }" @click="selectCategory('Microphones')" role="tab">Microphones</a>
+                  <a :class="{ active: selectedCategory === 'Microphones' }" class="nav-link"
+                     role="tab" @click="selectCategory('Microphones')">Microphones</a>
                 </li>
               </ul>
               <!-- Specifications Table -->
               <div class="table-responsive">
                 <table class="table table-bordered table-auto">
                   <thead>
-                    <tr>
-                      <th><input v-model="selectAll" type="checkbox" @change="toggleSelectAll"></th>
-                      <th>Item ID</th>
-                      <th>Item Name</th>
-                      <th v-for="title in uniqueSpecificationTitles" :key="title.id">{{ title.specification_title }}</th>
-                    </tr>
+                  <tr>
+                    <th><input v-model="selectAll" type="checkbox" @change="toggleSelectAll"></th>
+                    <th>Item ID</th>
+                    <th>Item Name</th>
+                    <th v-for="title in uniqueSpecificationTitles" :key="title.id">{{ title.specification_title }}</th>
+                  </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="group in groupedSpecifications" :key="group.item.id">
-                      <td><input v-model="selectedRows" :value="group.item" type="checkbox"></td>
-                      <td>{{ group.item.id }}</td>
-                      <td>{{ group.item.name }}</td>
-                      <td v-for="title in uniqueSpecificationTitles" :key="title.id">
-                        {{ getDescription(group.specifications, title.id) }}
-                      </td>
-                    </tr>
+                  <tr v-for="group in groupedSpecifications" :key="group.item.id">
+                    <td><input v-model="selectedRows" :value="group.item" type="checkbox"></td>
+                    <td>{{ group.item.id }}</td>
+                    <td>{{ group.item.name }}</td>
+                    <td v-for="title in uniqueSpecificationTitles" :key="title.id">
+                      {{ getDescription(group.specifications, title.id) }}
+                    </td>
+                  </tr>
                   </tbody>
                 </table>
               </div>
@@ -133,9 +158,9 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import {computed, onMounted, ref} from 'vue';
 import axios from 'axios';
-import { useRoute } from 'vue-router';
+import {useRoute} from 'vue-router';
 import * as XLSX from 'xlsx';
 import Modal from '@/components/Modal.vue';
 
@@ -254,7 +279,7 @@ const filteredDescriptions = computed(() => {
   return specifications.value.filter(description => {
     const categoryId = description.specification_title?.category_id;
     return categoryId === getCategoryID(selectedCategory.value) &&
-      (description.id.toString().includes(searchQuery.value) || description.description.toLowerCase().includes(searchQuery.value.toLowerCase()));
+        (description.id.toString().includes(searchQuery.value) || description.description.toLowerCase().includes(searchQuery.value.toLowerCase()));
   });
 });
 
@@ -262,8 +287,8 @@ const filteredDescriptions = computed(() => {
 const groupedSpecifications = computed(() => {
   const filteredSpecs = specifications.value.filter(spec => {
     return spec.specification_title.category_id === getCategoryID(selectedCategory.value) &&
-      (spec.item.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      spec.item.id.toString().includes(searchQuery.value));
+        (spec.item.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+            spec.item.id.toString().includes(searchQuery.value));
   });
 
   const grouped = filteredSpecs.reduce((acc, spec) => {
@@ -312,10 +337,10 @@ const getCategoryID = (categoryName) => {
 const searchItems = async () => {
   try {
     if (activeTab.value === 'items') {
-      const res = await axios.get('/items', { params: { search: searchQuery.value } });
+      const res = await axios.get('/items', {params: {search: searchQuery.value}});
       items.value = res.data.items;
     } else {
-      const res = await axios.get('/specification-descriptions', { params: { search: searchQuery.value } });
+      const res = await axios.get('/specification-descriptions', {params: {search: searchQuery.value}});
       specifications.value = res.data.specifications;
     }
   } catch (error) {
@@ -343,7 +368,6 @@ onMounted(() => {
   getSpecifications();
 });
 </script>
-
 
 
 <style scoped>

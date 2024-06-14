@@ -9,46 +9,60 @@
         <div class="card-header d-flex justify-content-between align-items-center">
           <h4 class="card-title mb-0">Categories</h4>
           <div class="d-flex align-items-center">
-            <input v-model="searchQuery" class="form-control me-2" placeholder="Search by ID or Name" style="width: 200px;" type="text" @input="searchItems"/>
-            <router-link class="btn btn-primary btn-round btn-fill me-2" :to="buttonLink">
+            <input v-model="searchQuery" class="form-control me-2" placeholder="Search by ID or Name"
+                   style="width: 200px;" type="text" @input="searchItems"/>
+            <router-link :to="buttonLink" class="btn btn-primary btn-round btn-fill me-2">
               {{ buttonText }}
             </router-link>
-            <button :disabled="!isAnyRowSelected" class="btn btn-warning btn-round btn-fill" @click="exportSelectedRows">Export Selected Rows</button>
+            <button :disabled="!isAnyRowSelected" class="btn btn-warning btn-round btn-fill"
+                    @click="exportSelectedRows">Export Selected Rows
+            </button>
           </div>
         </div>
         <div class="card-body">
-          <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <ul id="myTab" class="nav nav-tabs" role="tablist">
             <li class="nav-item" role="presentation">
-              <a class="nav-link" :class="{ active: activeTab === 'categories' }" id="categories-tab" data-bs-toggle="tab" href="#categories" role="tab" aria-controls="categories" aria-selected="activeTab === 'categories'" @click="switchTab('categories')">Categories</a>
+              <a id="categories-tab" :class="{ active: activeTab === 'categories' }" aria-controls="categories"
+                 aria-selected="activeTab === 'categories'" class="nav-link" data-bs-toggle="tab" href="#categories"
+                 role="tab" @click="switchTab('categories')">Categories</a>
             </li>
             <li class="nav-item" role="presentation">
-              <a class="nav-link" :class="{ active: activeTab === 'specification-titles' }" id="specification-titles-tab" data-bs-toggle="tab" href="#specification-titles" role="tab" aria-controls="specification-titles" aria-selected="activeTab === 'specification-titles'" @click="switchTab('specification-titles')">Specification Titles</a>
+              <a id="specification-titles-tab" :class="{ active: activeTab === 'specification-titles' }"
+                 aria-controls="specification-titles" aria-selected="activeTab === 'specification-titles'"
+                 class="nav-link" data-bs-toggle="tab"
+                 href="#specification-titles" role="tab"
+                 @click="switchTab('specification-titles')">Specification Titles</a>
             </li>
           </ul>
-          <div class="tab-content" id="myTabContent">
-            <div class="tab-pane fade" :class="{ show: activeTab === 'categories', active: activeTab === 'categories' }" id="categories" role="tabpanel" aria-labelledby="categories-tab">
+          <div id="myTabContent" class="tab-content">
+            <div id="categories" :class="{ show: activeTab === 'categories', active: activeTab === 'categories' }"
+                 aria-labelledby="categories-tab" class="tab-pane fade" role="tabpanel">
               <div class="table-responsive d-none d-md-block">
                 <table class="table table-bordered table-auto">
                   <thead>
-                    <tr>
-                      <th><input v-model="selectAll" type="checkbox" @change="toggleSelectAll"></th>
-                      <th>Category ID</th>
-                      <th>Category Name</th>
-                      <th>Item Count</th>
-                      <th>Actions</th>
-                    </tr>
+                  <tr>
+                    <th><input v-model="selectAll" type="checkbox" @change="toggleSelectAll"></th>
+                    <th>Category ID</th>
+                    <th>Category Name</th>
+                    <th>Item Count</th>
+                    <th>Actions</th>
+                  </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(category, index) in filteredCategories" :key="index">
-                      <td><input v-model="selectedRows" :value="category" type="checkbox"></td>
-                      <td>{{ category.id }}</td>
-                      <td>{{ category.category_name }}</td>
-                      <td>{{ category.items_count }}</td>
-                      <td class="justify-content-center">
-                        <router-link :to="{ path: '/admin/categories/' + category.id + '/edit' }" class="btn btn-success me-2">Edit</router-link>
-                        <button :disabled="category.items_count > 0" class="btn btn-danger" type="button" @click="openDeleteModal(category.id)">Delete</button>
-                      </td>
-                    </tr>
+                  <tr v-for="(category, index) in filteredCategories" :key="index">
+                    <td><input v-model="selectedRows" :value="category" type="checkbox"></td>
+                    <td>{{ category.id }}</td>
+                    <td>{{ category.category_name }}</td>
+                    <td>{{ category.items_count }}</td>
+                    <td class="justify-content-center">
+                      <router-link :to="{ path: '/admin/categories/' + category.id + '/edit' }"
+                                   class="btn btn-success me-2">Edit
+                      </router-link>
+                      <button :disabled="category.items_count > 0" class="btn btn-danger" type="button"
+                              @click="openDeleteModal(category.id)">Delete
+                      </button>
+                    </td>
+                  </tr>
                   </tbody>
                 </table>
               </div>
@@ -65,48 +79,62 @@
                     <p class="card-text"><strong>ID:</strong> {{ category.id }}</p>
                     <p class="card-text"><strong>Item Count:</strong> {{ category.items_count }}</p>
                     <div class="action-btns">
-                      <router-link :to="{ path: '/admin/categories/' + category.id + '/edit' }" class="btn btn-success me-2">Edit</router-link>
-                      <button :disabled="category.items_count > 0" class="btn btn-danger" type="button" @click="openDeleteModal(category.id)">Delete</button>
+                      <router-link :to="{ path: '/admin/categories/' + category.id + '/edit' }"
+                                   class="btn btn-success me-2">Edit
+                      </router-link>
+                      <button :disabled="category.items_count > 0" class="btn btn-danger" type="button"
+                              @click="openDeleteModal(category.id)">Delete
+                      </button>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="tab-pane fade" :class="{ show: activeTab === 'specification-titles', active: activeTab === 'specification-titles' }" id="specification-titles" role="tabpanel" aria-labelledby="specification-titles-tab">
-              <ul class="nav nav-tabs" id="categoryTabs" role="tablist">
+            <div id="specification-titles"
+                 :class="{ show: activeTab === 'specification-titles', active: activeTab === 'specification-titles' }"
+                 aria-labelledby="specification-titles-tab" class="tab-pane fade" role="tabpanel">
+              <ul id="categoryTabs" class="nav nav-tabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                  <a class="nav-link" :class="{ active: selectedCategoryId === 29 }" @click="selectCategory(29)" role="tab">Keyboards</a>
+                  <a :class="{ active: selectedCategoryId === 29 }" class="nav-link" role="tab"
+                     @click="selectCategory(29)">Keyboards</a>
                 </li>
                 <li class="nav-item" role="presentation">
-                  <a class="nav-link" :class="{ active: selectedCategoryId === 30 }" @click="selectCategory(30)" role="tab">Headphones</a>
+                  <a :class="{ active: selectedCategoryId === 30 }" class="nav-link" role="tab"
+                     @click="selectCategory(30)">Headphones</a>
                 </li>
                 <li class="nav-item" role="presentation">
-                  <a class="nav-link" :class="{ active: selectedCategoryId === 31 }" @click="selectCategory(31)" role="tab">Mouses</a>
+                  <a :class="{ active: selectedCategoryId === 31 }" class="nav-link" role="tab"
+                     @click="selectCategory(31)">Mouses</a>
                 </li>
                 <li class="nav-item" role="presentation">
-                  <a class="nav-link" :class="{ active: selectedCategoryId === 32 }" @click="selectCategory(32)" role="tab">Microphones</a>
+                  <a :class="{ active: selectedCategoryId === 32 }" class="nav-link" role="tab"
+                     @click="selectCategory(32)">Microphones</a>
                 </li>
               </ul>
               <div class="table-responsive d-none d-md-block">
                 <table class="table table-bordered table-auto">
                   <thead>
-                    <tr>
-                      <th><input v-model="selectAll" type="checkbox" @change="toggleSelectAll"></th>
-                      <th>Specification Title ID</th>
-                      <th>Specification Title</th>
-                      <th>Actions</th>
-                    </tr>
+                  <tr>
+                    <th><input v-model="selectAll" type="checkbox" @change="toggleSelectAll"></th>
+                    <th>Specification Title ID</th>
+                    <th>Specification Title</th>
+                    <th>Actions</th>
+                  </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(title, index) in filteredSpecificationTitles" :key="index">
-                      <td><input v-model="selectedRows" :value="title" type="checkbox"></td>
-                      <td>{{ title.id }}</td>
-                      <td>{{ title.specification_title }}</td>
-                      <td class="justify-content-center">
-                        <router-link :to="{ path: '/admin/specification-titles/' + title.id + '/edit' }" class="btn btn-success me-2">Edit</router-link>
-                        <button class="btn btn-danger" type="button" @click="openDeleteSpecificationModal(title.id)">Delete</button>
-                      </td>
-                    </tr>
+                  <tr v-for="(title, index) in filteredSpecificationTitles" :key="index">
+                    <td><input v-model="selectedRows" :value="title" type="checkbox"></td>
+                    <td>{{ title.id }}</td>
+                    <td>{{ title.specification_title }}</td>
+                    <td class="justify-content-center">
+                      <router-link :to="{ path: '/admin/specification-titles/' + title.id + '/edit' }"
+                                   class="btn btn-success me-2">Edit
+                      </router-link>
+                      <button class="btn btn-danger" type="button" @click="openDeleteSpecificationModal(title.id)">
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
                   </tbody>
                 </table>
               </div>
@@ -122,8 +150,12 @@
                     </h5>
                     <p class="card-text"><strong>ID:</strong> {{ title.id }}</p>
                     <div class="action-btns">
-                      <router-link :to="{ path: '/admin/specification-titles/' + title.id + '/edit' }" class="btn btn-success me-2">Edit</router-link>
-                      <button class="btn btn-danger" type="button" @click="openDeleteSpecificationModal(title.id)">Delete</button>
+                      <router-link :to="{ path: '/admin/specification-titles/' + title.id + '/edit' }"
+                                   class="btn btn-success me-2">Edit
+                      </router-link>
+                      <button class="btn btn-danger" type="button" @click="openDeleteSpecificationModal(title.id)">
+                        Delete
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -135,7 +167,8 @@
       <Modal :isOpen="isDeleteModalOpen" title="Confirm Delete" @close="closeDeleteModal" @confirm="confirmDelete">
         Are you sure you want to delete this Category?
       </Modal>
-      <Modal :isOpen="isDeleteSpecificationModalOpen" title="Confirm Delete" @close="closeDeleteSpecificationModal" @confirm="confirmDeleteSpecification">
+      <Modal :isOpen="isDeleteSpecificationModalOpen" title="Confirm Delete" @close="closeDeleteSpecificationModal"
+             @confirm="confirmDeleteSpecification">
         Are you sure you want to delete this Specification Title?
       </Modal>
     </div>
@@ -143,9 +176,9 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import {computed, onMounted, ref} from 'vue';
 import axios from 'axios';
-import { useRoute } from 'vue-router';
+import {useRoute} from 'vue-router';
 import * as XLSX from 'xlsx';
 import Modal from '@/components/Modal.vue';
 
@@ -236,8 +269,8 @@ const dismissSuccessMessage = () => {
 const exportSelectedRows = () => {
   const data = selectedRows.value.map(row => {
     return activeTab.value === 'categories'
-      ? { id: row.id, name: row.category_name }
-      : { id: row.id, name: row.specification_title };
+        ? {id: row.id, name: row.category_name}
+        : {id: row.id, name: row.specification_title};
   });
 
   const worksheet = XLSX.utils.json_to_sheet(data);
@@ -251,8 +284,8 @@ const isAnyRowSelected = computed(() => selectedRows.value.length > 0);
 const toggleSelectAll = () => {
   if (selectAll.value) {
     selectedRows.value = activeTab.value === 'categories'
-      ? [...categories.value]
-      : [...filteredSpecificationTitles.value];
+        ? [...categories.value]
+        : [...filteredSpecificationTitles.value];
   } else {
     selectedRows.value = [];
   }
@@ -273,14 +306,14 @@ const filteredSpecificationTitles = computed(() => {
 const searchItems = async () => {
   if (activeTab.value === 'categories') {
     try {
-      const res = await axios.get('/categories', { params: { search: searchQuery.value } });
+      const res = await axios.get('/categories', {params: {search: searchQuery.value}});
       categories.value = res.data.categories;
     } catch (error) {
       console.error('Error searching categories:', error);
     }
   } else {
     try {
-      const res = await axios.get('/specification-titles', { params: { search: searchQuery.value } });
+      const res = await axios.get('/specification-titles', {params: {search: searchQuery.value}});
       specificationTitles.value = res.data.specification_titles;
     } catch (error) {
       console.error('Error searching specification titles:', error);

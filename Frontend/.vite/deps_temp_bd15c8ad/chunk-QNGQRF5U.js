@@ -1639,7 +1639,7 @@ function assertNumber(val, type) {
     if (false)
         return;
     if (val === void 0) {
-        return;
+
     } else if (typeof val !== "number") {
         warn2(`${type} is not a valid number - got ${JSON.stringify(val)}.`);
     } else if (isNaN(val)) {
@@ -6499,7 +6499,7 @@ function createHydrationFunctions(rendererInternals) {
                     optimized
                 );
             } else if (vnode.type === Text && !vnode.children) {
-                continue;
+
             } else {
                 hasMismatch = true;
                 if (!hasWarned2) {
@@ -7354,7 +7354,7 @@ function baseCreateRenderer(options, createHydrationFns) {
                 if (true) {
                     popWarningContext();
                 }
-                return;
+
             } else {
                 instance.next = n2;
                 invalidateJob(instance.update);

@@ -6,7 +6,8 @@
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center">
             <h1>Your order:</h1>
-            <button class="btn btn-primary" @click="generatePDF(purchaseGroup.time, purchaseGroup, user)">Print PDF</button>
+            <button class="btn btn-primary" @click="generatePDF(purchaseGroup.time, purchaseGroup, user)">Print PDF
+            </button>
           </div>
           <div class="order-details">
             <div class="order-summary">
@@ -50,9 +51,9 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import axios from 'axios';
-import { generatePDF } from '@/utils/pdfUtils';
+import {generatePDF} from '@/utils/pdfUtils';
 
 const purchaseGroup = ref(null);
 const user = ref(null);

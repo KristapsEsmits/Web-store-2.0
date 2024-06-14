@@ -7,7 +7,7 @@
     <div class="container">
       <div class="filter">
         <h2>Filters</h2>
-        <select v-model="filters.category" @change="fetchSpecifications" class="form-select">
+        <select v-model="filters.category" class="form-select" @change="fetchSpecifications">
           <option value="">All Categories</option>
           <option v-for="category in categories" :key="category.id" :value="category.id">
             {{ category.category_name }}
@@ -20,14 +20,17 @@
         <input v-model.number="filters.minPrice" class="form-control" placeholder="Min Price" type="number">
         <input v-model.number="filters.maxPrice" class="form-control" placeholder="Max Price" type="number">
       </div>
-      
+
       <div v-if="filters.category" class="advanced-filters">
         <h3>Advanced Filters</h3>
         <div v-for="spec in specifications" :key="spec.id" class="spec-filter">
           <label>{{ spec.specification_title }}</label>
           <select v-model="advancedFilters[spec.id]" class="form-select">
             <option value="">All</option>
-            <option v-for="desc in spec.descriptions" :key="desc.id" :value="desc.description">{{ desc.description }}</option>
+            <option v-for="desc in spec.descriptions" :key="desc.id" :value="desc.description">{{
+                desc.description
+              }}
+            </option>
           </select>
         </div>
       </div>
@@ -266,20 +269,20 @@ export default {
     },
 
     async fetchSpecifications() {
-    if (!this.filters.category) return;
+      if (!this.filters.category) return;
 
-    try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/specification_titles/${this.filters.category}`);
-      this.specifications = response.data.specification_titles;
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/api/specification_titles/${this.filters.category}`);
+        this.specifications = response.data.specification_titles;
 
-      for (const spec of this.specifications) {
-        const descResponse = await axios.get(`http://127.0.0.1:8000/api/specifications/${spec.id}`);
-        spec.descriptions = descResponse.data.specifications;
+        for (const spec of this.specifications) {
+          const descResponse = await axios.get(`http://127.0.0.1:8000/api/specifications/${spec.id}`);
+          spec.descriptions = descResponse.data.specifications;
+        }
+      } catch (error) {
+        console.error('Error fetching specifications:', error);
       }
-    } catch (error) {
-      console.error('Error fetching specifications:', error);
-    }
-  },
+    },
 
     handleCartClick(itemId) {
       if (this.user) {

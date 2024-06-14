@@ -24,11 +24,13 @@
       <div v-if="favoriteItems.length > 0" class="row">
         <ul class="nav nav-tabs">
           <li v-for="(category, index) in favoriteCategories" :key="index" class="nav-item">
-            <a class="nav-link" :class="{ active: index === 0 }" data-bs-toggle="tab" :href="'#category-' + index">{{ category.name }}</a>
+            <a :class="{ active: index === 0 }" :href="'#category-' + index" class="nav-link"
+               data-bs-toggle="tab">{{ category.name }}</a>
           </li>
         </ul>
         <div class="tab-content">
-          <div v-for="(category, index) in favoriteCategories" :key="index" class="tab-pane fade" :class="{ show: index === 0, active: index === 0 }" :id="'category-' + index">
+          <div v-for="(category, index) in favoriteCategories" :id="'category-' + index" :key="index"
+               :class="{ show: index === 0, active: index === 0 }" class="tab-pane fade">
             <div class="row">
               <div v-for="item in category.items" :key="item.item.id" class="col-md-4 mb-4">
                 <div class="card">
@@ -47,7 +49,8 @@
                       <i class="bi bi-cart"></i>
                       Remove
                     </button>
-                    <button v-else class="btn" @click="handleCartClick(item.item.id)" :disabled="item.item.amount === 0">
+                    <button v-else :disabled="item.item.amount === 0" class="btn"
+                            @click="handleCartClick(item.item.id)">
                       <i v-if="item.item.amount !== 0" class="bi bi-cart"></i>
                       {{ item.item.amount === 0 ? 'Out of stock' : 'Cart' }}
                     </button>
@@ -66,16 +69,16 @@
             <h3 class="mt-4">Compare Specifications</h3>
             <table class="table">
               <thead>
-                <tr>
-                  <th>Specification</th>
-                  <th v-for="item in category.items" :key="item.item.id">{{ truncateName(item.item.name) }}</th>
-                </tr>
+              <tr>
+                <th>Specification</th>
+                <th v-for="item in category.items" :key="item.item.id">{{ truncateName(item.item.name) }}</th>
+              </tr>
               </thead>
               <tbody>
-                <tr v-for="specId in Object.keys(category.specifications)" :key="specId">
-                  <td>{{ category.specifications[specId] }}</td>
-                  <td v-for="item in category.items" :key="item.item.id">{{ item.specifications[specId] || 'N/A' }}</td>
-                </tr>
+              <tr v-for="specId in Object.keys(category.specifications)" :key="specId">
+                <td>{{ category.specifications[specId] }}</td>
+                <td v-for="item in category.items" :key="item.item.id">{{ item.specifications[specId] || 'N/A' }}</td>
+              </tr>
               </tbody>
             </table>
           </div>
@@ -208,7 +211,7 @@ export default {
     async addToCart(itemId) {
       try {
         const userId = this.user.id;
-        await axios.post('http://127.0.0.1:8000/api/cart', { user_id: userId, item_id: itemId });
+        await axios.post('http://127.0.0.1:8000/api/cart', {user_id: userId, item_id: itemId});
         this.updateItemCartStatus(itemId, true);
         document.dispatchEvent(new CustomEvent('cart-updated'));
       } catch (error) {
@@ -224,7 +227,7 @@ export default {
       if (this.user) {
         this.addToCart(itemId);
       } else {
-        this.$router.push({ path: '/login' });
+        this.$router.push({path: '/login'});
       }
     },
 
@@ -247,7 +250,7 @@ export default {
     async addToFavorites(itemId) {
       try {
         const userId = this.user.id;
-        await axios.post('http://127.0.0.1:8000/api/favorites', { user_id: userId, item_id: itemId });
+        await axios.post('http://127.0.0.1:8000/api/favorites', {user_id: userId, item_id: itemId});
         this.updateItemFavoriteStatus(itemId, true);
         document.dispatchEvent(new CustomEvent('favorites-updated'));
       } catch (error) {

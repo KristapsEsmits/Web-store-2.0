@@ -32,20 +32,20 @@ export default {
   methods: {
     getItemData(itemId) {
       axios.get(`/items/${itemId}/edit`)
-        .then((res) => {
-          console.log('Item data response:', res.data);
-          if (res.data.items) {
-            this.model.item = res.data.items;
-          } else {
-            console.error('Item data not found in response');
-          }
-        })
-        .catch((error) => {
-          console.error('Error fetching item data:', error);
-          if (error.response && error.response.status === 404) {
-            this.$router.push('/items');
-          }
-        });
+          .then((res) => {
+            console.log('Item data response:', res.data);
+            if (res.data.items) {
+              this.model.item = res.data.items;
+            } else {
+              console.error('Item data not found in response');
+            }
+          })
+          .catch((error) => {
+            console.error('Error fetching item data:', error);
+            if (error.response && error.response.status === 404) {
+              this.$router.push('/items');
+            }
+          });
     },
 
     handleImageUpload(event) {

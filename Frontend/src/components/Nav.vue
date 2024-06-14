@@ -33,7 +33,7 @@
                 <ul class="dropdown-menu show">
                   <li v-if="isLoading" class="dropdown-item">Loading...</li>
                   <li v-else-if="searchResults.length === 0" class="dropdown-item">Nothing found!</li>
-                  <li v-else v-for="item in searchResults" :key="item.id" class="d-flex align-items-center">
+                  <li v-for="item in searchResults" v-else :key="item.id" class="d-flex align-items-center">
                     <img :src="getImageUrl(item.img)" alt="" class="item-image me-2">
                     <RouterLink :to="'/product/' + item.id" class="dropdown-item" @click="clearSearch">
                       {{ truncatedName(item.name) }}
@@ -169,7 +169,7 @@ export default {
         maxLength = 15;
       } else if (screenWidth < 768) {
         maxLength = 20;
-      }else if (screenWidth < 375) {
+      } else if (screenWidth < 375) {
         maxLength = 40;
       }
 

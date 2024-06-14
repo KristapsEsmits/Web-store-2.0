@@ -63,19 +63,19 @@ export default {
   methods: {
     getItemData(itemId) {
       axios.get(`/items/${itemId}/edit`)
-        .then((res) => {
-          if (res.data.items) {
-            this.model.item = res.data.items;
-          } else {
-            console.error('Item data not found in response');
-          }
-        })
-        .catch((error) => {
-          console.error('Error fetching item data:', error);
-          if (error.response && error.response.status === 404) {
-            this.$router.push('/admin/inventory');
-          }
-        });
+          .then((res) => {
+            if (res.data.items) {
+              this.model.item = res.data.items;
+            } else {
+              console.error('Item data not found in response');
+            }
+          })
+          .catch((error) => {
+            console.error('Error fetching item data:', error);
+            if (error.response && error.response.status === 404) {
+              this.$router.push('/admin/inventory');
+            }
+          });
     },
 
     async updateItem() {
@@ -84,7 +84,7 @@ export default {
         amount: this.model.item.amount,
         vat: this.model.item.vat,
       };
-  
+
       console.log(this.model.item.vat);
       try {
         const res = await axios.put(`/items/${this.itemId}/update-inventory`, data, {

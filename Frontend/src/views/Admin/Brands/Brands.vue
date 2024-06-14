@@ -9,7 +9,8 @@
         <div class="card-header d-flex justify-content-between align-items-center">
           <h4 class="card-title mb-0">Brands</h4>
           <div class="d-flex align-items-center">
-            <input v-model="searchQuery" class="form-control me-2" placeholder="Search by ID or Name" style="width: 200px;"
+            <input v-model="searchQuery" class="form-control me-2" placeholder="Search by ID or Name"
+                   style="width: 200px;"
                    type="text" @input="searchBrands"/>
             <router-link class="btn btn-primary btn-round btn-fill me-2" to="/admin/brands/create">
               Add Brand

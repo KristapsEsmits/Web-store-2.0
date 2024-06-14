@@ -1705,7 +1705,7 @@ function loadRouteLocation(route) {
                     return Promise.reject(new Error(`Couldn't resolve component "${name}" at "${record.path}". Ensure you passed a function that returns a promise.`));
                 const resolvedComponent = isESModule(resolved) ? resolved.default : resolved;
                 record.components[name] = resolvedComponent;
-                return;
+
             }));
         }
         return promises;

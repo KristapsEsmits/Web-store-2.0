@@ -3,14 +3,14 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">{{ title }}</h5>
-        <button type="button" class="btn-close" @click="closeModal"></button>
+        <button class="btn-close" type="button" @click="closeModal"></button>
       </div>
       <div class="modal-body">
         <slot></slot>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" @click="closeModal">Cancel</button>
-        <button type="button" class="btn btn-danger" @click="confirmAction">Delete</button>
+        <button class="btn btn-secondary" type="button" @click="closeModal">Cancel</button>
+        <button class="btn btn-danger" type="button" @click="confirmAction">Delete</button>
       </div>
     </div>
   </div>

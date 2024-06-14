@@ -1,7 +1,7 @@
 <script setup>
 import axios from 'axios';
-import { onMounted, ref } from 'vue';
-import { Chart, registerables } from 'chart.js';
+import {onMounted, ref} from 'vue';
+import {Chart, registerables} from 'chart.js';
 import 'chartjs-adapter-date-fns';
 
 Chart.register(...registerables);
@@ -22,81 +22,81 @@ const totalEarnedWithoutVat = ref(0);
 
 const fetchNumberOfItems = () => {
   axios.get('/items')
-    .then((res) => {
-      numberOfItems.value = res.data.items.length;
-    })
-    .catch((error) => {
-      console.error('Error fetching items:', error);
-    });
+      .then((res) => {
+        numberOfItems.value = res.data.items.length;
+      })
+      .catch((error) => {
+        console.error('Error fetching items:', error);
+      });
 };
 
 const fetchNumberOfBrands = () => {
   axios.get('/brands')
-    .then((res) => {
-      numberOfBrands.value = res.data.brands.length;
-    })
-    .catch((error) => {
-      console.error('Error fetching brands:', error);
-    });
+      .then((res) => {
+        numberOfBrands.value = res.data.brands.length;
+      })
+      .catch((error) => {
+        console.error('Error fetching brands:', error);
+      });
 };
 
 const fetchNumberOfUsers = () => {
   axios.get('/user-amount')
-    .then((res) => {
-      numberOfUsers.value = res.data.user_count;
-    })
-    .catch((error) => {
-      console.error('Error fetching registered users:', error);
-    });
+      .then((res) => {
+        numberOfUsers.value = res.data.user_count;
+      })
+      .catch((error) => {
+        console.error('Error fetching registered users:', error);
+      });
 };
 
 const fetchUserRegistrationData = () => {
   axios.get('/user-registrations')
-    .then((res) => {
-      userRegistrationData.value = res.data.registrations;
-      renderUserRegistrationChart();
-    })
-    .catch((error) => {
-      console.error('Error fetching user registration data:', error);
-    });
+      .then((res) => {
+        userRegistrationData.value = res.data.registrations;
+        renderUserRegistrationChart();
+      })
+      .catch((error) => {
+        console.error('Error fetching user registration data:', error);
+      });
 };
 
 const fetchCategoryItemCounts = () => {
   axios.get('/items-category-count')
-    .then((res) => {
-      categoryItemCounts.value = res.data.category_counts;
-      renderCategoryItemCountChart();
-    })
-    .catch((error) => {
-      console.error('Error fetching category item counts:', error);
-    });
+      .then((res) => {
+        categoryItemCounts.value = res.data.category_counts;
+        renderCategoryItemCountChart();
+      })
+      .catch((error) => {
+        console.error('Error fetching category item counts:', error);
+      });
 };
 
 const fetchDailySpendingData = () => {
   axios.get('/total-spending-per-day')
-    .then((res) => {
-      dailySpendingData.value = res.data.data;
-      renderDailySpendingChart();
-    })
-    .catch((error) => {
-      console.error('Error fetching daily spending data:', error);
-    });
+      .then((res) => {
+        dailySpendingData.value = res.data.data;
+        renderDailySpendingChart();
+      })
+      .catch((error) => {
+        console.error('Error fetching daily spending data:', error);
+      });
 };
 
 const fetchStatisticsData = () => {
   axios.get('/finances')
-    .then((res) => {
-      mostSoldItem.value = res.data.mostSoldItem;
-      activeOrders.value = res.data.activeOrders;
-      canceledOrders.value = res.data.canceledOrders;
-      closedOrders.value = res.data.closedOrders;
-      totalEarnedWithVat.value = res.data.totalEarnedWithVat;
-      totalVat.value = res.data.totalVat;
-      totalEarnedWithoutVat.value = res.data.totalEarnedWithoutVat;
-    })
-    .catch((error) => {
-      console.error('Error fetching statistics data:', error);
-    });
+      .then((res) => {
+        mostSoldItem.value = res.data.mostSoldItem;
+        activeOrders.value = res.data.activeOrders;
+        canceledOrders.value = res.data.canceledOrders;
+        closedOrders.value = res.data.closedOrders;
+        totalEarnedWithVat.value = res.data.totalEarnedWithVat;
+        totalVat.value = res.data.totalVat;
+        totalEarnedWithoutVat.value = res.data.totalEarnedWithoutVat;
+      })
+      .catch((error) => {
+        console.error('Error fetching statistics data:', error);
+      });
 };
 
 const renderUserRegistrationChart = () => {

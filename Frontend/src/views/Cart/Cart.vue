@@ -200,48 +200,48 @@ export default {
     },
 
     async purchaseItems() {
-  try {
-    const purchasePayload = {
-      items: this.cartItems.map(cartItem => ({
-        id: cartItem.item.id,
-        quantity: cartItem.quantity
-      }))
-    };
-
-    const response = await axios.post('http://127.0.0.1:8000/api/purchase', purchasePayload);
-
-    if (response.data.status === 200) {
       try {
-        const purchaseGroup = {
-          time: new Date().toISOString().replace('T', ' ').substring(0, 19), // Store time in 'YYYY-MM-DD HH:MM:SS' format
+        const purchasePayload = {
           items: this.cartItems.map(cartItem => ({
-            item: cartItem.item,
-            quantity: cartItem.quantity,
-            total_price: cartItem.item.price * cartItem.quantity,
-            vat: cartItem.item.vat
-          })),
-          totalPrice: this.totalValue
+            id: cartItem.item.id,
+            quantity: cartItem.quantity
+          }))
         };
 
-        localStorage.setItem('recent_purchase', JSON.stringify(purchaseGroup));
-        localStorage.setItem('purchase_completed', 'true');
+        const response = await axios.post('http://127.0.0.1:8000/api/purchase', purchasePayload);
 
-        this.$router.push('/thank-you');
+        if (response.data.status === 200) {
+          try {
+            const purchaseGroup = {
+              time: new Date().toISOString().replace('T', ' ').substring(0, 19), // Store time in 'YYYY-MM-DD HH:MM:SS' format
+              items: this.cartItems.map(cartItem => ({
+                item: cartItem.item,
+                quantity: cartItem.quantity,
+                total_price: cartItem.item.price * cartItem.quantity,
+                vat: cartItem.item.vat
+              })),
+              totalPrice: this.totalValue
+            };
 
-        this.cartItems = [];
+            localStorage.setItem('recent_purchase', JSON.stringify(purchaseGroup));
+            localStorage.setItem('purchase_completed', 'true');
 
-        document.dispatchEvent(new CustomEvent('cart-updated'));
-      } catch (clearCartError) {
-        console.error('Error clearing cart:', clearCartError);
-        this.$router.push('/thank-you');
+            this.$router.push('/thank-you');
+
+            this.cartItems = [];
+
+            document.dispatchEvent(new CustomEvent('cart-updated'));
+          } catch (clearCartError) {
+            console.error('Error clearing cart:', clearCartError);
+            this.$router.push('/thank-you');
+          }
+        } else {
+          console.error('Purchase failed:', response.data.message);
+        }
+      } catch (error) {
+        console.error('Error purchasing items:', error);
       }
-    } else {
-      console.error('Purchase failed:', response.data.message);
-    }
-  } catch (error) {
-    console.error('Error purchasing items:', error);
-  }
-},
+    },
     truncatedName(name) {
       if (name.length > 40) {
         return name.substring(0, 37) + '...';
