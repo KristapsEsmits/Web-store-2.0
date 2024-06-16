@@ -89,7 +89,6 @@ class SpecificationTitleController extends Controller
                 'message' => 'Specification title deleted successfully',
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error deleting specification title: ' . $e->getMessage());
             return response()->json([
                 'status' => 500,
                 'message' => 'Internal Server Error',

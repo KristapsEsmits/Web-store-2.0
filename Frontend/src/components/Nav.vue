@@ -241,7 +241,11 @@ export default {
 
     searchItems() {
       if (this.searchText.trim().length > 0) {
-        this.searchResults = this.allItems.filter(item => item.name.toLowerCase().includes(this.searchText.toLowerCase())).slice(0, 4);
+        const lowerCaseSearchText = this.searchText.toLowerCase();
+        this.searchResults = this.allItems.filter(item => 
+          item.name.toLowerCase().includes(lowerCaseSearchText) || 
+          item.id.toString().includes(lowerCaseSearchText)
+        ).slice(0, 4);
         this.isSearchActive = true;
       } else {
         this.searchResults = this.allItems.slice(0, 4);
@@ -319,7 +323,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 .bar {

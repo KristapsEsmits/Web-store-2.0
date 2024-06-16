@@ -113,6 +113,32 @@ const filteredPurchaseHistory = computed(() => {
     return result;
   }, {});
 });
+
+const getStatusText = (status) => {
+  switch (status) {
+    case 'closed':
+      return 'Received';
+    case 'canceled':
+      return 'Canceled';
+    case 'active':
+      return 'Ready for Pick Up';
+    default:
+      return '';
+  }
+};
+
+const getStatusClass = (status) => {
+  switch (status) {
+    case 'closed':
+      return 'badge-success';
+    case 'canceled':
+      return 'badge-warning';
+    case 'active':
+      return 'badge-info';
+    default:
+      return 'badge-secondary';
+  }
+};
 </script>
 
 <template>
@@ -134,13 +160,11 @@ const filteredPurchaseHistory = computed(() => {
               </div>
               <div class="form-group">
                 <label for="searchEmail">Search by Email:</label>
-                <input id="searchEmail" v-model="searchEmail" class="form-control" placeholder="Enter email"
-                       type="text">
+                <input id="searchEmail" v-model="searchEmail" class="form-control" placeholder="Enter email" type="text">
               </div>
               <div class="form-group">
                 <label for="searchPhone">Search by Phone:</label>
-                <input id="searchPhone" v-model="searchPhone" class="form-control" placeholder="Enter phone"
-                       type="text">
+                <input id="searchPhone" v-model="searchPhone" class="form-control" placeholder="Enter phone" type="text">
               </div>
             </div>
             <div v-if="isLoading" class="d-flex justify-content-center my-5">
@@ -153,12 +177,13 @@ const filteredPurchaseHistory = computed(() => {
             </div>
             <div v-else>
               <ul class="list-group">
-                <li v-for="(purchaseGroup, time) in filteredPurchaseHistory" :key="time"
-                    :class="{'bg-lightgreen': groupStatus[time] === 'closed', 'bg-lightyellow': groupStatus[time] === 'canceled'}"
-                    class="list-group-item">
-                  <div class="d-flex justify-content-between align-items-center flex-wrap">
-                    <div>
-                      <strong>Purchased At:</strong> {{ time }}
+                <li v-for="(purchaseGroup, time) in filteredPurchaseHistory" :key="time" class="list-group-item">
+                  <div class="d-flex justify-content-between align-items-center flex-wrap purchase-group">
+                    <div class="purchase-info">
+                      <strong>Purchased At:</strong> {{ time }} -
+                      <button :class="['badge', 'badge-pill', getStatusClass(groupStatus[time])]">
+                        {{ getStatusText(groupStatus[time]) }}
+                      </button>
                     </div>
                     <div class="btn-group">
                       <button class="btn btn-primary mb-2 mb-sm-0 me-0"
@@ -211,15 +236,8 @@ const filteredPurchaseHistory = computed(() => {
   </main>
 </template>
 
+
 <style scoped>
-.bg-lightgreen {
-  background-color: rgb(186, 255, 186);
-}
-
-.bg-lightyellow {
-  background-color: lightyellow;
-}
-
 .filter-section {
   display: flex;
   flex-direction: column;
@@ -278,9 +296,33 @@ const filteredPurchaseHistory = computed(() => {
   flex-grow: 1;
 }
 
-@media (max-width: 767px) {
-  .btn-group {
-    gap: 0;
+.badge {
+  color: #000;
+  background-color: #f3f3f3;
+  border: 1px none;
+  text-decoration: none;
+  cursor: auto;
+}
+
+.badge-success {
+  background-color: rgb(127, 214, 127);
+}
+
+.badge-warning {
+  background-color: rgb(202, 202, 121);
+}
+
+.badge-info {
+  background-color: rgb(207, 207, 230);
+}
+
+@media (max-width: 767.98px) {
+  .purchase-group {
+    flex-direction: column-reverse;
+  }
+
+  .purchase-info {
+    margin-top: 10px;
   }
 }
 </style>

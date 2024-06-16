@@ -9,34 +9,22 @@
         <div class="card-header d-flex justify-content-between align-items-center">
           <h4 class="card-title mb-0">Categories</h4>
           <div class="d-flex align-items-center">
-            <input v-model="searchQuery" class="form-control me-2" placeholder="Search by ID or Name"
-                   style="width: 200px;" type="text" @input="searchItems"/>
-            <router-link :to="buttonLink" class="btn btn-primary btn-round btn-fill me-2">
-              {{ buttonText }}
-            </router-link>
-            <button :disabled="!isAnyRowSelected" class="btn btn-warning btn-round btn-fill"
-                    @click="exportSelectedRows">Export Selected Rows
-            </button>
+            <input v-model="searchQuery" class="form-control me-2" placeholder="Search by ID or Name" style="width: 200px;" type="text" @input="searchItems"/>
+            <router-link :to="buttonLink" class="btn btn-primary btn-round btn-fill me-2">{{ buttonText }}</router-link>
+            <button :disabled="!isAnyRowSelected" class="btn btn-warning btn-round btn-fill" @click="exportSelectedRows">Export Selected Rows</button>
           </div>
         </div>
         <div class="card-body">
           <ul id="myTab" class="nav nav-tabs" role="tablist">
             <li class="nav-item" role="presentation">
-              <a id="categories-tab" :class="{ active: activeTab === 'categories' }" aria-controls="categories"
-                 aria-selected="activeTab === 'categories'" class="nav-link" data-bs-toggle="tab" href="#categories"
-                 role="tab" @click="switchTab('categories')">Categories</a>
+              <a id="categories-tab" :class="{ active: activeTab === 'categories' }" aria-controls="categories" aria-selected="activeTab === 'categories'" class="nav-link" data-bs-toggle="tab" href="#categories" role="tab" @click="switchTab('categories')">Categories</a>
             </li>
             <li class="nav-item" role="presentation">
-              <a id="specification-titles-tab" :class="{ active: activeTab === 'specification-titles' }"
-                 aria-controls="specification-titles" aria-selected="activeTab === 'specification-titles'"
-                 class="nav-link" data-bs-toggle="tab"
-                 href="#specification-titles" role="tab"
-                 @click="switchTab('specification-titles')">Specification Titles</a>
+              <a id="specification-titles-tab" :class="{ active: activeTab === 'specification-titles' }" aria-controls="specification-titles" aria-selected="activeTab === 'specification-titles'" class="nav-link" data-bs-toggle="tab" href="#specification-titles" role="tab" @click="switchTab('specification-titles')">Specification Titles</a>
             </li>
           </ul>
           <div id="myTabContent" class="tab-content">
-            <div id="categories" :class="{ show: activeTab === 'categories', active: activeTab === 'categories' }"
-                 aria-labelledby="categories-tab" class="tab-pane fade" role="tabpanel">
+            <div id="categories" :class="{ show: activeTab === 'categories', active: activeTab === 'categories' }" aria-labelledby="categories-tab" class="tab-pane fade" role="tabpanel">
               <div class="table-responsive d-none d-md-block">
                 <table class="table table-bordered table-auto">
                   <thead>
@@ -55,12 +43,8 @@
                     <td>{{ category.category_name }}</td>
                     <td>{{ category.items_count }}</td>
                     <td class="justify-content-center">
-                      <router-link :to="{ path: '/admin/categories/' + category.id + '/edit' }"
-                                   class="btn btn-success me-2">Edit
-                      </router-link>
-                      <button :disabled="category.items_count > 0" class="btn btn-danger" type="button"
-                              @click="openDeleteModal(category.id)">Delete
-                      </button>
+                      <router-link :to="{ path: '/admin/categories/' + category.id + '/edit' }" class="btn btn-success me-2">Edit</router-link>
+                      <button :disabled="category.items_count > 0" class="btn btn-danger" type="button" @click="openDeleteModal(category.id)">Delete</button>
                     </td>
                   </tr>
                   </tbody>
@@ -79,39 +63,28 @@
                     <p class="card-text"><strong>ID:</strong> {{ category.id }}</p>
                     <p class="card-text"><strong>Item Count:</strong> {{ category.items_count }}</p>
                     <div class="action-btns">
-                      <router-link :to="{ path: '/admin/categories/' + category.id + '/edit' }"
-                                   class="btn btn-success me-2">Edit
-                      </router-link>
-                      <button :disabled="category.items_count > 0" class="btn btn-danger" type="button"
-                              @click="openDeleteModal(category.id)">Delete
-                      </button>
+                      <router-link :to="{ path: '/admin/categories/' + category.id + '/edit' }" class="btn btn-success me-2">Edit</router-link>
+                      <button :disabled="category.items_count > 0" class="btn btn-danger" type="button" @click="openDeleteModal(category.id)">Delete</button>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div id="specification-titles"
-                 :class="{ show: activeTab === 'specification-titles', active: activeTab === 'specification-titles' }"
-                 aria-labelledby="specification-titles-tab" class="tab-pane fade" role="tabpanel">
+            <div id="specification-titles" :class="{ show: activeTab === 'specification-titles', active: activeTab === 'specification-titles' }" aria-labelledby="specification-titles-tab" class="tab-pane fade" role="tabpanel">
               <ul id="categoryTabs" class="nav nav-tabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                  <a :class="{ active: selectedCategoryId === 29 }" class="nav-link" role="tab"
-                     @click="selectCategory(29)">Keyboards</a>
-                </li>
-                <li class="nav-item" role="presentation">
-                  <a :class="{ active: selectedCategoryId === 30 }" class="nav-link" role="tab"
-                     @click="selectCategory(30)">Headphones</a>
-                </li>
-                <li class="nav-item" role="presentation">
-                  <a :class="{ active: selectedCategoryId === 31 }" class="nav-link" role="tab"
-                     @click="selectCategory(31)">Mouses</a>
-                </li>
-                <li class="nav-item" role="presentation">
-                  <a :class="{ active: selectedCategoryId === 32 }" class="nav-link" role="tab"
-                     @click="selectCategory(32)">Microphones</a>
+                <li v-for="(category, index) in categories" :key="index" class="nav-item" role="presentation">
+                  <a :class="{ active: selectedCategoryId === category.id }" class="nav-link" role="tab" @click="selectCategory(category.id)">{{ category.category_name }}</a>
                 </li>
               </ul>
-              <div class="table-responsive d-none d-md-block">
+              <div v-if="subcategories.length" class="mt-3">
+                <h5>Subcategories</h5>
+                <ul class="nav nav-pills">
+                  <li v-for="(subcategory, index) in subcategories" :key="index" class="nav-item">
+                    <a :class="{ 'nav-link active': selectedSubcategoryId === subcategory.id, 'nav-link': selectedSubcategoryId !== subcategory.id }" @click="selectSubcategory(subcategory.id)">{{ subcategory.name }}</a>
+                  </li>
+                </ul>
+              </div>
+              <div class="table-responsive d-none d-md-block mt-3">
                 <table class="table table-bordered table-auto">
                   <thead>
                   <tr>
@@ -127,18 +100,14 @@
                     <td>{{ title.id }}</td>
                     <td>{{ title.specification_title }}</td>
                     <td class="justify-content-center">
-                      <router-link :to="{ path: '/admin/specification-titles/' + title.id + '/edit' }"
-                                   class="btn btn-success me-2">Edit
-                      </router-link>
-                      <button class="btn btn-danger" type="button" @click="openDeleteSpecificationModal(title.id)">
-                        Delete
-                      </button>
+                      <router-link :to="{ path: '/admin/specification-titles/' + title.id + '/edit' }" class="btn btn-success me-2">Edit</router-link>
+                      <button class="btn btn-danger" type="button" @click="openDeleteSpecificationModal(title.id)">Delete</button>
                     </td>
                   </tr>
                   </tbody>
                 </table>
               </div>
-              <div class="d-block d-md-none">
+              <div class="d-block d-md-none mt-3">
                 <div class="select-all-mobile">
                   <input v-model="selectAll" type="checkbox" @change="toggleSelectAll"> Select All
                 </div>
@@ -150,12 +119,8 @@
                     </h5>
                     <p class="card-text"><strong>ID:</strong> {{ title.id }}</p>
                     <div class="action-btns">
-                      <router-link :to="{ path: '/admin/specification-titles/' + title.id + '/edit' }"
-                                   class="btn btn-success me-2">Edit
-                      </router-link>
-                      <button class="btn btn-danger" type="button" @click="openDeleteSpecificationModal(title.id)">
-                        Delete
-                      </button>
+                      <router-link :to="{ path: '/admin/specification-titles/' + title.id + '/edit' }" class="btn btn-success me-2">Edit</router-link>
+                      <button class="btn btn-danger" type="button" @click="openDeleteSpecificationModal(title.id)">Delete</button>
                     </div>
                   </div>
                 </div>
@@ -167,8 +132,7 @@
       <Modal :isOpen="isDeleteModalOpen" title="Confirm Delete" @close="closeDeleteModal" @confirm="confirmDelete">
         Are you sure you want to delete this Category?
       </Modal>
-      <Modal :isOpen="isDeleteSpecificationModalOpen" title="Confirm Delete" @close="closeDeleteSpecificationModal"
-             @confirm="confirmDeleteSpecification">
+      <Modal :isOpen="isDeleteSpecificationModalOpen" title="Confirm Delete" @close="closeDeleteSpecificationModal" @confirm="confirmDeleteSpecification">
         Are you sure you want to delete this Specification Title?
       </Modal>
     </div>
@@ -176,14 +140,15 @@
 </template>
 
 <script setup>
-import {computed, onMounted, ref} from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import axios from 'axios';
-import {useRoute} from 'vue-router';
+import { useRoute } from 'vue-router';
 import * as XLSX from 'xlsx';
 import Modal from '@/components/Modal.vue';
 
 const categories = ref([]);
 const specificationTitles = ref([]);
+const subcategories = ref([]);
 const successMessage = ref('');
 const route = useRoute();
 const selectedRows = ref([]);
@@ -194,6 +159,7 @@ const isDeleteModalOpen = ref(false);
 const isDeleteSpecificationModalOpen = ref(false);
 const searchQuery = ref('');
 const selectedCategoryId = ref(null);
+const selectedSubcategoryId = ref(null);
 const activeTab = ref('categories');
 
 const getCategories = async () => {
@@ -335,6 +301,13 @@ const selectCategory = (categoryId) => {
   selectAll.value = false;
 };
 
+const selectSubcategory = (subcategoryId) => {
+  selectedSubcategoryId.value = subcategoryId;
+  searchQuery.value = '';
+  selectedRows.value = [];
+  selectAll.value = false;
+};
+
 const buttonText = computed(() => activeTab.value === 'categories' ? 'Add Category' : 'Add Specification Title');
 const buttonLink = computed(() => activeTab.value === 'categories' ? '/admin/categories/create' : '/admin/specification-titles/create');
 
@@ -344,7 +317,6 @@ onMounted(() => {
   getSpecificationTitles();
 });
 </script>
-
 <style scoped>
 .wrapper {
   display: flex;

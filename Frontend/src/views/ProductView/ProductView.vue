@@ -11,10 +11,10 @@
           <h1>Specifications</h1>
           <table v-if="specifications.length" class="spec-table">
             <tbody>
-            <tr v-for="spec in specifications" :key="spec.id">
-              <td class="spec-title">{{ spec.specification_title.specification_title }}:</td>
-              <td class="spec-description">{{ spec.description || '-' }}</td>
-            </tr>
+              <tr v-for="spec in specifications" :key="spec.id">
+                <td class="spec-title">{{ spec.specification_title.specification_title }}:</td>
+                <td class="spec-description">{{ spec.description || '-' }}</td>
+              </tr>
             </tbody>
           </table>
           <p v-else>No specifications found for this item.</p>
@@ -25,7 +25,7 @@
         <p class="product-id">ID: {{ items.id }}</p>
         <h2 class="price">Price: {{ items.price }}€</h2>
         <p class="without-vat">Price without VAT: {{ calculatePriceWithoutVAT(items.price) }}€</p>
-        <p :class="{'out-of-stock': items.amount === 0}">
+        <p :class="{ 'out-of-stock': items.amount === 0 }">
           {{ items.amount === 0 ? 'Out of stock' : `Items remaining: ${items.amount}` }}
         </p>
         <div class="action-btn-container">
@@ -54,15 +54,17 @@
 
     <div class="container">
       <template v-if="isLoading">
-        <div v-for="n in 4" :key="n" class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-          <SkeletonItemCard/>
+        <div class="row">
+          <div v-for="n in 4" :key="n" class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+            <SkeletonItemCard />
+          </div>
         </div>
       </template>
       <template v-else>
         <div class="row">
           <div v-for="item in similarItems" :key="item.id" class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
             <div class="card">
-              <router-link :to="{ path: '/product/' + item.id }" class="card-link">
+              <a :href="'/product/' + item.id" class="card-link">
                 <div class="img-container">
                   <img v-if="item.img" :src="getImageUrl(item.img)" alt="Item Image" class="img">
                 </div>
@@ -71,7 +73,7 @@
                   <h5 class="card-title">{{ truncateName(item.name) }}</h5>
                   <h5 class="card-title">{{ item.price }}€</h5>
                 </div>
-              </router-link>
+              </a>
               <div class="button-container">
                 <button v-if="user && item.isInCart" class="btn" @click="removeFromCart(item.id)">
                   <i class="bi bi-cart"></i>
@@ -160,7 +162,9 @@ export default {
     },
 
     calculatePriceWithoutVAT(price) {
-      return (price / 1.21).toFixed(2);
+      if (!this.items.vat) return price; // Fallback if VAT is not defined
+      const vatRate = this.items.vat / 100;
+      return (price / (1 + vatRate)).toFixed(2);
     },
 
     async fetchUserData() {
@@ -184,7 +188,7 @@ export default {
       if (this.user) {
         await this.addToCart(itemId);
       } else {
-        this.$router.push({path: '/login'});
+        this.$router.push({ path: '/login' });
       }
     },
 
@@ -196,14 +200,14 @@ export default {
       if (this.user) {
         await this.addToFavorites(itemId);
       } else {
-        this.$router.push({path: '/login'});
+        this.$router.push({ path: '/login' });
       }
     },
 
     async addToCart(itemId) {
       try {
         const userId = this.user.id;
-        const response = await axios.post('http://127.0.0.1:8000/api/cart', {user_id: userId, item_id: itemId});
+        const response = await axios.post('http://127.0.0.1:8000/api/cart', { user_id: userId, item_id: itemId });
         console.log(response.data.message);
         this.updateItemCartStatus(itemId, true);
         document.dispatchEvent(new CustomEvent('cart-updated'));
@@ -244,7 +248,7 @@ export default {
     async addToFavorites(itemId) {
       try {
         const userId = this.user.id;
-        const response = await axios.post('http://127.0.0.1:8000/api/favorites', {user_id: userId, item_id: itemId});
+        const response = await axios.post('http://127.0.0.1:8000/api/favorites', { user_id: userId, item_id: itemId });
         console.log(response.data.message);
         this.updateItemFavoriteStatus(itemId, true);
         document.dispatchEvent(new CustomEvent('favorites-updated'));
@@ -280,7 +284,7 @@ export default {
       }
       this.similarItems = this.similarItems.map(item => {
         if (item.id === itemId) {
-          return {...item, isFavorite};
+          return { ...item, isFavorite };
         }
         return item;
       });
@@ -292,7 +296,7 @@ export default {
       }
       this.similarItems = this.similarItems.map(item => {
         if (item.id === itemId) {
-          return {...item, isInCart};
+          return { ...item, isInCart };
         }
         return item;
       });

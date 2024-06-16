@@ -225,4 +225,16 @@ onMounted(async () => {
   text-decoration: none;
   cursor: auto;
 }
+
+.badge-success {
+  background-color: rgb(127, 214, 127);
+}
+
+.badge-warning {
+  background-color: rgb(202, 202, 121);
+}
+
+.badge-info {
+  background-color: rgb(207, 207, 230);
+}
 </style>

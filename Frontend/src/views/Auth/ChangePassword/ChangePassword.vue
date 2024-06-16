@@ -47,7 +47,7 @@ const updateExit = () => {
 <template>
   <div v-if="user" class="container mt-5">
     <div class="logo">
-      <img alt="Logo" src="\favicon.ico" style="height: 60px; width: 60px;">
+      <img alt="Logo" src="/favicon.ico" style="height: 60px; width: 60px;">
     </div>
     <div class="logoText">
       <h1>Change Password</h1>
