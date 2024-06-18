@@ -41,6 +41,7 @@
           <div class="mb-3">
             <label for="Image">Image</label>
             <input class="form-control" type="file" @change="handleImageUpload"/>
+            <img v-if="imagePreview" :src="imagePreview" alt="Item Image" class="mt-2 preview"/>
           </div>
         </div>
 
@@ -54,9 +55,8 @@
 
         <div class="mb-3">
           <button v-if="step > 1" class="btn btn-secondary" type="button" @click="prevStep">Previous</button>
-          <button v-if="step < 2" class="btn btn-primary" type="button" @click="nextStep">Next</button>
-          <button v-if="step === 2" class="btn btn-primary" type="button" @click="saveItemWithSpecifications">Save
-          </button>
+          <button v-if="step < 2" class="btn btn-primary" type="button" @click="nextStep" :disabled="!canProceed">Next</button>
+          <button v-if="step === 2" class="btn btn-primary" type="button" @click="saveItemWithSpecifications">Save</button>
           <button class="btn btn-danger" type="button" @click="Exit">Cancel</button>
         </div>
       </div>
@@ -73,6 +73,7 @@ export default {
     return {
       step: 1,
       errorList: {},
+      imagePreview: null,  // To store the image preview URL
       model: {
         item: {
           name: '',
@@ -92,6 +93,11 @@ export default {
   methods: {
     handleImageUpload(event) {
       this.model.item.img = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.imagePreview = e.target.result;
+      };
+      reader.readAsDataURL(event.target.files[0]);
     },
     nextStep() {
       if (this.step === 1) {
@@ -162,6 +168,11 @@ export default {
       }
     },
   },
+  computed: {
+    canProceed() {
+      return this.model.item.name && this.model.item.description && this.model.item.price && this.model.item.brand_id && this.model.item.categories_id && this.model.item.img;
+    }
+  },
   mounted() {
     this.getBrands();
     this.getCategories();
@@ -180,5 +191,10 @@ export default {
 
 .btn-secondary {
   margin-right: 10px;
+}
+
+.preview {
+  max-width: 100px;
+  max-height: 150px;
 }
 </style>

@@ -83,4 +83,8 @@ export default {
 .btn-close {
   box-shadow: none;
 }
+
+.btn-secondary {
+  margin-right: 15px;
+}
 </style>

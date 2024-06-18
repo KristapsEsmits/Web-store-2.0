@@ -213,7 +213,7 @@ export default {
         if (response.data.status === 200) {
           try {
             const purchaseGroup = {
-              time: new Date().toISOString().replace('T', ' ').substring(0, 19), // Store time in 'YYYY-MM-DD HH:MM:SS' format
+              time: new Date().toISOString().replace('T', ' ').substring(0, 19), 
               items: this.cartItems.map(cartItem => ({
                 item: cartItem.item,
                 quantity: cartItem.quantity,

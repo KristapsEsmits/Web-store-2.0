@@ -211,7 +211,7 @@ export default {
     async addToCart(itemId) {
       try {
         const userId = this.user.id;
-        await axios.post('http://127.0.0.1:8000/api/cart', {user_id: userId, item_id: itemId});
+        await axios.post('http://127.0.0.1:8000/api/cart', { user_id: userId, item_id: itemId });
         this.updateItemCartStatus(itemId, true);
         document.dispatchEvent(new CustomEvent('cart-updated'));
       } catch (error) {
@@ -227,7 +227,7 @@ export default {
       if (this.user) {
         this.addToCart(itemId);
       } else {
-        this.$router.push({path: '/login'});
+        this.$router.push({ path: '/login' });
       }
     },
 
@@ -250,7 +250,7 @@ export default {
     async addToFavorites(itemId) {
       try {
         const userId = this.user.id;
-        await axios.post('http://127.0.0.1:8000/api/favorites', {user_id: userId, item_id: itemId});
+        await axios.post('http://127.0.0.1:8000/api/favorites', { user_id: userId, item_id: itemId });
         this.updateItemFavoriteStatus(itemId, true);
         document.dispatchEvent(new CustomEvent('favorites-updated'));
       } catch (error) {
@@ -377,14 +377,6 @@ export default {
     opacity: 1;
   }
 
-  .card {
-    transition: transform 0.3s;
-
-    &:hover {
-      transform: scale(1.1);
-    }
-  }
-
   .no_favorites_img {
     width: 400px;
     height: 400px;
@@ -408,7 +400,6 @@ export default {
 
 .card {
   overflow: hidden;
-  width: 220px;
   height: 340px;
   border: 1px solid #ccc;
 
@@ -459,18 +450,6 @@ export default {
   }
 }
 
-@media screen and (min-width: 768px) {
-  .card:hover .button-container {
-    opacity: 1;
-  }
 
-  .card {
-    transition: transform 0.3s;
-
-    &:hover {
-      transform: scale(1.1);
-    }
-  }
-}
 </style>
 

@@ -150,4 +150,22 @@ class PurchaseController extends Controller
         ], 200);
     }
 
+    public function getAllPurchases()
+    {
+        $purchases = Purchase::with(['item', 'user'])->get();
+
+        if ($purchases->isEmpty()) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'No purchases found',
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'purchases' => $purchases,
+        ], 200);
+    }
+
+
 }

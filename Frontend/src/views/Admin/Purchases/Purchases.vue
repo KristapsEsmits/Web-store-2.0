@@ -83,7 +83,7 @@ onMounted(async () => {
     userId.value = userData.data.id;
     user.value = userData.data;
 
-    const purchaseData = await axios.get(`http://127.0.0.1:8000/api/purchases/user/${userId.value}`);
+    const purchaseData = await axios.get('http://127.0.0.1:8000/api/purchases'); // New endpoint to fetch all purchases
     const sortedPurchases = purchaseData.data.purchases.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     purchaseHistory.value = groupPurchasesByTime(sortedPurchases);
 
@@ -235,7 +235,6 @@ const getStatusClass = (status) => {
     </div>
   </main>
 </template>
-
 
 <style scoped>
 .filter-section {

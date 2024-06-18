@@ -273,7 +273,7 @@ onMounted(() => {
           <p>Completed Orders: {{ closedOrders }}</p>
         </div>
         <div class="card">
-          <h2 class="card-title">Total Amounts</h2>
+          <h2 class="">Total Amounts</h2>
           <p>Total Earned (with VAT): {{ totalEarnedWithVat.toFixed(2) }}</p>
           <p>Total VAT: {{ totalVat.toFixed(2) }}</p>
           <p>Total Earned (without VAT): {{ totalEarnedWithoutVat.toFixed(2) }}</p>

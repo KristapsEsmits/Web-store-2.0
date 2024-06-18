@@ -19,6 +19,11 @@
         </select>
         <input v-model.number="filters.minPrice" class="form-control" placeholder="Min Price" type="number">
         <input v-model.number="filters.maxPrice" class="form-control" placeholder="Max Price" type="number">
+        <select v-model="sortOrder" class="form-select">
+          <option value="default">Sort by price</option>
+          <option value="priceHighToLow">Price: High to Low</option>
+          <option value="priceLowToHigh">Price: Low to High</option>
+        </select>
       </div>
     </div>
 
@@ -76,6 +81,7 @@ export default {
         minPrice: null,
         maxPrice: null
       },
+      sortOrder: 'default',
       user: null,
       isLoading: true,
       currentPage: 1,
@@ -95,19 +101,31 @@ export default {
         this.getItemsAndCategories();
       },
       deep: true
+    },
+    sortOrder() {
+      this.currentPage = 1;
+      this.getItemsAndCategories();
     }
   },
 
   computed: {
     filteredItems() {
-      return this.items.filter(item => {
+      let filtered = this.items.filter(item => {
         return (
-            (!this.filters.category || item.categories_id === this.filters.category) &&
-            (!this.filters.brand || item.brand_id === this.filters.brand) &&
-            (!this.filters.minPrice || item.price >= this.filters.minPrice) &&
-            (!this.filters.maxPrice || item.price <= this.filters.maxPrice)
+          (!this.filters.category || item.categories_id === this.filters.category) &&
+          (!this.filters.brand || item.brand_id === this.filters.brand) &&
+          (!this.filters.minPrice || item.price >= this.filters.minPrice) &&
+          (!this.filters.maxPrice || item.price <= this.filters.maxPrice)
         );
       });
+
+      if (this.sortOrder === 'priceHighToLow') {
+        filtered.sort((a, b) => b.price - a.price);
+      } else if (this.sortOrder === 'priceLowToHigh') {
+        filtered.sort((a, b) => a.price - b.price);
+      }
+
+      return filtered;
     },
     paginatedItems() {
       const start = (this.currentPage - 1) * this.itemsPerPage;

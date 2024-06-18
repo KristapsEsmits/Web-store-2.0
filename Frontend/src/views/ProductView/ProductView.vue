@@ -120,8 +120,9 @@ export default {
   },
 
   mounted() {
-    this.getItems();
-    this.fetchUserData();
+    this.fetchUserData().then(() => {
+      this.getItems();
+    });
   },
 
   watch: {
@@ -134,6 +135,7 @@ export default {
       try {
         const response = await axios.get(`/items/${itemId}`);
         this.items = response.data.items;
+        await this.updateItemStatuses(itemId); // Update statuses after fetching items
         await this.fetchSimilarItems(itemId);
         await this.fetchSpecifications(itemId);
       } catch (error) {
@@ -145,6 +147,9 @@ export default {
       try {
         const response = await axios.get(`/items/similar/${itemId}`);
         this.similarItems = response.data.items;
+        if (this.user) {
+          await this.updateSimilarItemsStatuses(this.similarItems);
+        }
       } catch (error) {
         console.error('Error fetching similar items:', error);
       } finally {
@@ -175,6 +180,9 @@ export default {
           },
         });
         this.user = response.data;
+        if (this.items.id) {
+          await this.updateItemStatuses(this.items.id);
+        }
       } catch (error) {
         if (error.response && error.response.status === 401) {
           this.user = null;
@@ -301,6 +309,41 @@ export default {
         return item;
       });
     },
+
+    async updateItemStatuses(itemId) {
+      try {
+        const userId = this.user ? this.user.id : null;
+        if (userId) {
+          const [cartResponse, favoriteResponse] = await Promise.all([
+            axios.get(`http://127.0.0.1:8000/api/cart/user/${userId}/item/${itemId}`),
+            axios.get(`http://127.0.0.1:8000/api/user/${userId}/favorite/${itemId}`)
+          ]);
+          this.items.isInCart = cartResponse.data.isInCart;
+          this.items.isFavorite = favoriteResponse.data.isFavorite;
+        }
+      } catch (error) {
+        console.error('Error fetching item statuses:', error);
+      }
+    },
+
+    async updateSimilarItemsStatuses(similarItems) {
+      try {
+        const userId = this.user.id;
+        const itemIds = similarItems.map(item => item.id);
+        const [cartStatusResponse, favoriteStatusResponse] = await Promise.all([
+          axios.post('http://127.0.0.1:8000/api/user/cart-status', { userId, itemIds }),
+          axios.post('http://127.0.0.1:8000/api/user/favorites-status', { userId, itemIds })
+        ]);
+
+        this.similarItems = this.similarItems.map(item => ({
+          ...item,
+          isInCart: cartStatusResponse.data[item.id],
+          isFavorite: favoriteStatusResponse.data[item.id]
+        }));
+      } catch (error) {
+        console.error('Error updating similar item statuses:', error);
+      }
+    }
   },
 };
 </script>

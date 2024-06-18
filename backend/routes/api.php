@@ -121,3 +121,5 @@ Route::delete('/specification-titles/{id}/delete', [SpecificationTitleController
 Route::get('/specification-descriptions', [ItemsController::class, 'getSpecificationsDescription']);
 
 
+Route::middleware('auth:sanctum')->get('purchases', [PurchaseController::class, 'getAllPurchases']);
+

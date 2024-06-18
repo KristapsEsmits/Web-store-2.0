@@ -13,6 +13,7 @@ export default {
           img: null,
         },
       },
+      currentImage: '',
     };
   },
 
@@ -25,6 +26,7 @@ export default {
     getBrandsData(brandsId) {
       axios.get(`/brands/${brandsId}/edit`).then((res) => {
         this.model.brands = res.data.brands;
+        this.currentImage = this.getImageUrl(res.data.brands.img);
       })
           .catch((error) => {
             if (error.response) {
@@ -40,6 +42,7 @@ export default {
       const reader = new FileReader();
       reader.onload = (e) => {
         this.model.brands.img = e.target.result;
+        this.currentImage = e.target.result;
       };
       reader.readAsDataURL(file);
     },
@@ -59,7 +62,6 @@ export default {
       })
           .then((res) => {
             this.$router.push('/admin/brands');
-            alert(res.data.message);
             this.errorList = '';
           })
           .catch(function (error) {
@@ -75,6 +77,10 @@ export default {
 
     Exit() {
       this.$router.push('/admin/brands');
+    },
+
+    getImageUrl(image) {
+      return `http://localhost:8000/storage/uploads/${image}`;
     },
   },
 };
@@ -99,6 +105,9 @@ export default {
         <div class="mb-3">
           <label for="Image">Image</label>
           <input class="form-control" type="file" @change="handleImageUpload"/>
+        </div>
+        <div class="mb-3">
+          <img :src="currentImage" alt="Brand Image" v-if="currentImage" style="max-width: 100px; max-height: 100px;"/>
         </div>
         <div class="mb-3">
           <button class="btn btn-primary" type="button" @click="updateBrands">Update</button>
